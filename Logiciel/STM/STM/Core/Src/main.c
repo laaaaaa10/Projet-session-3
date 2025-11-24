@@ -137,7 +137,6 @@ int main(void)
 while (1) {
     In_Coords[1] = // X
     In_Coords[2] = // Y
-    In_Coords[3] = // Z
 
     if (GO_TEST | (ONE_TIME == FALSE)){
         ARM_LOGIC(In_Coords, Out_Pivots){
