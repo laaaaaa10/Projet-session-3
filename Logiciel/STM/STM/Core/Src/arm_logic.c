@@ -5,7 +5,8 @@ Z
 |__ Y
  \
   X   
-// *the robot base pivot is at 0,0
+// (pos are in cm)
+// *the robot base pivot is at 0,0,10 
 // *the angles of a pivot point are relative to the previous segment*
 // *the angle is the total ratio 360 degrees = to X rotations of the motor*
 // minmax angle for motor 0 (base rotation) = inifinite
@@ -13,6 +14,8 @@ Z
 // minmax angle for motor 2 (second pivot point) = 45..300 degrees
 // minmax angle for motor 3 (wrist) = 45..300 degrees
 // minmax angle for motor 4 (hand open/close) = 0(close)..125(open) degrees 
+//
+// note that Z is not going to work, it will constantly be at 5cm from the buildplate
 */
 
 // *************************** INCLUDES ************************************* // 
@@ -32,8 +35,8 @@ int Pivot4 = 0;      // hand angle
 
 // output angles for the 5 motors (base rotation, pivot1, pivot2, wrist, hand)
 int Out_Pivots[5] = {Pivot0, Pivot1, Pivot2, Pivot3, Pivot4};
-int In_Coords[3]  = {In_X, In_Y, In_Z}; // desired coordinates for the arm to reach (x,y,z)
-int Distance;                           // distance from base to point in space
+int In_Coords[3]  = {In_X, In_Y};    // desired coordinates for the arm to reach (x,y,z)
+int Distance;                        // distance from base to point in space
 
 
 
@@ -96,8 +99,8 @@ void ARM_ROTATIONS(int *In_Coords, int *Out_Pivots) {
     int z = In_Coords[2];
 
     int Distance = sqrt(x*x + y*y);
-    int r = sqrt(d*d + z*z); //r means ...
-
+    int r = sqrt(d*d + z*z); //r means ...?
+    // DONT FORGET THAT THE ARMS HAVE DIFFRENT LIMITS AND LENGHTS
     Out_Pivots[1] = ...; // pivot1
     Out_Pivots[2] = ...; // pivot2
 }
