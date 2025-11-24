@@ -1,0 +1,2 @@
+../Core/Src/Keyboard.c:20:6:Keyboard_Init	2
+../Core/Src/Keyboard.c:28:6:Keyboard_Check_Buttons	4

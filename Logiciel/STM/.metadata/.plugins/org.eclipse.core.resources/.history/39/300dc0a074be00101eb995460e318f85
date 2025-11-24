@@ -1,0 +1,24 @@
+// ************** INCLUDES ************** // 
+#include "main.h"
+#include "Keyboard.h"
+#include <stdbool.h>
+#include <stdio.h>
+
+// ************** VARIABLES ************ //
+
+// ************** FUNCTIONS ************ //
+
+// addition function
+void add(Operandes *operandes) {
+    operandes->resultat = operandes->a + operandes->b;
+}
+
+// subtraction function
+void sub(Operandes *operandes) {
+    operandes->resultat = operandes->a - operandes->b;
+}
+
+// multiplication function
+void mul(Operandes *operandes) {
+    operandes->resultat = operandes->a * operandes->b;
+}
