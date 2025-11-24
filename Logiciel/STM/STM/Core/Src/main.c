@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
+#include "Keyboard.h"
+#include "arm_logic.h"
 #include <stdio.h>
 
 /* USER CODE END Includes */
