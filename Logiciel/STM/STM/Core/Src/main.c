@@ -35,7 +35,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TRUE 1
+#define FALSE 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,6 +51,8 @@ int mode = DEFAULT;
 char key = 0;
 int function = 0;
 
+ONE_TIME = FALSE;
+GO_TEST = FALSE;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -131,8 +134,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-while (1)
-{
+while (1) {
+    In_Coords[1] = // X
+    In_Coords[2] = // Y
+    In_Coords[3] = // Z
+
+    if (GO_TEST | (ONE_TIME == FALSE)){
+        ARM_LOGIC(In_Coords, Out_Pivots){
+        ONE_TIME = TRUE;
+    }
+    
     key = Keyboard_Check_Buttons();
 
     // custom characters
@@ -149,11 +160,12 @@ while (1)
     }
 
     HAL_Delay(10);
-  }
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
+  }
 }
 
 /**
