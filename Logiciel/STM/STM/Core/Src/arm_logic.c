@@ -25,7 +25,6 @@ Z
 #include <math.h>
 
 
-
 // *************************** VARIABLES ************************************ //
 int Pivot0 = 0;      // base rotation angle
 int Pivot1 = 0;      // first pivot point angle
@@ -34,21 +33,26 @@ int Pivot3 = 0;      // wrist angle
 int Pivot4 = 0;      // hand angle
 
 // output angles for the 5 motors (base rotation, pivot1, pivot2, wrist, hand)
+int Pivots[5] = {Pivot0, Pivot1, Pivot2, Pivot3, Pivot4};
 int Out_Pivots[5] = {Pivot0, Pivot1, Pivot2, Pivot3, Pivot4};
 int In_Coords[3]  = {In_X, In_Y};    // desired coordinates for the arm to reach (x,y,z)
 int Distance;                        // distance from base to point in space
 
+// length of each arm
+float L1 = 17.8;
+float L2 = 25.5;
 
 
 //************************* SETUP MAIN PROGRAM *******************************
 // the logic of the 2 pivot points and hand control is in this function
 // this function takes in x,y,z coordinates
 // to get the hand to a certain position in space
-void ARM_LOGIC(int *In_Coords, int *Out_Pivots){
-    BASE_ROTATION(In_Coords, Out_Pivots);
-    RARM_ROTATIONS(In_Coords, Out_Pivots);
-    WRIST_ANGLE(Out_Pivots);
+void ARM_LOGIC(int *In_Coords, int *Pivots){
+    BASE_ROTATION(In_Coords, Pivots);
+    ARM_ROTATIONS(In_Coords, Pivots);
+    WRIST_ANGLE(Pivots);
     HAND_CONTROL(Hand_action); //(prob will do a logic that it does X when ti reaches its desired coords)
+    PIV_TRANSLATE(Pivots,Out_Pivots)
     
     if(!VERIFY_PIVOTS(Out_Pivots)){
         // return error code
@@ -57,8 +61,6 @@ void ARM_LOGIC(int *In_Coords, int *Out_Pivots){
     return 0;
 }
 
-
-
 //***************************** FUNCTIONS *************************************
 // ----- BASE ROTATION (PIV 0)----- //
 // controls the base rotation of the arm
@@ -66,12 +68,12 @@ void ARM_LOGIC(int *In_Coords, int *Out_Pivots){
 // the robot it at 0,0 (if we look from top down)
 // to get the correct base rotation angle we do
 // atan2(y,x) = base rotation angle
-void BASE_ROTATION(int *In_Coords, int *Out_Pivots){
+void BASE_ROTATION(int *In_Coords, int *Pivots){
     float x = In_Coords[0];
     float y = In_Coords[1];
     
-    Out_Pivots[1] = atan2(y, x) * (180.0 / M_PI); // convert radians to degrees
-    // need to gear ratio to return correct pivot0 value
+    // gets the rotation from the coords
+    Pivots[0] = atan2(y, x);
 }
 
 // ----- ARM ROTATIONS (PIV 1 & 2) ----- //
@@ -93,36 +95,66 @@ void BASE_ROTATION(int *In_Coords, int *Out_Pivots){
 // use law of cosines: elbow_angle = acos((L1^2 + L2^2 - r^2)/(2*L1*L2))
 // compute shoulder_angle = atan2(z, d) - atan2(L2*sin(elbow_angle), L1 + L2*cos(elbow_angle))
 
-void ARM_ROTATIONS(int *In_Coords, int *Out_Pivots) {
+void ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     int x = In_Coords[0];
     int y = In_Coords[1];
-    int z = In_Coords[2];
-
     int Distance = sqrt(x*x + y*y);
-    int r = sqrt(d*d + z*z); //r means ...?
-    // DONT FORGET THAT THE ARMS HAVE DIFFRENT LIMITS AND LENGHTS
-    Out_Pivots[1] = ...; // pivot1
-    Out_Pivots[2] = ...; // pivot2
+    
+    // ----- checks if can reach -----
+    if (Distance > (L1 + L2)) {
+        return -1;   // too far
+    }
+    if (Distance < fabsf(L1 - L2)) {
+        return -1;   // too close
+    }
+
+    // ----- elbow angle -----
+    // elbow = acos((L1^2 + L2^2 - d^2) / (2*L1*L2))
+    // 1.0f or -1.0f = Clamp float for acos safety
+    float cos_elbow = (L1*L1 + L2*L2 - Distance*Distance) / (2.0f * L1 * L2);
+    if (cos_elbow > 1.0f) cos_elbow = 1.0f;
+    if (cos_elbow < -1.0f) cos_elbow = -1.0f;
+    float elbow_deg = acosf(cos_elbow) * 180.0f / M_PI;
+
+    // ----- shoulder angle -----
+    // shoulder = angle_to_target - acos((d^2 + L1^2 - L2^2)/(2*L1*d))
+    float cos_sh_tri = (Distance*Distance + L1*L1 - L2*L2) / (2.0f * L1 * Distance);
+    if (cos_sh_tri > 1.0f) cos_sh_tri = 1.0f;
+    if (cos_sh_tri < -1.0f) cos_sh_tri = -1.0f;
+    float sh_tri_deg = acosf(cos_sh_tri) * 180.0f / M_PI;
+
+    // idfk what that does
+    float angle_to_target_deg = atan2f(y, x) * 180.0f / M_PI;
+    float shoulder_deg = angle_to_target_deg - sh_tri_deg;
+
+    Pivots[1] = (int)roundf(shoulder_deg);
+    Pivots[2] = (int)roundf(180.0f - elbow_deg); 
+
+    return 0;
 }
 
 // ----- WRIST ANGLE (PIV 3)----- //
 // controlls the joint of the hand, primarly keeps it faced down releative
 // to pivot point 1 and 2
 
-// imagin angle of pivot 1 (in that case its 45 degrees down from horzontal)
-// and angle of pivot 2 (in that case its 135 degrees relative to pivot 1)
-// - to get the hand to be down (0 degrees relative to horizontal)
-//   you need to do 45 + (135 - 90) = 90 degrees of rotation from the base
-//   so the hand angle is function of the two pivot angles
-void WRIST_ANGLE(int *Out_Pivots){
-    // get pivot 1 angle
-    // get pivot 2 angle
-    // do math to get hand angle
+// imagin angle of pivot 1 (in that case its 125 degrees)
+// and angle of pivot 2  (in that case its 135 degrees)
+// - to get the hand to be down (90 degrees relative to horizontal)
+//   you need to do 180 - (pivot1 + pivot2) = 90
+void WRIST_ANGLE(int *Pivots){
+    // Wrist angle = always keep hand down relative to arm
+    Pivots[3] = 180 - (Pivots[1] + Pivots[2]);
 }
 
 // ----- HAND CONTROL (PIV 4) ----- //
 // controls the opening and closing of the hand
 void HAND_CONTROL(Hand_action){
+
+}
+// ----- TRANSLATE PIVOTS ----- //
+// translates the degres into teh correct value 
+// and does the gear ratio multiplication
+void PIV_TRANSLATE(Pivots,Out_Pivots){
 
 }
 
