@@ -136,7 +136,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   key = Keyboard_Check_Buttons();
-
+HAL
   In_Coords[1] = 20 // X (in cm)
   In_Coords[2] = 10 // Y (in cm)
   
