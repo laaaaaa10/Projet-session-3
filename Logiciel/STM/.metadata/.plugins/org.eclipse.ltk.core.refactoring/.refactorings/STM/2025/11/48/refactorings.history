@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;STM/Core/Src/STM_to_PIC.c&apos; to &apos;UART_Com.c&apos;" description="Rename resource &apos;STM_to_PIC.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/STM_to_PIC.c" name="UART_Com.c" stamp="1764099362220" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;STM/Core/Inc/STM_to_PIC.h&apos; to &apos;UART_Com.h&apos;" description="Rename resource &apos;STM_to_PIC.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/STM_to_PIC.h" name="UART_Com.h" stamp="1764099384266" updateReferences="true"/>
+</session>
