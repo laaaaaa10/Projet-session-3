@@ -1,5 +1,5 @@
 "./Core/Src/Keyboard.o"
-"./Core/Src/STM_to_PIC.o"
+"./Core/Src/UART_Com.o"
 "./Core/Src/arm_logic.o"
 "./Core/Src/lcd.o"
 "./Core/Src/main.o"
