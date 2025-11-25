@@ -159,7 +159,7 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     // Pivot3
     Out_Pivots[3] = (int)((float)(Pivots[3] - 45) / (300 - 45) * 205) * 5;
     // Pivot4
-    Out_Pivots[4] = (int)((float)(Pivots[4] - 0) / 125 * 205) * 5
+    Out_Pivots[4] = (int)((float)(Pivots[4] - 0) / 125 * 205) * 5;
 }
 
 // ----- VERIFY PIVOTS ----- //

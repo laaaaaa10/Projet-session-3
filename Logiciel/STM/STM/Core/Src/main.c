@@ -172,7 +172,6 @@ while (1) {
     /* USER CODE BEGIN 3 */
 } 
   /* USER CODE END 3 */
-}
 
 /**
   * @brief System Clock Configuration
