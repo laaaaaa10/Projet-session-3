@@ -1,0 +1,7 @@
+../Core/Src/arm_logic.c:44:5:ARM_LOGIC	2
+../Core/Src/arm_logic.c:65:6:BASE_ROTATION	1
+../Core/Src/arm_logic.c:92:6:ARM_ROTATIONS	7
+../Core/Src/arm_logic.c:139:6:WRIST_ANGLE	1
+../Core/Src/arm_logic.c:146:6:HAND_CONTROL	1
+../Core/Src/arm_logic.c:152:6:PIV_TRANSLATE	1
+../Core/Src/arm_logic.c:158:6:VERIFY_PIVOTS	9
