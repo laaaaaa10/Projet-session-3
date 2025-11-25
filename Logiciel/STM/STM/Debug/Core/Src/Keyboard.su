@@ -1,2 +1,0 @@
-../Core/Src/Keyboard.c:20:6:Keyboard_Init	16	static
-../Core/Src/Keyboard.c:28:6:Keyboard_Check_Buttons	16	static

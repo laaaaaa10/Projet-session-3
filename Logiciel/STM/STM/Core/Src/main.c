@@ -25,6 +25,7 @@
 #include "lcd.h"
 #include "Keyboard.h"
 #include "arm_logic.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 /* USER CODE END Includes */
@@ -37,6 +38,7 @@
 /* USER CODE BEGIN PD */
 #define TRUE 1
 #define FALSE 0
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,14 +47,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
-
 /* USER CODE BEGIN PV */
-int mode = DEFAULT;
 char key = 0;
 int function = 0;
 
-ONE_TIME = FALSE;
-GO_TEST = FALSE;
+int ONE_TIME = FALSE;
+int GO_TEST = FALSE;
+/* USER CODE END PV */
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,54 +99,54 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
-  LCD_Init();
-  Keyboard_Init();
+//  LCD_Init();
+//  Keyboard_Init();
 
   /* Define custom characters */
-  uint8_t penis[8] = {
-    0b11011,
-    0b11111,
-    0b00100,
-    0b00100,
-    0b00100,
-    0b00100,
-    0b00100,
-    0b00000
-  };
-
-  uint8_t amongus[8] = {
-    0b00000,
-    0b01100,
-    0b10010,
-    0b10101,
-    0b10010,
-    0b10110,
-    0b01010,
-    0b00000
-  };
-
+//  uint8_t penis[8] = {
+//    0b11011,
+//    0b11111,
+//    0b00100,
+//    0b00100,
+//    0b00100,
+//    0b00100,
+//    0b00100,
+//    0b00000
+//  };
+//
+//  uint8_t amongus[8] = {
+//    0b00000,
+//    0b01100,
+//    0b10010,
+//    0b10101,
+//    0b10010,
+//    0b10110,
+//    0b01010,
+//    0b00000
+//  };
+//
   /* Store them into LCD custom character slots */
-  LCD_CreateChar(1, penis);
-  LCD_CreateChar(2, amongus);
+//  LCD_CreateChar(1, penis);
+//  LCD_CreateChar(2, amongus);
 
-  Operandes op;
-  static char result_str[6];
+//  Operandes op;
+//  static char result_str[6];
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 while (1) {
-  key = Keyboard_Check_Buttons();
-HAL
-  In_Coords[1] = 20 // X (in cm)
-  In_Coords[2] = 10 // Y (in cm)
+ // key = Keyboard_Check_Buttons();
+
+  In_Coords[1] = 20; // X (in cm)
+  In_Coords[2] = 10; // Y (in cm)
   
-  // test for the robot arm logic
-  GO_TEST = HAL_GPIO_TogglePin();
-  if (GO_TEST | (ONE_TIME == FALSE)){
-    ARM_LOGIC(In_Coords, Out_Pivots){
-    ONE_TIME = TRUE;
-  }
+// test for the robot arm logic
+//GO_TEST = HAL_GPIO_ReadPin(GPIOA, 0xF7);
+//if (GO_TEST | (ONE_TIME == FALSE)){
+//  ARM_LOGIC(In_Coords, Out_Pivots);
+//  ONE_TIME = TRUE;
+//}
 
   // custom characters (prob wont be used but keep it)
   if (key == 'D') {
@@ -164,11 +165,9 @@ HAL
   HAL_Delay(10);
   }
     /* USER CODE END WHILE */
-  }
-  /* USER CODE BEGIN 3 */
-  
+    /* USER CODE BEGIN 3 */
+} 
   /* USER CODE END 3 */  
-}
 
 /**
   * @brief System Clock Configuration

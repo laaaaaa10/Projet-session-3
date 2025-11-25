@@ -1,4 +1,0 @@
-../Core/Src/calculator.c:13:6:add	16	static
-../Core/Src/calculator.c:19:6:sub	16	static
-../Core/Src/calculator.c:24:6:mul	16	static
-../Core/Src/calculator.c:29:6:calc_to_string	16	static
