@@ -135,36 +135,39 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 while (1) {
-    In_Coords[1] = // X
-    In_Coords[2] = // Y
-
-    if (GO_TEST | (ONE_TIME == FALSE)){
-        ARM_LOGIC(In_Coords, Out_Pivots){
-        ONE_TIME = TRUE;
-    }
-    
-    key = Keyboard_Check_Buttons();
-
-    // custom characters
-    if (key == 'D') {
-      key = 1;
-    }
-    if (key == 'A') {
-      key = 2;
-    }
-
-    // print text
-    if (key != 0) {
-      // write what key was pressed
-    }
-
-    HAL_Delay(10);
-    }
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  /* USER CODE END 3 */
+  key = Keyboard_Check_Buttons();
+HAL
+  In_Coords[1] = 20 // X (in cm)
+  In_Coords[2] = 10 // Y (in cm)
+  
+  // test for the robot arm logic
+  GO_TEST = HAL_GPIO_TogglePin();
+  if (GO_TEST | (ONE_TIME == FALSE)){
+    ARM_LOGIC(In_Coords, Out_Pivots){
+    ONE_TIME = TRUE;
   }
+
+  // custom characters (prob wont be used but keep it)
+  if (key == 'D') {
+    key = 1;
+  }
+  if (key == 'A') { 
+    key = 2;
+  }
+
+  // ----- print text ----- //
+  if (key != 0) {
+    // write what key was pressed
+    // on the LCD
+  }
+
+  HAL_Delay(10);
+  }
+    /* USER CODE END WHILE */
+  }
+  /* USER CODE BEGIN 3 */
+  
+  /* USER CODE END 3 */  
 }
 
 /**
