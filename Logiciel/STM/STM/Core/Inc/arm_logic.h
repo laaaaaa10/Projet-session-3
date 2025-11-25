@@ -12,7 +12,7 @@ extern int Pivots[5];
 extern int Out_Pivots[5];
 extern int In_Coords[3];
 // ************** FUNCTION PROTOTYPES ************** //
-int ARM_LOGIC(int *In_Coords, int *Pivots);
+int ARM_LOGIC(int *In_Coords);
 
 void BASE_ROTATION(int *In_Coords, int *Pivots);
 void ARM_ROTATIONS(int *In_Coords, int *Pivots);

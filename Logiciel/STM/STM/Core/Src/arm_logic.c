@@ -42,7 +42,7 @@ float L2 = 25.5;
 // the logic of the 2 pivot points and hand control is in this function
 // this function takes in x,y,z coordinates
 // to get the hand to a certain position in space
-int ARM_LOGIC(int *In_Coords, int *Pivots){
+int ARM_LOGIC(int *In_Coords){
     BASE_ROTATION(In_Coords, Pivots);
     ARM_ROTATIONS(In_Coords, Pivots);
     WRIST_ANGLE(Pivots);

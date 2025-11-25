@@ -56,14 +56,17 @@ int function = 0;
 
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
+
+int Out_Pivots[5] = {0, 0, 0, 0, 0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN PFP */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
-/* USER CODE BEGIN PFP */
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -147,7 +150,7 @@ while (1) {
 // test for the robot arm logic
 //GO_TEST = HAL_GPIO_ReadPin(GPIOA, 0xF7);
 //if (GO_TEST | (ONE_TIME == FALSE)){
-//  ARM_LOGIC(In_Coords, Out_Pivots);
+//  Out_Pivots = ARM_LOGIC(In_Coords);
 //  ONE_TIME = TRUE;
 //}
 
@@ -166,12 +169,12 @@ while (1) {
   }
 
   HAL_Delay(10);
-  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 } 
   /* USER CODE END 3 */
+}
 
 /**
   * @brief System Clock Configuration
