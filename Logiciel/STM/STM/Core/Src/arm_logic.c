@@ -5,10 +5,11 @@ Z
 |__ Y
  \
   X   
+// Gear ratio: 5:1 (motor:arm)
 // (pos are in cm)
 // *the robot base pivot is at 0,0,10 
 // *the angles of a pivot point are relative to the previous segment*
-// *the angle is the total ratio 360 degrees = to X rotations of the motor*
+// *the angle is the total ratio 360 degrees = to 5 rotations of the motor*
 // minmax angle for motor 0 (base rotation) = inifinite
 // minmax angle for motor 1 (first pivot point) = 45..200 degrees
 // minmax angle for motor 2 (second pivot point) = 45..300 degrees
@@ -147,10 +148,18 @@ void HAND_CONTROL(int *Pivots, int Hand_action){
 
 }
 // ----- TRANSLATE PIVOTS ----- //
-// translates the degres into teh correct value 
-// and does the gear ratio multiplication
+// translates the degres into teh correct value between (0 to 205)
+//0 being _____ and 205 being _____   (motors are PWM)
+// and does the gear ratio multiplication (x5)
 void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
-
+    // Pivot1
+    Out_Pivots[1] = (int)((float)(Pivots[1] - 45) / (200 - 45) * 205) * 5;
+    // Pivot2
+    Out_Pivots[2] = (int)((float)(Pivots[2] - 45) / (300 - 45) * 205) * 5;
+    // Pivot3
+    Out_Pivots[3] = (int)((float)(Pivots[3] - 45) / (300 - 45) * 205) * 5;
+    // Pivot4
+    Out_Pivots[4] = (int)((float)(Pivots[4] - 0) / 125 * 205) * 5;
 }
 
 // ----- VERIFY PIVOTS ----- //
