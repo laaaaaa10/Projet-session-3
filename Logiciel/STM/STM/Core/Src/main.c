@@ -59,7 +59,9 @@ int GO_TEST = FALSE;
 
 int Out_Pivots[5] = {200, 100, 0, 69, 0};
 int In_Coords[2];
-int PICs_8Bit[8];
+
+extern uint8_t PICs_8Bit[8];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -145,26 +147,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // reads the 8 bits from the pic prob will need to 
-  // i was hammered when i did that so might need to fid a better 
-  // way the will actaully fucking work
-              
-  /*  UART_Rec(
-      char PICs_8Bit[0]
-      char PICs_8Bit[1]
-      char PICs_8Bit[2]
-      char PICs_8Bit[3]
-      char PICs_8Bit[4]
-      char PICs_8Bit[5]
-      char PICs_8Bit[6]
-      char PICs_8Bit[7]
-  );              ^~~~~~~~~~~~~~~~~~~~~ t'appels pas ça comme ça*/
-  data = UART_Rec(); // <~~~~~ ça c'est la bonne manière et data doit etre utiliser comme tableau
+  PICs_8Bit = UART_Recive();
 
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
-  //if (PICs_8Bit != 0) {
-  //  LCD_Print(char *PICs_8Bit);
-  
+  if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
+    LCD_Print((char *)PICs_8Bit);
 
     In_Coords[1] = 20; // X (in cm)
     In_Coords[2] = 10; // Y (in cm)
@@ -183,7 +171,7 @@ while (1) {
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
-  
+  }
   
   HAL_Delay(10);
     /* USER CODE END WHILE */
