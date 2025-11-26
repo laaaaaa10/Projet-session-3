@@ -1,5 +1,4 @@
 // ************** INCLUDES ************** //
-#include "UART_Com.h"
 #include "main.h"
 
 // ************** Transmit ************** //

@@ -52,6 +52,7 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 char key = 0;
 int function = 0;
+uint8_t *data;
 
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
@@ -146,7 +147,8 @@ while (1) {
   // reads the 8 bits from the pic prob will need to 
   // i was hammered when i did that so might need to fid a better 
   // way the will actaully fucking work
-  UART_Rec(
+              
+  /*  UART_Rec(
       char PICs_8Bit[0]
       char PICs_8Bit[1]
       char PICs_8Bit[2]
@@ -155,12 +157,13 @@ while (1) {
       char PICs_8Bit[5]
       char PICs_8Bit[6]
       char PICs_8Bit[7]
-  );
-  
+  );              ^~~~~~~~~~~~~~~~~~~~~ t'appels pas ça comme ça*/
+  data = UART_Rec(); // <~~~~~ ça c'est la bonne manière et data doit etre utiliser comme tableau
+
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
-  if (PICs_8Bit != 0) {
-    LCD_Print(char *PICs_8Bit);
+  //if (PICs_8Bit != 0) {
+  //  LCD_Print(char *PICs_8Bit);
   
 
     In_Coords[1] = 20; // X (in cm)
@@ -180,13 +183,13 @@ while (1) {
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
-  }
+  
   
   HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-} 
+ } 
   /* USER CODE END 3 */
 }
 
