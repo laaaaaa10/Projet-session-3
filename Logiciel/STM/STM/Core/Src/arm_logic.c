@@ -27,12 +27,7 @@ Z
 
 
 // *************************** VARIABLES ************************************ //
-// output angles for the 5 motors (base rotation, pivot1, pivot2, wrist, hand)
-int Pivots[5]     = {0, 0, 0, 0, 0};
-int Out_Pivots[5] = {0, 0, 0, 0, 0};
-int In_Coords[3]  = {0, 0, 5};   // x,y,z (z=5cm fixed)
 int Distance;                     // distance from base to point in space
-
 // length of each arm
 float L1 = 17.8;
 float L2 = 25.5;
@@ -42,7 +37,7 @@ float L2 = 25.5;
 // the logic of the 2 pivot points and hand control is in this function
 // this function takes in x,y,z coordinates
 // to get the hand to a certain position in space
-int ARM_LOGIC(int *In_Coords){
+int ARM_LOGIC(int *In_Coords, int *Out_Pivots){
     BASE_ROTATION(In_Coords, Pivots);
     ARM_ROTATIONS(In_Coords, Pivots);
     WRIST_ANGLE(Pivots);
@@ -68,7 +63,7 @@ void BASE_ROTATION(int *In_Coords, int *Pivots){
     float y = In_Coords[1];
     
     // gets the rotation from the coords
-    Pivots[0] = atan2(y, x);
+    Pivots[0] = atan2(y, x) * 180.0f / 3.14159f;
 }
 
 // ----- ARM ROTATIONS (PIV 1 & 2) ----- //
@@ -90,7 +85,7 @@ void BASE_ROTATION(int *In_Coords, int *Pivots){
 // use law of cosines: elbow_angle = acos((L1^2 + L2^2 - r^2)/(2*L1*L2))
 // compute shoulder_angle = atan2(z, d) - atan2(L2*sin(elbow_angle), L1 + L2*cos(elbow_angle))
 
-void ARM_ROTATIONS(int *In_Coords, int *Pivots) {
+int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     int x = In_Coords[0];
     int y = In_Coords[1];
     int Distance = sqrt(x*x + y*y);
@@ -165,6 +160,24 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
 // ----- VERIFY PIVOTS ----- //
 // makes sure the pivot angles are within the min/max range
 bool VERIFY_PIVOTS(int *Out_Pivots) {
+// -------------------------------------------------------------
+// NOTE ABOUT VERIFY_PIVOTS:
+//
+// Out_Pivots[] contains *PWM values* after translation,
+// NOT degrees. The current verification limits (45..200, etc.)
+// are ANGLE limits, NOT PWM limits.
+//
+// This means these checks are WRONG until we know the real
+// min/max PWM output range for each motor.
+//
+// TODO:
+//  - Find the actual PWM range the motors accept
+//    (example: 0–255, 0–1023, 0–4095, etc.)
+//  - Replace the VERIFY_PIVOTS() checks with correct PWM limits
+//
+// Until then, VERIFY_PIVOTS() will NOT behave correctly.
+// -------------------------------------------------------------
+
     if (Out_Pivots[1] < 45 || Out_Pivots[1] > 200) return false;
     if (Out_Pivots[2] < 45 || Out_Pivots[2] > 300) return false;
     if (Out_Pivots[3] < 45 || Out_Pivots[3] > 300) return false;

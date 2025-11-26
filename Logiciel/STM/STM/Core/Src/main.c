@@ -24,6 +24,7 @@
 #include "lcd.h"
 #include "Keyboard.h"
 #include "arm_logic.h"
+#include "UART_Com.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -46,7 +47,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -57,13 +57,11 @@ int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
 int Out_Pivots[5] = {0, 0, 0, 0, 0};
+int In_Coords[2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_TIM2_Init(void);
-static void MX_USART1_UART_Init(void);
+
 /* USER CODE BEGIN PFP */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -149,12 +147,19 @@ while (1) {
   In_Coords[1] = 20; // X (in cm)
   In_Coords[2] = 10; // Y (in cm)
   
-// test for the robot arm logic
-//GO_TEST = HAL_GPIO_ReadPin(GPIOA, 0xF7);
-//if (GO_TEST | (ONE_TIME == FALSE)){
-//  Out_Pivots = ARM_LOGIC(In_Coords);
-//  ONE_TIME = TRUE;
-//}
+  // test for the robot arm logic
+//  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
+//  if (GO_TEST && (ONE_TIME == FALSE)){
+//    ARM_LOGIC(In_Coords, Out_Pivots);
+//    ONE_TIME = TRUE;
+//  }
+  UART_Send(
+      (uint8_t)Out_Pivots[0],
+      (uint8_t)Out_Pivots[1],
+      (uint8_t)Out_Pivots[2],
+      (uint8_t)Out_Pivots[3],
+      (uint8_t)Out_Pivots[4]
+  );
 
   // custom characters (prob wont be used but keep it)
   if (key == 'D') {
