@@ -56,8 +56,9 @@ int function = 0;
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {0, 0, 0, 0, 0};
+int Out_Pivots[5] = {200, 100, 0, 69, 0};
 int In_Coords[2];
+int PICs_8Bit[8];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -142,39 +143,45 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 while (1) {
- // key = Keyboard_Check_Buttons();
-
-  In_Coords[1] = 20; // X (in cm)
-  In_Coords[2] = 10; // Y (in cm)
-  
-  // test for the robot arm logic
-//  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
-//  if (GO_TEST && (ONE_TIME == FALSE)){
-//    ARM_LOGIC(In_Coords, Out_Pivots);
-//    ONE_TIME = TRUE;
-//  }
-  UART_Send(
-      (uint8_t)Out_Pivots[0],
-      (uint8_t)Out_Pivots[1],
-      (uint8_t)Out_Pivots[2],
-      (uint8_t)Out_Pivots[3],
-      (uint8_t)Out_Pivots[4]
+  // reads the 8 bits from the pic prob will need to 
+  // i was hammered when i did that so might need to fid a better 
+  // way the will actaully fucking work
+  UART_Rec(
+      char PICs_8Bit[0]
+      char PICs_8Bit[1]
+      char PICs_8Bit[2]
+      char PICs_8Bit[3]
+      char PICs_8Bit[4]
+      char PICs_8Bit[5]
+      char PICs_8Bit[6]
+      char PICs_8Bit[7]
   );
+  
+  // ----- run main code if pic received shit----- //
+  // prints all the PIC's values on the LCD
+  if (PICs_8Bit != 0) {
+    LCD_Print(char *PICs_8Bit);
+  
 
-  // custom characters (prob wont be used but keep it)
-  if (key == 'D') {
-    key = 1;
-  }
-  if (key == 'A') { 
-    key = 2;
-  }
+    In_Coords[1] = 20; // X (in cm)
+    In_Coords[2] = 10; // Y (in cm)
+    
+    // test for the robot arm logic
+  //  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
+  //  if (GO_TEST && (ONE_TIME == FALSE)){
+  //    ARM_LOGIC(In_Coords, Out_Pivots);
+  //    ONE_TIME = TRUE;
+  //  }
 
-  // ----- print text ----- //
-  if (key != 0) {
-    // write what key was pressed
-    // on the LCD
+    UART_Send(
+        (uint8_t)Out_Pivots[0],
+        (uint8_t)Out_Pivots[1],
+        (uint8_t)Out_Pivots[2],
+        (uint8_t)Out_Pivots[3],
+        (uint8_t)Out_Pivots[4]
+    );
   }
-
+  
   HAL_Delay(10);
     /* USER CODE END WHILE */
 
