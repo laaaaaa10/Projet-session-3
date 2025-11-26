@@ -1,7 +1,7 @@
-../Core/Src/arm_logic.c:45:5:ARM_LOGIC	2
-../Core/Src/arm_logic.c:66:6:BASE_ROTATION	1
-../Core/Src/arm_logic.c:93:6:ARM_ROTATIONS	7
-../Core/Src/arm_logic.c:140:6:WRIST_ANGLE	1
-../Core/Src/arm_logic.c:147:6:HAND_CONTROL	1
-../Core/Src/arm_logic.c:154:6:PIV_TRANSLATE	1
-../Core/Src/arm_logic.c:167:6:VERIFY_PIVOTS	9
+../Core/Src/arm_logic.c:40:5:ARM_LOGIC	2
+../Core/Src/arm_logic.c:61:6:BASE_ROTATION	1
+../Core/Src/arm_logic.c:88:5:ARM_ROTATIONS	7
+../Core/Src/arm_logic.c:135:6:WRIST_ANGLE	1
+../Core/Src/arm_logic.c:142:6:HAND_CONTROL	1
+../Core/Src/arm_logic.c:149:6:PIV_TRANSLATE	1
+../Core/Src/arm_logic.c:162:6:VERIFY_PIVOTS	9
