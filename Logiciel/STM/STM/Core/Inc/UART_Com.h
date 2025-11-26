@@ -1,5 +1,8 @@
-// ************** INCLUDES ************** //
+// ************** INCLUDES ************** // 
 #include "main.h"
+#include "Keyboard.h"
+#include <stdbool.h>
+#include "UART_Com.h"
 
 // ************** EXTERN **************** //
 extern UART_HandleTypeDef huart1;

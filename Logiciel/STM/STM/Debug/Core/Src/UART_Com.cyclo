@@ -1,4 +1,4 @@
 ../Core/Src/UART_Com.c:6:6:UART_Send	1
 ../Core/Src/UART_Com.c:20:6:UART_Com	1
-../Core/Src/UART_Com.c:25:5:UART_Rec	2
-../Core/Src/UART_Com.c:33:5:Lire_UART	1
+../Core/Src/UART_Com.c:26:5:UART_Rec	2
+../Core/Src/UART_Com.c:34:5:Lire_UART	1
