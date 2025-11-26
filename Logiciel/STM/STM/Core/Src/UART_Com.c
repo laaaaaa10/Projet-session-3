@@ -1,6 +1,9 @@
 // ************** INCLUDES ************** //
 #include "main.h"
 
+// ************** VARIABLES ************** //
+uint8_t PICs_8Bit[8];
+
 // ************** Transmit ************** //
 void UART_Send(uint8_t M_0, uint8_t M_1, uint8_t M_2, uint8_t M_3, uint8_t M_4){
     uint8_t CheckSum;
@@ -22,17 +25,17 @@ void UART_Com(uint8_t V_TX){
 
 // ************** Receive ************** //
 // call read_UART 8 times for each bite of the PIC, thenretrun it in the main
-int UART_Rec(void){
-    char Char_tab[8];
-    for (int i = 0; i < 8; i++){
-        Char_tab[i] = Lire_UART();
+int UART_Recive(void){
+    char i;
+    for (i = 0; i < 8; i++){
+        PICs_8Bit[i] = UART_Read_1bit();
     }
-    return Char_tab;
+    return 0;
 }
 
-int Lire_UART(void){
+int UART_Read_1bit(void){
     char ucCaract;
-    HAL_UART_Receive(&huart1, (uint8_t *)&ucCaract, 1, HAL_MAX_DELAY);
+    HAL_UART_Recive(&huart1, (uint8_t *)&ucCaract, 1, HAL_MAX_DELAY);
     return ucCaract;
 }
 
