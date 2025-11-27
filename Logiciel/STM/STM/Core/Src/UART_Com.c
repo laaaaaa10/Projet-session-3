@@ -1,8 +1,10 @@
 // ************** INCLUDES ************** //
 #include "main.h"
 #include "UART_Com.h"
+#include "stm32f1xx_hal.h"
 
 // ************** VARIABLES ************** //
+extern UART_HandleTypeDef huart1;
 uint8_t PICs_8Bit[8];
 
 // ************** Transmit ************** //
@@ -25,17 +27,20 @@ void UART_Com(uint8_t V_TX){
 }
 
 // ************** Receive ************** //
-// call read_UART 8 times for each bite of the PIC, then return it in the main
-uint8_t* UART_Recive(void){
+// read 8 bytes (blocking) and return pointer to buffer
+uint8_t* UART_Receive(void){
     for (uint8_t i = 0; i < 8; i++){
         PICs_8Bit[i] = UART_Read_1bit();
     }
     return PICs_8Bit;
 }
 
-int UART_Read_1bit(void){
-    uint8_t ucCaract;
-    HAL_UART_Receive(&huart1, &ucCaract, 1, HAL_MAX_DELAY); // fix typo
+uint8_t UART_Read_1bit(void){
+    uint8_t ucCaract = 0;
+    // Use 1000 ms timeout for robustness during debug; reduce later if needed
+    if (HAL_UART_Receive(&huart1, &ucCaract, 1, 1000) != HAL_OK) {
+        // on timeout or error return 0 (NUL). You can change behaviour if desired.
+        return 0;
+    }
     return ucCaract;
 }
-
