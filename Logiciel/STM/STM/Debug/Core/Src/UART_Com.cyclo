@@ -1,0 +1,4 @@
+../Core/Src/UART_Com.c:11:6:UART_Send	1
+../Core/Src/UART_Com.c:25:6:UART_Com	1
+../Core/Src/UART_Com.c:31:10:UART_Receive	2
+../Core/Src/UART_Com.c:38:9:UART_Read_1bit	2
