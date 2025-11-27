@@ -57,11 +57,12 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 char key = 0;
 int function = 0;
+int *Membrane = 0;
 
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {170, 80, 35, 95, 95};
+int Out_Pivots[5] = {50, 95, 50, 95, 95};
 int In_Coords[2];
 
 //uint8_t PICs_8Bit[8];
@@ -161,7 +162,7 @@ while (1) {
   // prints all the PIC's values on the LCD
     // Check buttons and set pivot values
 
-  UART_Receive(); // fills PICs_8Bit
+  Membrane = UART_Receive(); // fills PICs_8Bit
   //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
   //  LCD_Clear();
   //  LCD_Print((char *)&PICs_8Bit[2]);
