@@ -1,3 +1,4 @@
+"./Core/Src/I2C.o"
 "./Core/Src/Keyboard.o"
 "./Core/Src/UART_Com.o"
 "./Core/Src/arm_logic.o"
