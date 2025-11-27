@@ -61,7 +61,7 @@ int function = 0;
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {200, 100, 0, 69, 0};
+int Out_Pivots[5] = {100, 205, 205, 205, 0};
 int In_Coords[2];
 
 //uint8_t PICs_8Bit[8];
@@ -160,7 +160,7 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
 
-  //UART_Receive(); // fills PICs_8Bit
+  UART_Receive(); // fills PICs_8Bit
   //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
   //  LCD_Clear();
   //  LCD_Print((char *)&PICs_8Bit[2]);
