@@ -1,30 +1,6 @@
-09:53:59 **** Incremental Build of configuration Debug for project STM ****
+13:21:01 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c: In function 'main':
-../Core/Src/main.c:162:36: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
-  162 |         HAL_UART_Transmit(&huart1, &key, 1, 1);
-      |                                    ^~~~
-      |                                    |
-      |                                    char *
-In file included from ../Core/Inc/stm32f1xx_hal_conf.h:338,
-                 from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:29,
-                 from ../Core/Inc/main.h:30,
-                 from ../Core/Src/main.c:20:
-../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:749:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
-  749 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
-      |                                                                ~~~~~~~~~~~~~~~^~~~~
-../Core/Src/main.c:163:15: warning: implicit declaration of function 'Lire_I2C' [-Wimplicit-function-declaration]
-  163 |         key = Lire_I2C();
-      |               ^~~~~~~~
-../Core/Src/main.c:164:36: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
-  164 |         HAL_UART_Transmit(&huart1, &key, 1, 1);
-      |                                    ^~~~
-      |                                    |
-      |                                    char *
-../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:749:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
-  749 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
-      |                                                                ~~~~~~~~~~~~~~~^~~~~
+arm-none-eabi-gcc "../Core/Src/Mem_Tac.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Mem_Tac.d" -MT"Core/Src/Mem_Tac.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Mem_Tac.o"
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -32,7 +8,7 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  13416	     12	   1852	  15280	   3bb0	STM.elf
+  11972	     32	   1864	  13868	   362c	STM.elf
 Finished building: default.size.stdout
  
 Finished building: STM.bin
@@ -40,5 +16,5 @@ Finished building: STM.bin
 Finished building: STM.list
  
 
-09:54:04 Build Finished. 0 errors, 3 warnings. (took 5s.105ms)
+13:21:05 Build Finished. 0 errors, 0 warnings. (took 4s.567ms)
 

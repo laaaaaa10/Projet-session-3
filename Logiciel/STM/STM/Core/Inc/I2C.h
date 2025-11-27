@@ -1,8 +1,7 @@
 // ************** INCLUDES ************** //
 #include "main.h"
 
-// ************** EXTERN *************** //
-extern I2C_HandleTypeDef hi2c1;
+// ************** DEFINES *************** //
+
 
 // ************** FUNCTION ************** //
-char Lire_I2C(void);

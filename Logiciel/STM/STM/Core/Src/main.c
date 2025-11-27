@@ -57,11 +57,12 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 char key = 0;
 int function = 0;
+int *Membrane = 0;
 
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {200, 100, 0, 69, 0};
+int Out_Pivots[5] = {152, 97, 96, 95, 95};
 int In_Coords[2];
 
 //uint8_t PICs_8Bit[8];
@@ -120,7 +121,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
-//  LCD_Init();
+  LCD_Init();
 //  Keyboard_Init();
 
   /* Define custom characters */
@@ -157,21 +158,18 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 while (1) {
-  while (1){
-	key = 0xff;
-	HAL_UART_Transmit(&huart1, &key, 1, 1);
-	key = Lire_I2C();
-	HAL_UART_Transmit(&huart1, &key, 1, 1);
-  }
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
-  UART_Recive(); // fills PICs_8Bit
-  if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
-    LCD_Print((char *)&PICs_8Bit[2]);
+    // Check buttons and set pivot values
+
+  Membrane = UART_Receive(); // fills PICs_8Bit
+  //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
+  //  LCD_Clear();
+  //  LCD_Print((char *)&PICs_8Bit[2]);
 
     In_Coords[1] = 20; // X (in cm)
     In_Coords[2] = 10; // Y (in cm)
-    
+
     // test for the robot arm logic
   //  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
   //  if (GO_TEST && (ONE_TIME == FALSE)){
@@ -186,7 +184,7 @@ while (1) {
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
-  }
+  //}
   
   HAL_Delay(10);
     /* USER CODE END WHILE */
