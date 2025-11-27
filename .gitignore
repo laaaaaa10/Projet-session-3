@@ -7,6 +7,8 @@
 #Taken from zeha on GIST https://gist.github.com/zeha/5999375
 #Updated by Cristian Cristea (https://github.com/cristiancristea00)
 
+*.elf
+*.bin
 *.d
 *.pre
 *.p1

@@ -62,7 +62,7 @@ int *Membrane = 0;
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {135, 110, 110, 95, 95};
+int Out_Pivots[5] = {197, 93, 160, 95, 95};
 int In_Coords[2];
 
 /* USER CODE END PV */
