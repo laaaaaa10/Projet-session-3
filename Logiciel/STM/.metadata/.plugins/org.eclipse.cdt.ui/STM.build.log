@@ -1,6 +1,43 @@
-13:21:01 **** Incremental Build of configuration Debug for project STM ****
+17:43:05 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
-arm-none-eabi-gcc "../Core/Src/Mem_Tac.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Mem_Tac.d" -MT"Core/Src/Mem_Tac.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Mem_Tac.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:167:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+In file included from ../Core/Src/main.c:24:
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:170:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  170 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:172:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  172 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:174:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  174 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:180:12: warning: assignment to 'int *' from incompatible pointer type 'uint8_t *' {aka 'unsigned char *'} [-Wincompatible-pointer-types]
+  180 |   Membrane = UART_Receive(); // fills PICs_8Bit
+      |            ^
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -8,7 +45,7 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  11972	     32	   1864	  13868	   362c	STM.elf
+  11236	     32	   1848	  13116	   333c	STM.elf
 Finished building: default.size.stdout
  
 Finished building: STM.bin
@@ -16,5 +53,5 @@ Finished building: STM.bin
 Finished building: STM.list
  
 
-13:21:05 Build Finished. 0 errors, 0 warnings. (took 4s.567ms)
+17:43:13 Build Finished. 0 errors, 5 warnings. (took 7s.663ms)
 

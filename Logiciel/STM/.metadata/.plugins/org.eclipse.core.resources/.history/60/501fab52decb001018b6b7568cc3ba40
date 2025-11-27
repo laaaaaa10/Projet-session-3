@@ -94,8 +94,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int Valeur_Prnt[2];
-  Valeur_Prnt[1] = '\0';     // NE PAS TOUCHER C'EST TRÈS IMPORTANT POUR LE LCD
+  char Valeur_Prnt[2];
+	Valeur_Prnt[1] = '\0';
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -161,29 +161,9 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
-  for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
-    Valeur_Prnt[0] = 1 + i + 0x30;
-    if(i == 3) LCD_SetCursor(0,1);
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(" ");
-  }/*
-  LCD_SetCursor(0,2);
+  LCD_Print("1"); LCD_Print(":"); LCD_Print(Out_Pivots[0] /100 ); LCD_Print(Out_Pivots[0] /10 ); LCD_Print(Out_Pivots[0] %10 ); LCD_Print(" ");
 
-  LCD_Print("X"); 
-  LCD_Print(":"); 
 
-  LCD_Print(" ");
-  LCD_Print("X"); 
-  LCD_Print(":"); 
-
-  LCD_Print(" ");*/
   Membrane = UART_Receive(); // fills PICs_8Bit
   //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
   //  LCD_Clear();
