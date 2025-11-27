@@ -1,0 +1,19 @@
+// ************** INCLUDES ************** // 
+#include "main.h"
+#include <stdbool.h>
+
+// ************** DEFINES *************** //
+#ifndef INC_MEM_TAC_H_
+#define INC_MEM_TAC_H_
+
+// ************** VARIABLES *************** //
+struct Point {
+    char x;
+    char y;
+};
+struct Point Tab;
+
+// ************** FUNCTION ************** //
+char Simple_Tab(int *data);
+
+#endif
