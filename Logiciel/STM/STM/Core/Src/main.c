@@ -62,7 +62,7 @@ int *Membrane = 0;
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {152, 97, 96, 95, 95};
+int Out_Pivots[5] = {50, 95, 50, 95, 95};
 int In_Coords[2];
 
 //uint8_t PICs_8Bit[8];
