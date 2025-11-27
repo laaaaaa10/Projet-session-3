@@ -60,7 +60,7 @@ int GO_TEST = FALSE;
 int Out_Pivots[5] = {200, 100, 0, 69, 0};
 int In_Coords[2];
 
-extern uint8_t PICs_8Bit[8];
+//extern uint8_t PICs_8Bit[8];
 
 /* USER CODE END PV */
 
@@ -147,7 +147,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // reads the 8 bits from the pic prob will need to 
-  PICs_8Bit = UART_Recive();
+	uint8_t *PICs_8Bit = UART_Recive();
 
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
