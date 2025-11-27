@@ -108,7 +108,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
-//  LCD_Init();
+  LCD_Init();
 //  Keyboard_Init();
 
   /* Define custom characters */
@@ -147,13 +147,16 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
-  UART_Recive(); // fills PICs_8Bit
-  if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
+
+  UART_Receive(); // fills PICs_8Bit
+  if (PICs_8Bit[0] == 0x47 && PICs_8Bit[1] == 0x4f) {
+    LCD_Clear();
     LCD_Print((char *)&PICs_8Bit[2]);
+    LCD_Set(0, 1);
 
     In_Coords[1] = 20; // X (in cm)
     In_Coords[2] = 10; // Y (in cm)
-    
+
     // test for the robot arm logic
   //  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
   //  if (GO_TEST && (ONE_TIME == FALSE)){
@@ -169,8 +172,6 @@ while (1) {
         (uint8_t)Out_Pivots[4]
     );
   }
-  
-  HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
