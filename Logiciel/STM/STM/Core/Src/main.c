@@ -157,6 +157,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 while (1) {
+  while (1){
+	key = 0xff;
+	HAL_UART_Transmit(&huart1, &key, 1, 1);
+	key = Lire_I2C();
+	HAL_UART_Transmit(&huart1, &key, 1, 1);
+  }
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   UART_Recive(); // fills PICs_8Bit
