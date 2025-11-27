@@ -8,6 +8,7 @@
 
 // ************** VARIABLES *************** //
 extern uint8_t PICs_8Bit[8];
+extern UART_HandleTypeDef huart1;
 
 // ************** FUNCTION ************** //
 // Transmit helpers
