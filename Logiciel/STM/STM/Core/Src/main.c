@@ -60,9 +60,8 @@ int function = 0;
 int *Membrane = 0;
 
 int ONE_TIME = FALSE;
-int GO_TEST = FALSE;
 
-int Out_Pivots[5] = {197, 93, 160, 95, 95};
+int Out_Pivots[5]; // = {51, 75, 160, 95, 95};
 int In_Coords[2];
 
 /* USER CODE END PV */
@@ -122,37 +121,7 @@ int main(void)
 
   /* Initialize LCD */
   LCD_Init();
-//  Keyboard_Init();
 
-  /* Define custom characters */
-//  uint8_t penis[8] = {
-//    0b11011,
-//    0b11111,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00000
-//  };
-//
-//  uint8_t amongus[8] = {
-//    0b00000,
-//    0b01100,
-//    0b10010,
-//    0b10101,
-//    0b10010,
-//    0b10110,
-//    0b01010,
-//    0b00000
-//  };
-//
-  /* Store them into LCD custom character slots */
-//  LCD_CreateChar(1, penis);
-//  LCD_CreateChar(2, amongus);
-
-//  Operandes op;
-//  static char result_str[6];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -184,31 +153,33 @@ while (1) {
   LCD_Print(":"); 
 
   LCD_Print(" ");*/
-  Membrane = UART_Receive(); // fills PICs_8Bit
-  //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
-  //  LCD_Clear();
-  //  LCD_Print((char *)&PICs_8Bit[2]);
 
-    In_Coords[1] = 20; // X (in cm)
-    In_Coords[2] = 10; // Y (in cm)
+  //Membrane = UART_Receive(); // fills PICs_8Bit
 
-    // test for the robot arm logic
-  //  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
-  //  if (GO_TEST && (ONE_TIME == FALSE)){
-  //    ARM_LOGIC(In_Coords, Out_Pivots);
-  //    ONE_TIME = TRUE;
-  //  }
+  In_Coords[1] = 10; // x (in cm)
+  In_Coords[0] = 20;  // y (in cm)
 
-    UART_Send(
-        (uint8_t)Out_Pivots[0],
-        (uint8_t)Out_Pivots[1],
-        (uint8_t)Out_Pivots[2],
-        (uint8_t)Out_Pivots[3],
-        (uint8_t)Out_Pivots[4]
-    );
-  //}
+  // test for the robot arm logic
+  if (ONE_TIME == FALSE) {
+      ARM_LOGIC(In_Coords, Out_Pivots);
+      
+      //Out_Pivots[0] = 
+      //Out_Pivots[1] = 93;
+      //Out_Pivots[2] = 160;
+      Out_Pivots[3] = 95;
+      Out_Pivots[4] = 95;
+
+      ONE_TIME = TRUE;
+  }
+
+  UART_Send(
+    (uint8_t)Out_Pivots[0],
+    (uint8_t)Out_Pivots[1],
+    (uint8_t)Out_Pivots[2],
+    (uint8_t)Out_Pivots[3],
+    (uint8_t)Out_Pivots[4]
+  );
   
-  HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
