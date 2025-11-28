@@ -100,13 +100,28 @@ int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     // Horizontal distance from base to target
     float d = hypotf(x, y);
     
-    // Vertical offset: wrist at 15cm, shoulder at 10cm → z = 5cm above shoulder
-    // Droop compensation - linear formula
-    float compensation = (d - 25.0f) * 0.33f;
-    if (compensation < -5.0f) compensation = -5.0f;
-    if (compensation > 3.0f) compensation = 3.0f;
+    // Vertical offset: wrist at 15cm, shoulder at 10cm → z = 5cm above shoulder;
+    float z = 10.0f;
+    float compensation;
+    
+    if (d <= 15.0f) {
+        // 10→15: error 4→5
+        compensation = -4.0f - (d - 10.0f) * 0.2f;
+    } else if (d <= 25.0f) {
+        // 15→25: error 5→0
+        compensation = -5.0f + (d - 15.0f) * 0.5f;
+    } else if (d <= 35.0f) {
+        // 25→35: error 0→-3
+        compensation = (d - 25.0f) * 0.3f;
+    } else {
+        // 35+: stays -3
+        compensation = 3.0f;
+    }
+    
+    z += compensation;
 
-    float z = 13.0f + compensation;
+    // 3D distance in vertical plane from shoulder to wrist
+    float r = hypotf(d, z);
     
     float L1f = L1;
     float L2f = L2;
@@ -162,8 +177,15 @@ void WRIST_ANGLE(int *Pivots){
     // Use the same conventions as Pivots: Pivots[1] is shoulder deg, Pivots[2] is motor-style (180 - elbow_deg).
     // Simple heuristic: wrist = 270 - (shoulder + elbow_motor). Keep as integer.
     int shoulder = Pivots[1];
-    int elbow_motor = Pivots[2];
-    int wrist = 270 - (shoulder + elbow_motor);
+    int elbow = Pivots[2];
+    
+    // Compensate to keep gripper pointing down
+    int wrist = shoulder + elbow - 180;
+    
+    // Normalize to 0-360
+    while (wrist < 0) wrist += 360;
+    while (wrist >= 360) wrist -= 360;
+    
     Pivots[3] = wrist;
 }
 

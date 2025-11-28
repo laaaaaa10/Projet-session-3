@@ -154,14 +154,11 @@ while (1) {
 
   //Membrane = UART_Receive(); // fills PICs_8Bit
 
-  In_Coords[1] = 13; // x (in cm)
+  In_Coords[1] = 0; // x (in cm)
   In_Coords[0] = 40; // y (in cm)
 
   ARM_LOGIC(In_Coords, Out_Pivots);
-      
-  //Out_Pivots[0] = 117;
-  //Out_Pivots[1] = 93;
-  //Out_Pivots[2] = 20;
+
   Out_Pivots[3] = 50;
   Out_Pivots[4] = 95;
   
