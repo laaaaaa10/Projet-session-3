@@ -136,7 +136,7 @@ while (1) {
 
   ARM_LOGIC(In_Coords, Out_Pivots);
 
-  Out_Pivots[3] = 50;
+  //Out_Pivots[3] = 135;
   Out_Pivots[4] = 95;
   
   UART_Send(
