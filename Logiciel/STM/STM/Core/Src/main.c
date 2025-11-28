@@ -35,6 +35,7 @@
 /* USER CODE BEGIN PTD */
 /* USER CODE END PTD */
 
+
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TRUE 1
@@ -60,10 +61,7 @@ char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
-int ONE_TIME = FALSE;
-int GO_TEST = FALSE;
-
-int Out_Pivots[5] = {197, 93, 160, 95, 95};
+int Out_Pivots[5]; // = {51, 75, 160, 95, 95};
 int In_Coords[2];
 
 /* USER CODE END PV */
@@ -123,37 +121,7 @@ int main(void)
 
   /* Initialize LCD */
   LCD_Init();
-//  Keyboard_Init();
 
-  /* Define custom characters */
-//  uint8_t penis[8] = {
-//    0b11011,
-//    0b11111,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00100,
-//    0b00000
-//  };
-//
-//  uint8_t amongus[8] = {
-//    0b00000,
-//    0b01100,
-//    0b10010,
-//    0b10101,
-//    0b10010,
-//    0b10110,
-//    0b01010,
-//    0b00000
-//  };
-//
-  /* Store them into LCD custom character slots */
-//  LCD_CreateChar(1, penis);
-//  LCD_CreateChar(2, amongus);
-
-//  Operandes op;
-//  static char result_str[6];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -163,31 +131,25 @@ while (1) {
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
 
-  Membrane = UART_Receive(); // fills PICs_8Bit
-  //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
-  //  LCD_Clear();
-  //  LCD_Print((char *)&PICs_8Bit[2]);
+  In_Coords[1] = -3; // x (in cm)
+  In_Coords[0] = 17; // y (in cm)
 
-    In_Coords[1] = 20; // X (in cm)
-    In_Coords[2] = 10; // Y (in cm)
-
-    // test for the robot arm logic
-  //  GO_TEST = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
-  //  if (GO_TEST && (ONE_TIME == FALSE)){
-  //    ARM_LOGIC(In_Coords, Out_Pivots);
-  //    ONE_TIME = TRUE;
-  //  }
-
-    UART_Send(
-        (uint8_t)Out_Pivots[0],
-        (uint8_t)Out_Pivots[1],
-        (uint8_t)Out_Pivots[2],
-        (uint8_t)Out_Pivots[3],
-        (uint8_t)Out_Pivots[4]
-    );
-  //}
+  ARM_LOGIC(In_Coords, Out_Pivots);
+      
+  //Out_Pivots[0] = 117;
+  //Out_Pivots[1] = 93;
+  //Out_Pivots[2] = 20;
+  Out_Pivots[3] = 50;
+  Out_Pivots[4] = 95;
   
-  HAL_Delay(10);  
+  UART_Send(
+    (uint8_t)Out_Pivots[0],
+    (uint8_t)Out_Pivots[1],
+    (uint8_t)Out_Pivots[2],
+    (uint8_t)Out_Pivots[3],
+    (uint8_t)Out_Pivots[4]
+  );
+
   for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
     Valeur_Prnt[0] = 1 + i + 0x30;
     if(i == 3) LCD_SetCursor(0,1);
@@ -200,9 +162,7 @@ while (1) {
     Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
     LCD_Print(Valeur_Prnt); 
     LCD_Print(" ");
-  };
-  LCD_SetCursor(0,2);
-
+  }
   LCD_Print("X"); 
   LCD_Print(":"); 
   Valeur_Prnt[0] = (Membrane.x /10)+0x30; // affiche la dizaine
@@ -217,6 +177,7 @@ while (1) {
   Valeur_Prnt[0] = (Membrane.y %10)+0x30; // affiche l'unité
   LCD_Print(Valeur_Prnt); 
   LCD_Print(" ");
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

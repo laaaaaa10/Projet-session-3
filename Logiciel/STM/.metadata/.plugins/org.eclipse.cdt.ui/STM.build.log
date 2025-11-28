@@ -1,6 +1,80 @@
-15:57:30 **** Incremental Build of configuration Debug for project STM ****
+16:32:40 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
 arm-none-eabi-gcc "../Core/Src/Mem_Tac.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Mem_Tac.d" -MT"Core/Src/Mem_Tac.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Mem_Tac.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/Mem_Tac.c: In function 'Lire_Tab':
+../Core/Src/Mem_Tac.c:32:32: warning: array subscript has type 'char' [-Wchar-subscripts]
+   32 |     Coord_Mem = Tableau_Mem[Tab.y][Tab.x];
+      |                             ~~~^~
+../Core/Src/Mem_Tac.c:32:39: warning: array subscript has type 'char' [-Wchar-subscripts]
+   32 |     Coord_Mem = Tableau_Mem[Tab.y][Tab.x];
+      |                                    ~~~^~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:156:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  156 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+In file included from ../Core/Src/main.c:24:
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:159:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  159 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:161:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  161 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:163:15: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  163 |     LCD_Print(Valeur_Prnt);
+      |               ^~~~~~~~~~~
+      |               |
+      |               int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:169:13: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  169 |   LCD_Print(Valeur_Prnt);
+      |             ^~~~~~~~~~~
+      |             |
+      |             int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:171:13: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  171 |   LCD_Print(Valeur_Prnt);
+      |             ^~~~~~~~~~~
+      |             |
+      |             int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:176:13: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  176 |   LCD_Print(Valeur_Prnt);
+      |             ^~~~~~~~~~~
+      |             |
+      |             int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
+../Core/Src/main.c:178:13: warning: passing argument 1 of 'LCD_Print' from incompatible pointer type [-Wincompatible-pointer-types]
+  178 |   LCD_Print(Valeur_Prnt);
+      |             ^~~~~~~~~~~
+      |             |
+      |             int *
+../Core/Inc/lcd.h:24:22: note: expected 'char *' but argument is of type 'int *'
+   24 | void LCD_Print(char *str);
+      |                ~~~~~~^~~
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -8,7 +82,7 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  12532	     32	   1872	  14436	   3864	STM.elf
+  19384	    108	   2196	  21688	   54b8	STM.elf
 Finished building: default.size.stdout
  
 Finished building: STM.bin
@@ -16,5 +90,5 @@ Finished building: STM.bin
 Finished building: STM.list
  
 
-15:57:34 Build Finished. 0 errors, 0 warnings. (took 3s.786ms)
+16:32:44 Build Finished. 0 errors, 10 warnings. (took 4s.138ms)
 
