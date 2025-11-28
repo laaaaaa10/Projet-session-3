@@ -12,6 +12,8 @@ extern int Out_Pivots[5];
 extern int In_Coords[2];
 
 // ************** FUNCTION PROTOTYPES ************** //
+int pwm_to_deg(int pwm, int deg0, int deg205);
+
 int ARM_LOGIC(int *In_Coords, int *Out_Pivots);
 int ARM_ROTATIONS(int *In_Coords, int *Pivots);
 
