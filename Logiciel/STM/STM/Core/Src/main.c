@@ -25,6 +25,7 @@
 #include "Keyboard.h"
 #include "arm_logic.h"
 #include "UART_Com.h"
+#include "Mem_Tac.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -57,7 +58,7 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 char key = 0;
 int function = 0;
-int *Membrane = 0;
+Point Membrane = {0,0};
 
 int ONE_TIME = FALSE;
 int GO_TEST = FALSE;
@@ -161,29 +162,7 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
-  for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
-    Valeur_Prnt[0] = 1 + i + 0x30;
-    if(i == 3) LCD_SetCursor(0,1);
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(" ");
-  }/*
-  LCD_SetCursor(0,2);
 
-  LCD_Print("X"); 
-  LCD_Print(":"); 
-
-  LCD_Print(" ");
-  LCD_Print("X"); 
-  LCD_Print(":"); 
-
-  LCD_Print(" ");*/
   Membrane = UART_Receive(); // fills PICs_8Bit
   //if (PICs_8Bit[0] == 'G' && PICs_8Bit[1] == 'O') {
   //  LCD_Clear();
@@ -208,7 +187,36 @@ while (1) {
     );
   //}
   
-  HAL_Delay(10);
+  HAL_Delay(10);  
+  for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
+    Valeur_Prnt[0] = 1 + i + 0x30;
+    if(i == 3) LCD_SetCursor(0,1);
+    LCD_Print(Valeur_Prnt); 
+    LCD_Print(":"); 
+    Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
+    LCD_Print(Valeur_Prnt); 
+    Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
+    LCD_Print(Valeur_Prnt); 
+    Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
+    LCD_Print(Valeur_Prnt); 
+    LCD_Print(" ");
+  };
+  LCD_SetCursor(0,2);
+
+  LCD_Print("X"); 
+  LCD_Print(":"); 
+  Valeur_Prnt[0] = (Membrane.x /10)+0x30; // affiche la dizaine
+  LCD_Print(Valeur_Prnt); 
+  Valeur_Prnt[0] = (Membrane.x %10)+0x30; // affiche l'unité
+  LCD_Print(Valeur_Prnt); 
+  LCD_Print(" ");
+  LCD_Print("Y"); 
+  LCD_Print(":"); 
+  Valeur_Prnt[0] = (Membrane.y /10)+0x30; // affiche la dizaine
+  LCD_Print(Valeur_Prnt); 
+  Valeur_Prnt[0] = (Membrane.y %10)+0x30; // affiche l'unité
+  LCD_Print(Valeur_Prnt); 
+  LCD_Print(" ");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
