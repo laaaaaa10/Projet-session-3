@@ -7,15 +7,14 @@
 #define INC_MEM_TAC_H_
 
 // ************** VARIABLES *************** //
-
 // ************** STRUCTURE *************** //
 typedef struct {
-    int x;
-    int y;
+    char x;
+    char y;
 } Point;
 
 // ************** FUNCTION ************** //
 Point Simple_Tab(int *data);
-char Lire_Tab(int *KKK);
+Point Lire_Tab(int *KKK);
 
 #endif
