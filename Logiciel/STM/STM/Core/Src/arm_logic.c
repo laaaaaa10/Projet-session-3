@@ -93,14 +93,18 @@ void BASE_ROTATION(int *In_Coords, int *Pivots){
 // check if r is reachable
 // use law of cosines: elbow_angle = acos((L1^2 + L2^2 - r^2)/(2*L1*L2))
 // compute shoulder_angle = atan2(z, d) - atan2(L2*sin(elbow_angle), L1 + L2*cos(elbow_angle))
-
 int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     float x = (float) In_Coords[0];
     float y = (float) In_Coords[1];
     
-    float z_target = 14f;
+    // Horizontal distance from base to target
     float d = hypotf(x, y);
-    float r = hypotf(d, z_target);
+    
+    // Vertical offset: wrist at 15cm, shoulder at 10cm → z = 5cm above shoulder
+    float z = 5.5f;
+    
+    // 3D distance in vertical plane from shoulder to wrist
+    float r = hypotf(d, z);
     
     float L1f = L1;
     float L2f = L2;
@@ -108,25 +112,29 @@ int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     if (r > (L1f + L2f) - 0.001f) return -1;
     if (r < fabsf(L1f - L2f) + 0.001f) return -1;
     
-    float cos_elbow = (L1f*L1f + L2f*L2f - r*r) / (2.0f * L1f * L2f);
-    if (cos_elbow > 1.0f) cos_elbow = 1.0f;
-    if (cos_elbow < -1.0f) cos_elbow = -1.0f;
-    float elbow_internal_rad = acosf(cos_elbow);
-    float elbow_internal_deg = elbow_internal_rad * (180.0f / 3.14159265f);
+    // Internal angle between the two arms (this equals Pivot 2)
+    float cos_internal = (L1f*L1f + L2f*L2f - r*r) / (2.0f * L1f * L2f);
+    if (cos_internal > 1.0f) cos_internal = 1.0f;
+    if (cos_internal < -1.0f) cos_internal = -1.0f;
+    float internal_rad = acosf(cos_internal);
+    float pivot2_deg = internal_rad * (180.0f / 3.14159265f);
     
-    float sin_e = sinf(elbow_internal_rad);
-    float cos_e = cosf(elbow_internal_rad);
-    float beta_rad = atan2f(L2f * sin_e, L1f + L2f * cos_e);
+    // Shoulder angle calculation
+    // Angle to target from shoulder (line of sight)
+    float alpha = atan2f(z, d);
     
-    float alpha_rad = atan2f(z_target, d);
-    float shoulder_rad = alpha_rad + beta_rad;
-    float shoulder_deg = shoulder_rad * (180.0f / 3.14159265f);
+    // Triangle angle at shoulder (law of cosines, not atan2)
+    float cos_beta = (L1f*L1f + r*r - L2f*L2f) / (2.0f * L1f * r);
+    if (cos_beta > 1.0f) cos_beta = 1.0f;
+    if (cos_beta < -1.0f) cos_beta = -1.0f;
+    float beta = acosf(cos_beta);
     
-    // FIXED: motor angle equals internal angle directly
-    float elbow_motor_deg = elbow_internal_deg;
+    // Shoulder angle (elbow-up configuration)
+    float pivot1_rad = alpha + beta;
+    float pivot1_deg = pivot1_rad * (180.0f / 3.14159265f);
     
-    int s = (int) roundf(shoulder_deg);
-    int e = (int) roundf(elbow_motor_deg);
+    int s = (int) roundf(pivot1_deg);
+    int e = (int) roundf(pivot2_deg);
     
     if (s < 0) s = 0;
     if (s > 131) s = 131;
@@ -216,14 +224,28 @@ int pwm_to_deg(int pwm, int deg0, int deg205) {
 void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     // pivot0: deg0 = -169, deg205 = 165
     Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165);
-    // pivot1: deg0 = 131, deg205 = 0
-    Out_Pivots[1] = linear_deg_to_pwm(Pivots[1], 131, 0);
+    
+    // pivot1: Piecewise linear from calibration table
+    // 131° → PWM 50, 90° → PWM 93, 0° → PWM 142
+    {
+        int deg = Pivots[1];
+        int pwm;
+        if (deg >= 90) {
+            // 131° to 90°: PWM 50 to 93
+            pwm = 50 + (131 - deg) * 43 / 41;
+        } else {
+            // 90° to 0°: PWM 93 to 142
+            pwm = 93 + (90 - deg) * 49 / 90;
+        }
+        if (pwm < 0) pwm = 0;
+        if (pwm > 205) pwm = 205;
+        Out_Pivots[1] = pwm;
+    }
+    
     // pivot2: deg0 = 34, deg205 = 375
     Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375);
-    // pivots 3 & 4 ignored for now as requested; keep safe defaults/clamps
-    // wrist: clamp to 0..205 using same mapping as pivot2 heuristic
+    
     Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 34, 375);
-    // hand: Pivots[4] is already 0..125 range, map direct (0..125 -> 0..125 PWM)
     if (Pivots[4] < 0) Out_Pivots[4] = 0;
     else if (Pivots[4] > 125) Out_Pivots[4] = 125;
     else Out_Pivots[4] = Pivots[4];
