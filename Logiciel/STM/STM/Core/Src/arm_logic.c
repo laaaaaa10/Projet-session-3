@@ -101,10 +101,12 @@ int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     float d = hypotf(x, y);
     
     // Vertical offset: wrist at 15cm, shoulder at 10cm → z = 5cm above shoulder
-    float z = 5.5f;
-    
-    // 3D distance in vertical plane from shoulder to wrist
-    float r = hypotf(d, z);
+    // Droop compensation - linear formula
+    float compensation = (d - 25.0f) * 0.33f;
+    if (compensation < -5.0f) compensation = -5.0f;
+    if (compensation > 3.0f) compensation = 3.0f;
+
+    float z = 13.0f + compensation;
     
     float L1f = L1;
     float L2f = L2;
