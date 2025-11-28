@@ -179,8 +179,8 @@ void WRIST_ANGLE(int *Pivots){
     int shoulder = Pivots[1];
     int elbow = Pivots[2];
     
-    // Compensate to keep gripper pointing down
-    int wrist = shoulder + elbow - 180;
+    // Keep gripper pointing straight down
+    int wrist = 270 - shoulder - elbow;
     
     // Normalize to 0-360
     while (wrist < 0) wrist += 360;
@@ -250,15 +250,12 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165);
     
     // pivot1: Piecewise linear from calibration table
-    // 131° → PWM 50, 90° → PWM 93, 0° → PWM 142
     {
         int deg = Pivots[1];
         int pwm;
         if (deg >= 90) {
-            // 131° to 90°: PWM 50 to 93
             pwm = 50 + (131 - deg) * 43 / 41;
         } else {
-            // 90° to 0°: PWM 93 to 142
             pwm = 93 + (90 - deg) * 49 / 90;
         }
         if (pwm < 0) pwm = 0;
@@ -269,7 +266,16 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     // pivot2: deg0 = 34, deg205 = 375
     Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375);
     
-    Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 34, 375);
+    // pivot3: 249° → PWM 50, 90° → PWM 160
+    {
+        int deg = Pivots[3];
+        int pwm = 50 + (249 - deg) * 110 / 159;
+        if (pwm < 0) pwm = 0;
+        if (pwm > 205) pwm = 205;
+        Out_Pivots[3] = pwm;
+    }
+    
+    // pivot4: hand
     if (Pivots[4] < 0) Out_Pivots[4] = 0;
     else if (Pivots[4] > 125) Out_Pivots[4] = 125;
     else Out_Pivots[4] = Pivots[4];
