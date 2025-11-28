@@ -95,66 +95,46 @@ void BASE_ROTATION(int *In_Coords, int *Pivots){
 // compute shoulder_angle = atan2(z, d) - atan2(L2*sin(elbow_angle), L1 + L2*cos(elbow_angle))
 
 int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
-    /* Input: In_Coords[0]=X (cm), In_Coords[1]=Y (cm)
-       Output: Pivots[1]=shoulder_deg, Pivots[2]=elbow_motor_deg
-    */
-
-    /* read inputs as floats once */
     float x = (float) In_Coords[0];
     float y = (float) In_Coords[1];
-
-    /* 1) planar distance from base */
-    float d = hypotf(x, y);               /* sqrt(x*x + y*y) */
-
-    /* reach checks (use arm lengths L1,L2 from your file) */
-    float r = d;                          /* no Z, r == d */
+    
+    float z_target = 14f;
+    float d = hypotf(x, y);
+    float r = hypotf(d, z_target);
+    
     float L1f = L1;
     float L2f = L2;
-
-    if (r > (L1f + L2f) - 0.001f) return -1; /* too far */
-    if (r < fabsf(L1f - L2f) + 0.001f)  return -1; /* too close */
-
-    /* 2) elbow internal angle (radians) via law of cosines */
+    
+    if (r > (L1f + L2f) - 0.001f) return -1;
+    if (r < fabsf(L1f - L2f) + 0.001f) return -1;
+    
     float cos_elbow = (L1f*L1f + L2f*L2f - r*r) / (2.0f * L1f * L2f);
     if (cos_elbow > 1.0f) cos_elbow = 1.0f;
     if (cos_elbow < -1.0f) cos_elbow = -1.0f;
     float elbow_internal_rad = acosf(cos_elbow);
-
-    /* convert to degrees if needed once */
     float elbow_internal_deg = elbow_internal_rad * (180.0f / 3.14159265f);
-
-    /* 3) shoulder: alpha - beta (elbow-down solution)
-         alpha = atan2(0 (z), d) but z==0 so alpha = 0 -> shoulder from horizontal = -beta
-         For planar XY with Z=0 the usual formula simplifies:
-         beta = atan2(L2*sin(elbow_internal), L1 + L2*cos(elbow_internal))
-    */
+    
     float sin_e = sinf(elbow_internal_rad);
     float cos_e = cosf(elbow_internal_rad);
-    float beta = atan2f(L2f * sin_e, L1f + L2f * cos_e); /* radians */
-    float beta_deg = beta * (180.0f / 3.14159265f);
-
-    /* angle_to_target in plane measured from x-axis */
-    float angle_to_target_deg = atan2f(y, x) * (180.0f / 3.14159265f);
-
-    /* shoulder (degrees) for elbow-down */
-    float shoulder_deg = angle_to_target_deg - beta_deg;
-
-    /* elbow motor convention: you previously used motor = 180 - elbow_deg */
-    float elbow_motor_deg = 180.0f - elbow_internal_deg;
-
-    /* round and clamp to sensible ints */
+    float beta_rad = atan2f(L2f * sin_e, L1f + L2f * cos_e);
+    
+    float alpha_rad = atan2f(z_target, d);
+    float shoulder_rad = alpha_rad + beta_rad;
+    float shoulder_deg = shoulder_rad * (180.0f / 3.14159265f);
+    
+    // FIXED: motor angle equals internal angle directly
+    float elbow_motor_deg = elbow_internal_deg;
+    
     int s = (int) roundf(shoulder_deg);
     int e = (int) roundf(elbow_motor_deg);
-
-    /* optional clamps to mechanical safe range before translation */
-    if (s < -180) s = -180;
-    if (s >  360) s = 360;
-    if (e < 0)    e = 0;
-    if (e > 360)  e = 360;
-
+    
+    if (s < 0) s = 0;
+    if (s > 131) s = 131;
+    if (e < 0) e = 0;
+    if (e > 400) e = 400;
+    
     Pivots[1] = s;
     Pivots[2] = e;
-
     return 0;
 }
 

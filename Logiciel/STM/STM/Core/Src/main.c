@@ -156,17 +156,17 @@ while (1) {
 
   //Membrane = UART_Receive(); // fills PICs_8Bit
 
-  In_Coords[1] = 10; // x (in cm)
-  In_Coords[0] = 20;  // y (in cm)
+  In_Coords[1] = -4; // x (in cm)
+  In_Coords[0] = 16;  // y (in cm)
 
   // test for the robot arm logic
   if (ONE_TIME == FALSE) {
       ARM_LOGIC(In_Coords, Out_Pivots);
       
-      //Out_Pivots[0] = 
-      //Out_Pivots[1] = 93;
-      //Out_Pivots[2] = 160;
-      Out_Pivots[3] = 95;
+      //Out_Pivots[0] = 117;
+      //Out_Pivots[1] = 71;
+      //Out_Pivots[2] = 78;
+      Out_Pivots[3] = 50;
       Out_Pivots[4] = 95;
 
       ONE_TIME = TRUE;
