@@ -1,7 +1,22 @@
-// ************** INCLUDES ************** //
-#include "Mem_Tac.h"  // Inclusion du fichier d'en-tête contenant la définition de Point et autres fonctions/macro
+// ************************************************************************* // 
+// File: Me_Tac.c
+// Done by :
+// Description :
+//
+//
+// ************************************************************************* // 
 
-// ************** Lire_Tableau ************** //
+// *************************** INCLUDES ************************************ // 
+#include "main.h"
+#include "Mem_Tac.h"
+
+// *************************** DEFINES ************************************* //
+
+
+// *************************** VARIABLES *********************************** //
+
+
+// ************************* SETUP MAIN PROGRAM **************************** //
 Point Lire_Tab(int *KKK){
     Point Coord_Mem = {0,0};   // Initialisation de la variable qui contiendra la coordonnée finale
 
@@ -34,6 +49,8 @@ Point Lire_Tab(int *KKK){
     return Coord_Mem;  // Retourne la coordonnée finale
 }
 
+// ***************************** FUNCTIONS ********************************* //
+// ----- Lire_Tableau ----- //
 // Fonction qui convertit les valeurs du tableau data en indices x et y
 Point Simple_Tab(int *data){
     Point Tab = {0,0};  // Initialisation des indices

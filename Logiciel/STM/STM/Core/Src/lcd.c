@@ -1,12 +1,28 @@
+// ************************************************************************* // 
+// File: lcd.c
+// Done by :
+// Description :
+//
+//
+// ************************************************************************* // 
+
+// *************************** INCLUDES ************************************ // 
+#include "main.h"
 #include "LCD.h"
 #include "string.h"
 #include "stm32f1xx_hal.h"
 
+// *************************** DEFINES ************************************* //
+
+
+// *************************** VARIABLES *********************************** //
 static uint8_t lcd_row = 0;
 static uint8_t lcd_col = 0;
 
-// === Fonctions internes ===
+// ************************* SETUP MAIN PROGRAM **************************** //
 
+
+// ***************************** FUNCTIONS ********************************* //
 static void LCD_EnablePulse(void)
 {
     HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, GPIO_PIN_SET);

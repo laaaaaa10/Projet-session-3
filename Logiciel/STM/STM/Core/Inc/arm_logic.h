@@ -1,9 +1,9 @@
+#ifndef ARM_LOGIC_H
+#define ARM_LOGIC_H
+
 // ************** INCLUDES ************** //
 #include "main.h"
 #include <stdbool.h>
-
-#ifndef ARM_LOGIC_H
-#define ARM_LOGIC_H
 
 // ************ VARIABLES *************** //
 // output angles for the 5 motors (base rotation, pivot1, pivot2, wrist, hand)
