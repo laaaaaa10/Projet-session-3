@@ -1,3 +1,11 @@
+// ************************************************************************* // 
+// File: arm_logic.c
+// Done by : Javier
+// Description :
+// send coordfs and return the pwm of each motors
+//
+// ************************************************************************* // 
+
 /* important info:
 // forarm = 25.5 cm
 // upper arm = 17.8 cm
@@ -6,17 +14,14 @@ Z
  \
   X   
 // (pos are in cm)
-// *the robot base pivot is at 0,0,10 
-// *the angles of a pivot point are relative to the previous segment*
-// *the angle is the total ratio 360 degrees = to 5 rotations of the motor*
+// the robot base pivot is at 0,0,10 
+// the angles of a pivot point are relative to the previous segment
+// the angle is the total ratio 360 degrees = to 5 rotations of the motor
 // minmax angle for motor 0 (base rotation) = -169..169
 // minmax angle for motor 1 (first pivot point) = 0..131 degrees 
 // minmax angle for motor 2 (second pivot point) = 300..60 degrees
 // minmax angle for motor 3 (wrist) = 300..60 degrees
-// minmax angle for motor 4 (hand open/close) = 0(close)..125(open) degrees 
-//
-// note that Z is not going to work, it will constantly be at 5cm from the buildplate
-*/
+// minmax angle for motor 4 (hand open/close) = 0(close)..125(open) degrees */
 
 // *************************** INCLUDES ************************************* // 
 #include "main.h"
@@ -24,135 +29,119 @@ Z
 #include <stdbool.h>
 #include <math.h>
 
+// *************************** DEFINES ************************************ //
+#define PI 3.14159f
 
 // *************************** VARIABLES ************************************ //
-int Distance;                     // distance from base to point in space
 // length of each arm
 float L1 = 17.8;
 float L2 = 25.5;
 
+// coordinates
+float x;
+float y;
+
+// calculated values
+float distance;
+float height;
+float reach;
+float compensation;
+
+int Pivots[5] = {0,0,0,0,0};
+
 
 //************************* SETUP MAIN PROGRAM *******************************
-// the logic of the 2 pivot points and hand control is in this function
-// this function takes in x,y coordinates
-// to get the hand to a certain position in space
+// controlls every parts of the arm
 int ARM_LOGIC(int *In_Coords, int *Out_Pivots){
-    int Pivots[5] = {0,0,0,0,0};
+    
+    x = (float)In_Coords[0];
+    y = (float)In_Coords[1];
 
-    BASE_ROTATION(In_Coords, Pivots); {
-        float bx = (float)In_Coords[0];
-        float by = (float)In_Coords[1];
-        Pivots[0] = (int)roundf(atan2f(by, bx) * 180.0f / 3.14159f);
-    }
+    BASE_ROTATION(Pivots);
 
     if (ARM_ROTATIONS(In_Coords, Pivots) != 0) {
-        return -1;
+        return -1; // return error code
     }
+
     WRIST_ANGLE(Pivots);
-    //HAND_CONTROL(Hand_action); //(prob will do a logic that it does X when ti reaches its desired coords)
     PIV_TRANSLATE(Pivots,Out_Pivots);
 
     if (!VERIFY_PIVOTS(Out_Pivots)) {
-        // return error code
-        return -1;
+        return -1; // return error code
     }
+
     return 0;
 }
 
-//***************************** FUNCTIONS *************************************
-// ----- BASE ROTATION (PIV 0)----- //
-// controls the base rotation of the arm
-// the base rotation:
-// the robot it at 0,0 (if we look from top down)
-// to get the correct base rotation angle we do
-// atan2(y,x) = base rotation angle
-void BASE_ROTATION(int *In_Coords, int *Pivots){
-    float x = In_Coords[0];
-    float y = In_Coords[1];
-    
-    // gets the rotation from the coords
-    Pivots[0] = (int)roundf(atan2f(y, x) * 180.0f / 3.14159f);
+// ***************************** FUNCTIONS ************************************* //
+// ----- BASE ROTATION (PIV 0) ----- //
+// Calculates the base rotation angle to point the arm toward the target
+// Uses atan2(y,x) to get the angle in the horizontal plane
+void BASE_ROTATION(int *Pivots){
+    Pivots[0] = (int)roundf(atan2f(y, x) * 180.0f / PI);
 }
 
 // ----- ARM ROTATIONS (PIV 1 & 2) ----- //
-// controls the first pivot point of the arm
-
-// the 2 main pivot points:
-// we do some trigonometry to get the angles of the 2 pivot points
-// we start by getting the distance from the base to the point in space
-// d = sqrt(x^2 + y^2)
-// now with d, we can get the angles using the law of cosines
-// we can change the arm distance if for example the pivot 1 is at 90 degrees
-// and the pivot 2 is at 0(or 360) degrees, the arm is as close as possible to the base 
-// (technically it would be folded on itself)
-
-// if pivot 1 is at 90 degrees and pivot 2 is at 180 degrees, the arm is fully extended upwards
-// the furdest it can reach is when pivot 2 is at 45 and pivot 1 is at ____ 
-// so if we have the distance d,
-// we can compute r = sqrt(d^2 + z^2)
-// check if r is reachable
-// use law of cosines: elbow_angle = acos((L1^2 + L2^2 - r^2)/(2*L1*L2))
-// compute shoulder_angle = atan2(z, d) - atan2(L2*sin(elbow_angle), L1 + L2*cos(elbow_angle))
-int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
-    float x = (float) In_Coords[0];
-    float y = (float) In_Coords[1];
-    
+// Calculates shoulder and elbow angles using inverse kinematics
+// First gets horizontal distance, then adds vertical offset (height)
+// 'reach' is the 3D straight-line distance from shoulder to target wrist position
+// Uses law of cosines to solve the triangle formed by upper arm, forearm, and reach
+// Returns -1 if target is unreachable (too far or too close)
+int ARM_ROTATIONS(int *In_Coords, int *Pivots) {    
     // Horizontal distance from base to target
-    float d = hypotf(x, y);
+    distance = hypotf(x, y);
     
-    // Vertical offset: wrist at 15cm, shoulder at 10cm → z = 5cm above shoulder;
-    float z = 10.0f;
-    float compensation;
+    // Vertical offset and also need to apply
+    // compensation based on distance
+    height = 10.0f;
     
-    if (d <= 15.0f) {
-        // 10→15: error 4→5
-        compensation = -4.0f - (d - 10.0f) * 0.2f;
-    } else if (d <= 25.0f) {
-        // 15→25: error 5→0
-        compensation = -5.0f + (d - 15.0f) * 0.5f;
-    } else if (d <= 35.0f) {
-        // 25→35: error 0→-3
-        compensation = (d - 25.0f) * 0.3f;
-    } else {
-        // 35+: stays -3
-        compensation = 3.0f;
-    }
+    // 10→15: error 4→5
+    if      (distance <= 15.0f) {compensation = -4.0f - (distance - 10.0f) * 0.2f;} 
+    // 15→25: error 5→0  
+    else if (distance <= 25.0f) {compensation = -5.0f + (distance - 15.0f) * 0.5f;} 
+    // 25→35: error 0→-3
+    else if (distance <= 35.0f) {compensation = (distance - 25.0f) * 0.3f;} 
+    // 35+: stays -3
+    else                        {compensation = 3.0f;}
     
-    z += compensation;
+    height += compensation;
 
     // 3D distance in vertical plane from shoulder to wrist
-    float r = hypotf(d, z);
+    reach = hypotf(distance, height);
     
     float L1f = L1;
     float L2f = L2;
     
-    if (r > (L1f + L2f) - 0.001f) return -1;
-    if (r < fabsf(L1f - L2f) + 0.001f) return -1;
+    // Check if target is reachable
+    if (reach > (L1f + L2f) - 0.001f) return -1;  // too far
+    if (reach < fabsf(L1f - L2f) + 0.001f) return -1;  // too close
     
-    // Internal angle between the two arms (this equals Pivot 2)
-    float cos_internal = (L1f*L1f + L2f*L2f - r*r) / (2.0f * L1f * L2f);
+    // Calculate elbow angle using law of cosines
+    // This is the internal angle between upper arm and forearm
+    float cos_internal = (L1f*L1f + L2f*L2f - reach*reach) / (2.0f * L1f * L2f);
     if (cos_internal > 1.0f) cos_internal = 1.0f;
     if (cos_internal < -1.0f) cos_internal = -1.0f;
     float internal_rad = acosf(cos_internal);
-    float pivot2_deg = internal_rad * (180.0f / 3.14159265f);
+    float pivot2_deg = internal_rad * (180.0f / PI);
     
-    // Shoulder angle calculation
-    // Angle to target from shoulder (line of sight)
-    float alpha = atan2f(z, d);
+    // Calculate shoulder angle
+    // alpha = angle to target from horizontal
+    // beta = angle offset due to arm triangle geometry
+    float alpha = atan2f(height, distance);
     
-    // Triangle angle at shoulder (law of cosines, not atan2)
-    float cos_beta = (L1f*L1f + r*r - L2f*L2f) / (2.0f * L1f * r);
+    float cos_beta = (L1f*L1f + reach*reach - L2f*L2f) / (2.0f * L1f * reach);
     if (cos_beta > 1.0f) cos_beta = 1.0f;
     if (cos_beta < -1.0f) cos_beta = -1.0f;
     float beta = acosf(cos_beta);
     
-    // Shoulder angle (elbow-up configuration)
+    // Shoulder angle = target angle + geometry offset
     float pivot1_rad = alpha + beta;
-    float pivot1_deg = pivot1_rad * (180.0f / 3.14159265f);
+    float pivot1_deg = pivot1_rad * (180.0f / PI);
     
     int s = (int) roundf(pivot1_deg);
     int e = (int) roundf(pivot2_deg);
     
+    // Clamp to motor limits
     if (s < 0) s = 0;
     if (s > 131) s = 131;
     if (e < 0) e = 0;
@@ -164,18 +153,10 @@ int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
 }
 
 // ----- WRIST ANGLE (PIV 3)----- //
-// controlls the joint of the hand, primarly keeps it faced down releative
-// to pivot point 1 and 2
-
-// imagin angle of pivot 1 (in that case its 45 degrees)
-// and angle of pivot 2  (in that case its 100 degrees)
-// - to get the hand to be down (90 degrees relative to horizontal)
-//   you need to do __________
+// Keeps the gripper pointing straight down regardless of arm position
+// Compensates for the combined angles of shoulder and elbow
+// Formula: 270° - shoulder - elbow keeps gripper vertical
 void WRIST_ANGLE(int *Pivots){
-    // Wrist angle = always keep hand down relative to arm
-    // Minimal implementation: try to keep end-effector "down".
-    // Use the same conventions as Pivots: Pivots[1] is shoulder deg, Pivots[2] is motor-style (180 - elbow_deg).
-    // Simple heuristic: wrist = 270 - (shoulder + elbow_motor). Keep as integer.
     int shoulder = Pivots[1];
     int elbow = Pivots[2];
     
@@ -190,53 +171,40 @@ void WRIST_ANGLE(int *Pivots){
 }
 
 // ----- HAND CONTROL (PIV 4) ----- //
-// controls the opening and closing of the hand
+// Controls gripper opening: 0 = fully closed, 125 = fully open
 void HAND_CONTROL(int *Pivots, int Hand_action){
-    // minimal clamp behavior
     if (Hand_action < 0) Hand_action = 0;
     if (Hand_action > 125) Hand_action = 125;
     Pivots[4] = Hand_action;
 }
 
 // ----- TRANSLATE PIVOTS ----- //
-// translates the degres into teh correct value between (0 to 205)
-//
-// Using the table endpoints (first and last rows) to build a linear mapping
-// PWM 0 -> angle0_0, PWM 205 -> angle0_205 (same for pivots 1 and 2).
-// We produce integer PWM values (0..205).
-//
-// Endpoints derived from the table you supplied:
-// pivot0: PWM0 = -169, PWM205 = 165
-// pivot1: PWM0 = 131,  PWM205 = 0
-// pivot2: PWM0 = 34,   PWM205 = 375
+// Converts angle values (degrees) into PWM motor control values (0-205)
+// Uses linear interpolation between calibration table endpoints
+// Different pivots have different angle-to-PWM mappings based on physical calibration
+// i genuenly dont know how this magic works so i wont even bother tryign to
+// understand what gpt cooked
 static inline int linear_deg_to_pwm(int deg, int deg0, int deg205){
-    // denom = deg205 - deg0
     int denom = deg205 - deg0;
     if (denom == 0) return 0;
-    // compute numerator with 64-bit to avoid overflow: (deg - deg0) * 205
     long long numer = (long long)(deg - deg0) * 205LL;
     long long absden = (denom >= 0) ? denom : - (long long)denom;
-    // do rounding toward nearest:
     long long adj = absden / 2;
     long long pwm;
     if (denom > 0) {
         if (numer >= 0) pwm = (numer + adj) / denom;
         else pwm = - ( ( -numer + adj ) / denom );
     } else {
-        // denom < 0: result sign flips
         if (numer >= 0) pwm = - ( ( numer + adj ) / absden );
         else pwm = ( ( -numer + adj ) / absden );
     }
-    // clamp
     if (pwm < 0) pwm = 0;
     if (pwm > 205) pwm = 205;
     return (int)pwm;
 }
 
-// inverse helper: pwm -> deg using endpoints
-// inverse: pwm -> deg using endpoints deg0 @ 0 and deg205 @ 205
+// Inverse function: converts PWM back to degrees for verification
 int pwm_to_deg(int pwm, int deg0, int deg205) {
-    // deg = deg0 + (deg205 - deg0) * pwm / 205  (rounded to nearest)
     int denom = 205;
     long long numer = (long long)(deg205 - deg0) * (long long)pwm;
     long long adj = denom / 2;
@@ -246,66 +214,60 @@ int pwm_to_deg(int pwm, int deg0, int deg205) {
 }
 
 void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
-    // pivot0: deg0 = -169, deg205 = 165
-    Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165);
-    
-    // pivot1: Piecewise linear from calibration table
-    {
-        int deg = Pivots[1];
-        int pwm;
+    int deg = Pivots[1];
+    int pwm;
+
+    // pivot0: base rotation, deg0 = -169, deg205 = 165    
+    Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165); {
         if (deg >= 90) {
             pwm = 50 + (131 - deg) * 43 / 41;
-        } else {
+        } 
+        else {
             pwm = 93 + (90 - deg) * 49 / 90;
         }
         if (pwm < 0) pwm = 0;
         if (pwm > 205) pwm = 205;
-        Out_Pivots[1] = pwm;
+
+        Out_Pivots[1] = pwm;     // pivot1: shoulder, uses piecewise linear from calibration table
     }
-    
-    // pivot2: deg0 = 34, deg205 = 375
-    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375);
-    
-    // pivot3: 249° → PWM 50, 90° → PWM 160
-    {
+
+    // pivot2: elbow, deg0 = 34, deg205 = 375    
+    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375); {
         int deg = Pivots[3];
         int pwm = 50 + (249 - deg) * 110 / 159;
         if (pwm < 0) pwm = 0;
         if (pwm > 205) pwm = 205;
-        Out_Pivots[3] = pwm;
+
+        Out_Pivots[3] = pwm;    // pivot3: wrist, 249° → PWM 50, 90° → PWM 160
     }
     
-    // pivot4: hand
+    // pivot4: gripper, direct mapping (0-125)
     if (Pivots[4] < 0) Out_Pivots[4] = 0;
     else if (Pivots[4] > 125) Out_Pivots[4] = 125;
     else Out_Pivots[4] = Pivots[4];
 }
 
-// ----- VERIFY PIVOTS ----- //// makes sure the pivot angles are within the min/max range
+// ----- VERIFY PIVOTS ----- //
+// Converts PWM values back to degrees and checks if they're within mechanical limits
+// Returns false if any motor would be commanded outside its safe range
 bool VERIFY_PIVOTS(int *Out_Pivots) {
-// -------------------------------------------------------------
-// NOTE ABOUT VERIFY_PIVOTS:
-//
-// Out_Pivots[] contains *PWM values* after translation,
-// We convert back to degrees using the inverse linear mapping
-// (derived from the same endpoints) and compare to the mechanical ranges.
-    // motor0: -169..169
+    // motor0: base rotation, -169..169 degrees
     int a0 = pwm_to_deg(Out_Pivots[0], -169, 165);
     if (a0 < -169 || a0 > 169) return false;
 
-    // motor1: 0..131
+    // motor1: shoulder, 0..131 degrees
     int a1 = pwm_to_deg(Out_Pivots[1], 131, 0);
     if (a1 < 0 || a1 > 131) return false;
 
-    // motor2: allowed if >=300 or <=60 (wrapped)
+    // motor2: elbow, wrapped range (300-360 or 0-60 degrees)
     int a2 = pwm_to_deg(Out_Pivots[2], 34, 375);
     if (!((a2 >= 300 && a2 <= 360) || (a2 >= 0 && a2 <= 60))) return false;
 
-    // motor3: wrist same wrapped check using pivot2 mapping
+    // motor3: wrist, wrapped range (300-360 or 0-60 degrees)
     int a3 = pwm_to_deg(Out_Pivots[3], 34, 375);
     if (!((a3 >= 300 && a3 <= 360) || (a3 >= 0 && a3 <= 60))) return false;
 
-    // motor4: 0..125 (already PWM mapped directly)
+    // motor4: gripper, 0..125 (already in correct range)
     int a4 = Out_Pivots[4];
     if (a4 < 0 || a4 > 125) return false;
 

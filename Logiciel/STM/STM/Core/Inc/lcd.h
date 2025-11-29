@@ -1,8 +1,10 @@
 #ifndef __LCD_H__
 #define __LCD_H__
 
+// ************** INCLUDES ************** //
 #include "main.h"
 
+// ************** DEFINES *************** //
 #define LCD_RS_Pin GPIO_PIN_9
 #define LCD_RS_GPIO_Port GPIOB
 #define LCD_RW_Pin GPIO_PIN_10
@@ -18,6 +20,7 @@
 #define LCD_D7_Pin GPIO_PIN_15
 #define LCD_D7_GPIO_Port GPIOB
 
+// ************** FUNCTIONS ************** //
 void LCD_Init(void);
 void LCD_Clear(void);
 void LCD_SetCursor(uint8_t row, uint8_t col);
@@ -27,3 +30,4 @@ void LCD_SendData(uint8_t data);
 void LCD_SetBack(void);
 
 #endif
+

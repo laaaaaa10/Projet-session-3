@@ -1,7 +1,12 @@
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
+
 // ************** INCLUDES ************** //
-//#include "main.h"
+#include "main.h"
 
 // ************** DEFINES *************** //
 
 
-// ************** FUNCTION ************** //
+// ************** FUNCTIONS ************** //
+
+#endif

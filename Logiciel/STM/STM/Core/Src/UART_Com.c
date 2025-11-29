@@ -1,13 +1,25 @@
-// ************** INCLUDES ************** //
+// ************************************************************************* // 
+// File: 
+// Done by :
+// Description :
+//
+//
+// ************************************************************************* // 
+
+// *************************** INCLUDES ************************************ // 
 #include "main.h"
 #include "UART_Com.h"
 #include "stm32f1xx_hal.h"
 
-// ************** VARIABLES ************** //
+// *************************** DEFINES ************************************* //
+
+
+// *************************** VARIABLES *********************************** //
 extern UART_HandleTypeDef huart1;
 uint8_t PICs_8Bit[8];
 
-// ************** Transmit ************** //
+// ************************* SETUP MAIN PROGRAM **************************** //
+// ----- Transmit ----- //
 void UART_Send(uint8_t M_0, uint8_t M_1, uint8_t M_2, uint8_t M_3, uint8_t M_4){
     uint8_t CheckSum;
     UART_Com('G');
@@ -26,7 +38,7 @@ void UART_Com(uint8_t V_TX){
     HAL_UART_Transmit(&huart1, &V_TX, 1, 1);
 }
 
-// ************** Receive ************** //
+// ----- Receive ----- //
 // read 8 bytes (blocking) and return pointer to buffer
 uint8_t* UART_Receive(void){
     for (uint8_t i = 0; i < 8; i++){
@@ -35,6 +47,8 @@ uint8_t* UART_Receive(void){
     return PICs_8Bit;
 }
 
+// ***************************** FUNCTIONS ********************************* //
+// ----- read one bit at a time ----- //
 uint8_t UART_Read_1bit(void){
     uint8_t ucCaract = 0;
     // Use 1000 ms timeout for robustness during debug; reduce later if needed
