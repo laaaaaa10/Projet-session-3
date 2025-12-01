@@ -131,6 +131,9 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
+	  Valeur_Prnt[0] = Clavier_MX();
+	  if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
+  
 
   test ++;
   if (test > 4) {
@@ -189,7 +192,6 @@ while (1) {
   LCD_Print(Valeur_Prnt); 
   Valeur_Prnt[0] = (Membrane.x %10)+0x30; // affiche l'unité
   LCD_Print(Valeur_Prnt); 
-  LCD_Print(" ");
   LCD_Print("Y"); 
   LCD_Print(":"); 
   Valeur_Prnt[0] = (Membrane.y /10)+0x30; // affiche la dizaine
@@ -197,7 +199,6 @@ while (1) {
   Valeur_Prnt[0] = (Membrane.y %10)+0x30; // affiche l'unité
   LCD_Print(Valeur_Prnt); 
   LCD_Print(" ");
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
