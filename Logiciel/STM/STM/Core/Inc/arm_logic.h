@@ -17,7 +17,7 @@ int pwm_to_deg(int pwm, int deg0, int deg205);
 int ARM_LOGIC(int *In_Coords, int *Out_Pivots);
 int ARM_ROTATIONS(int *In_Coords, int *Pivots);
 
-void BASE_ROTATION(int *In_Coords, int *Pivots);
+void BASE_ROTATION(int *Pivots);
 void WRIST_ANGLE(int *Pivots);
 void HAND_CONTROL(int *Pivots, int Hand_action);
 void PIV_TRANSLATE(int *Pivots, int *Out_Pivots);
