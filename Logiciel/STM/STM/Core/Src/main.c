@@ -63,6 +63,7 @@ Point Membrane = {0,0};
 
 int Out_Pivots[5]; // = {51, 75, 160, 95, 95};
 int In_Coords[2];
+int test = 0;
 
 /* USER CODE END PV */
 
@@ -134,15 +135,32 @@ while (1) {
 	  if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
   
 
-  In_Coords[1] = 20; // x (in cm)
-  In_Coords[0] = 0; // y (in cm)
+  test ++;
+  if (test > 4) {
+      test = 0;
+  }
 
+  switch (test) {
+      case 0:
+          In_Coords[1] = -7; // x (in cm)
+          In_Coords[0] = 15; // y (in cm)
+          break;
+      case 1:
+          In_Coords[1] = -7; // x (in cm)
+          In_Coords[0] = 37; // y (in cm)
+          break;
+      case 2:
+          In_Coords[1] = 7; // x (in cm)
+          In_Coords[0] = 37; // y (in cm)
+          break;
+      case 3:
+          In_Coords[1] = 7; // x (in cm)
+          In_Coords[0] = 15; // y (in cm)
+          break;
+  }
+  
   ARM_LOGIC(In_Coords, Out_Pivots);
 
-  Out_Pivots[0] = 107;
-  Out_Pivots[1] = 93;
-  Out_Pivots[2] = 35;
-  Out_Pivots[3] = 142;
   Out_Pivots[4] = 95;
   
   UART_Send(
@@ -152,6 +170,8 @@ while (1) {
     (uint8_t)Out_Pivots[3],
     (uint8_t)Out_Pivots[4]
   );
+
+  HAL_Delay(5000);
 
   for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
     Valeur_Prnt[0] = 1 + i + 0x30;
