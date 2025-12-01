@@ -22,13 +22,13 @@ Point Lire_Tab(int *KKK){
     // Tableau 2D de Points représentant des coordonnées x et y pour chaque position
     // 7 lignes (colonnes logiques), 3 colonnes (lignes logiques)
     Point Tableau_Mem[7][3] = {
-        {{17,-3},{17,1},{17,5}},  // 1ère colonne : x=17, y varie
-        {{20,-3},{20,1},{20,5}},  // 2ème colonne : x=20
-        {{23,-3},{23,1},{23,5}},  // 3ème colonne : x=23
-        {{26,-3},{26,1},{26,5}},  // 4ème colonne : x=26
-        {{29,-3},{29,1},{29,5}},  // 5ème colonne : x=29
-        {{32,-3},{32,1},{32,5}},  // 6ème colonne : x=32
-        {{35,-3},{35,1},{35,5}}   // 7ème colonne : x=35
+        {{-3,17},{1,17},{5,17}},  // 1ère colonne : x=17, y varie
+        {{-3,20},{1,20},{5,20}},  // 2ème colonne : x=20
+        {{-3,23},{1,23},{5,23}},  // 3ème colonne : x=23
+        {{-3,26},{1,26},{5,26}},  // 4ème colonne : x=26
+        {{-3,29},{1,29},{5,29}},  // 5ème colonne : x=29
+        {{-3,32},{1,32},{5,32}},  // 6ème colonne : x=32
+        {{-3,35},{1,35},{5,35}}   // 7ème colonne : x=35
     };
 
     // Récupération de l'indice correspondant aux données fournies dans KKK
