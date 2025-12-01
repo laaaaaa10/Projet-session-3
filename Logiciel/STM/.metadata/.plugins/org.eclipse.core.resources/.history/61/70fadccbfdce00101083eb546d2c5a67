@@ -1,0 +1,30 @@
+// ************************************************************************* // 
+// File: 12C.c
+// Done by :
+// Description :
+//
+//
+// ************************************************************************* // 
+
+// *************************** INCLUDES ************************************ // 
+#include "I2C.h"
+
+// *************************** DEFINES ************************************* //
+#define DEVICE_ADDR_R 0x41
+#define DEVICE_ADDR_W 0x40
+
+// ************************* SETUP MAIN PROGRAM **************************** //
+uint8_t Lire_I2C(void)
+{
+    uint8_t data = 0;
+
+    // On lit le data
+    HAL_I2C_Master_Receive(&hi2c1, DEVICE_ADDR_R , &data, 1, HAL_MAX_DELAY);
+
+    return data;
+}
+
+void Ecrire_I2C(uint8_t value)
+{
+    HAL_I2C_Master_Transmit(&hi2c1, DEVICE_ADDR_W, value, 2, HAL_MAX_DELAY);
+}

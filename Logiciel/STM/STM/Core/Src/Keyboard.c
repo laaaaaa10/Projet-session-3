@@ -9,35 +9,32 @@
 // *************************** INCLUDES ************************************ // 
 #include "keyboard.h"
 
-// *************************** DEFINES ************************************* //
-
-
-// *************************** VARIABLES *********************************** //
-
-
 // ************************* SETUP MAIN PROGRAM **************************** //
-char Clavier_MX(void)
+uint8_t Clavier_MX(void)
 {	
-    char Symbole_CLAVIER[16] =  // Clavier Matrice
-			{'1','2','3','A',
-			 '4','5','6','B',
-		     '7','8','9','C',
-			 '*','0','#','D'};
-
-    char Data_Val = 0;          
-    static bool Ch_Front = 1;
-    if (Ch_Front == 1){           // changement de front mais ne marche pas mais ça marche
-        Data_Val = Lire_I2C();
-        if (Data_Val >= 0 && Data_Val <= 15){  // détecte si ce n'est pas une valeur random de l'i2c
-            HAL_Delay(10);
-            Ch_Front = 0;
-            return Symbole_CLAVIER[Data_Val];  
-        } 
-    }
-    Ch_Front = 1;	      
+    static uint8_t Symbole_Clavier[4][4] = {
+        {'1','2','3','A'},  // Row 0
+        {'4','5','6','B'},  // Row 1
+        {'7','8','9','C'},  // Row 2
+        {'*','0','#','D'}   // Row 3
+    };
+    static uint8_t Ch_Front = 1;
+	for (int ligne = 1; ligne < 5; ligne++){
+		// Lire les colonnes (entrée)
+		for (int col = 1; col < 5; col++){
+            Ecrire_I2C(col);
+			if ((Lire_I2C() & 0xF0) > 0 ){
+				if (Ch_Front == 1){
+					HAL_Delay(10);
+					Ch_Front = 0;
+					return Symbole_Clavier[col-1][ligne-1];
+				}
+				else{			
+					return 0; // aucune touche
+				}
+			}	
+		}
+	}	
+	Ch_Front = 1;
     return 0; // aucune touche
 }
-
-// ***************************** FUNCTIONS ********************************* //
-
-
