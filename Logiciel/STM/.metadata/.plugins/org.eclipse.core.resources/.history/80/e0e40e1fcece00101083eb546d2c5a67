@@ -1,0 +1,13 @@
+#ifndef I2C_H
+#define I2C_H
+
+// ************** INCLUDES ************** //
+#include "main.h"
+
+// ************** DEFINES *************** //
+
+
+// ************** FUNCTIONS ************** //
+void Lire_I2C(void);
+
+#endif

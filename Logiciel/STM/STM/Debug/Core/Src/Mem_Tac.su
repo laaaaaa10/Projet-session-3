@@ -1,2 +1,2 @@
-../Core/Src/Mem_Tac.c:5:7:Lire_Tab	80	static
-../Core/Src/Mem_Tac.c:38:7:Simple_Tab	24	static
+../Core/Src/Mem_Tac.c:20:7:Lire_Tab	80	static
+../Core/Src/Mem_Tac.c:55:7:Simple_Tab	24	static
