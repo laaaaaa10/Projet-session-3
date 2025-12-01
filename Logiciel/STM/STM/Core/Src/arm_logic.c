@@ -160,8 +160,21 @@ void WRIST_ANGLE(int *Pivots){
     int shoulder = Pivots[1];
     int elbow = Pivots[2];
     
-    // Keep gripper pointing straight down
-    int wrist = 270 - shoulder - elbow;
+    // Distance-based offset to keep gripper pointing down
+    // Compensates for mechanical nonlinearity in the arm
+    float offset;
+    if (distance <= 15.0f) {
+        offset = 17.0f;
+    } else if (distance <= 25.0f) {
+        // Steep slope: 17° at d=15 → 36° at d=25
+        offset = 17.0f + (distance - 15.0f) * 1.9f;
+    } else {
+        // Flat slope: 36° at d=25 → 41° at d=40
+        offset = 36.0f + (distance - 25.0f) * 0.33f;
+    }
+    
+    // Wrist angle = base formula + offset
+    int wrist = (int)roundf(265.0f - (float)shoulder - (float)elbow + offset);
     
     // Normalize to 0-360
     while (wrist < 0) wrist += 360;
@@ -218,28 +231,24 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     int pwm;
 
     // pivot0: base rotation, deg0 = -169, deg205 = 165    
-    Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165); {
-        if (deg >= 90) {
-            pwm = 50 + (131 - deg) * 43 / 41;
-        } 
-        else {
-            pwm = 93 + (90 - deg) * 49 / 90;
-        }
-        if (pwm < 0) pwm = 0;
-        if (pwm > 205) pwm = 205;
-
-        Out_Pivots[1] = pwm;     // pivot1: shoulder, uses piecewise linear from calibration table
+    Out_Pivots[0] = linear_deg_to_pwm(Pivots[0], -169, 165);
+    
+    // pivot1: shoulder, piecewise linear from calibration table
+    if (deg >= 90) {
+        pwm = 50 + (131 - deg) * 43 / 41;
+    } 
+    else {
+        pwm = 93 + (90 - deg) * 49 / 90;
     }
+    if (pwm < 0) pwm = 0;
+    if (pwm > 205) pwm = 205;
+    Out_Pivots[1] = pwm;
 
     // pivot2: elbow, deg0 = 34, deg205 = 375    
-    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375); {
-        int deg = Pivots[3];
-        int pwm = 50 + (249 - deg) * 110 / 159;
-        if (pwm < 0) pwm = 0;
-        if (pwm > 205) pwm = 205;
-
-        Out_Pivots[3] = pwm;    // pivot3: wrist, 249° → PWM 50, 90° → PWM 160
-    }
+    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375);
+    
+    // pivot3: wrist, 327° → PWM 0, 25° → PWM 205
+    Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 327, 25);
     
     // pivot4: gripper, direct mapping (0-125)
     if (Pivots[4] < 0) Out_Pivots[4] = 0;

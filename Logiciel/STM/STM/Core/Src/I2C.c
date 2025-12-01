@@ -19,9 +19,8 @@
 void Lire_I2C(void){
     uint8_t data = 0;
     //uint16_t Clavier_I2C = 0x0000;
-    HAL_I2C_Master_Receive(&hi2cl, 0x14 << 1, &data, 1, 100);
+    HAL_I2C_Master_Receive(&hi2c1, 0x14 << 1, &data, 1, 100);
 }
-
 
 // ***************************** FUNCTIONS ********************************* //
 
