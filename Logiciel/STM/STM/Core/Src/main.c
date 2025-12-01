@@ -40,6 +40,8 @@
 /* USER CODE BEGIN PD */
 #define TRUE 1
 #define FALSE 0
+#define OPEN 1
+#define CLOSE 0
 
 /* USER CODE END PD */
 
@@ -61,8 +63,7 @@ char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
-int Out_Pivots[5]; // = {51, 75, 160, 95, 95};
-int In_Coords[2];
+int Out_Pivots[5];
 int test = 0;
 
 /* USER CODE END PV */
@@ -131,47 +132,27 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
-  while(1){
-	  Valeur_Prnt[0] = Clavier_MX();
-	  if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
-  }
+	Valeur_Prnt[0] = Clavier_MX();
+	if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
   
-
   test ++;
   if (test > 4) {
       test = 0;
   }
-
   switch (test) {
-      case 0:
-          In_Coords[1] = -7; // x (in cm)
-          In_Coords[0] = 15; // y (in cm)
-          break;
-      case 1:
-          In_Coords[1] = -7; // x (in cm)
-          In_Coords[0] = 37; // y (in cm)
-          break;
-      case 2:
-          In_Coords[1] = 7; // x (in cm)
-          In_Coords[0] = 37; // y (in cm)
-          break;
-      case 3:
-          In_Coords[1] = 7; // x (in cm)
-          In_Coords[0] = 15; // y (in cm)
-          break;
+    case 0:
+        ARM_LOGIC(15, -7, 10, CLOSE, Out_Pivots);  // y=15, x=-7
+        break;
+    case 1:
+        ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
+        break;
+    case 2:
+        ARM_LOGIC(37, 7, 10, CLOSE, Out_Pivots);   // y=37, x=7
+        break;
+    case 3:
+        ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
+        break;
   }
-  
-  ARM_LOGIC(In_Coords, Out_Pivots);
-
-  Out_Pivots[4] = 95;
-  
-  UART_Send(
-    (uint8_t)Out_Pivots[0],
-    (uint8_t)Out_Pivots[1],
-    (uint8_t)Out_Pivots[2],
-    (uint8_t)Out_Pivots[3],
-    (uint8_t)Out_Pivots[4]
-  );
 
   HAL_Delay(5000);
 

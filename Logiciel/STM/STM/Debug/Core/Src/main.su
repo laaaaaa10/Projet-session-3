@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ../Core/Src/main.c:93:5:main	16	static
 ../Core/Src/main.c:215:6:SystemClock_Config	88	static
 ../Core/Src/main.c:262:13:MX_ADC1_Init	24	static
@@ -6,3 +7,13 @@
 ../Core/Src/main.c:388:13:MX_USART1_UART_Init	8	static
 ../Core/Src/main.c:421:13:MX_GPIO_Init	40	static
 ../Core/Src/main.c:488:6:Error_Handler	4	static,ignoring_inline_asm
+=======
+../Core/Src/main.c:94:5:main	32	static
+../Core/Src/main.c:196:6:SystemClock_Config	88	static
+../Core/Src/main.c:243:13:MX_ADC1_Init	24	static
+../Core/Src/main.c:290:13:MX_I2C1_Init	8	static
+../Core/Src/main.c:324:13:MX_TIM2_Init	32	static
+../Core/Src/main.c:369:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:402:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:469:6:Error_Handler	4	static,ignoring_inline_asm
+>>>>>>> 83ff4eabc4d09cbed0cef44accc82ff4e8cfb692
