@@ -27,7 +27,8 @@ Core/Src/arm_logic.o: ../Core/Src/arm_logic.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- ../Core/Inc/arm_logic.h ../Core/Inc/main.h
+ ../Core/Inc/arm_logic.h ../Core/Inc/main.h ../Core/Inc/UART_Com.h \
+ ../Core/Inc/UART_Com.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -59,3 +60,5 @@ Core/Src/arm_logic.o: ../Core/Src/arm_logic.c ../Core/Inc/main.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
 ../Core/Inc/arm_logic.h:
 ../Core/Inc/main.h:
+../Core/Inc/UART_Com.h:
+../Core/Inc/UART_Com.h:
