@@ -11,6 +11,6 @@ extern I2C_HandleTypeDef hi2c1;
 
 
 // ************** FUNCTIONS ************** //
-void Lire_I2C(void);
+char Lire_I2C(void);
 
 #endif
