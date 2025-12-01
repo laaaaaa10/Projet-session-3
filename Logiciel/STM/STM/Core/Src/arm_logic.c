@@ -26,13 +26,20 @@ Z
 // *************************** INCLUDES ************************************* // 
 #include "main.h"
 #include "arm_logic.h"
+#include "UART_Com.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <math.h>
 
 // *************************** DEFINES ************************************ //
 #define PI 3.14159f
 
+#define OPEN 1
+#define CLOSE 0
+
 // *************************** VARIABLES ************************************ //
+extern UART_HandleTypeDef huart1;
+
 // length of each arm
 float L1 = 17.8;
 float L2 = 25.5;
@@ -40,6 +47,12 @@ float L2 = 25.5;
 // coordinates
 float x;
 float y;
+float z;
+bool state;
+
+float prev_x = 0;
+float prev_y = 0;
+float prev_z = 0;
 
 // calculated values
 float distance;
@@ -48,30 +61,60 @@ float reach;
 float compensation;
 
 int Pivots[5] = {0,0,0,0,0};
-
+int Estim_delay;
 
 //************************* SETUP MAIN PROGRAM *******************************
 // controlls every parts of the arm
-int ARM_LOGIC(int *In_Coords, int *Out_Pivots){
-    
-    x = (float)In_Coords[0];
-    y = (float)In_Coords[1];
+int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots){
+    x = (float)x_coord;
+    y = (float)y_coord;
+    z = (float)z_coord;
+    state = hand_inst;
 
     BASE_ROTATION(Pivots);
-
-    if (ARM_ROTATIONS(In_Coords, Pivots) != 0) {
+    
+    if (ARM_ROTATIONS(Pivots) != 0) {
         return -1; // return error code
-    }
-
+    }    
+    
     WRIST_ANGLE(Pivots);
-    PIV_TRANSLATE(Pivots,Out_Pivots);
+    PIV_TRANSLATE(Pivots, Out_Pivots);
+    ESTIMATE_DELAY();
 
     if (!VERIFY_PIVOTS(Out_Pivots)) {
         return -1; // return error code
     }
 
+    // sends the pivots value to the PIC
+    UART_Send(
+        (uint8_t)Out_Pivots[0],
+        (uint8_t)Out_Pivots[1],
+        (uint8_t)Out_Pivots[2],
+        (uint8_t)Out_Pivots[3],
+        (uint8_t)Out_Pivots[4]
+    );
+    // estimated time of deplacement
+    HAL_Delay(Estim_delay);
+    // changes the arm state
+    HAND_CONTROL(Out_Pivots, state);
+
+    // controll the hand (keeps the arm at the same pos)
+    UART_Send(
+        (uint8_t)Out_Pivots[0],
+        (uint8_t)Out_Pivots[1],
+        (uint8_t)Out_Pivots[2],
+        (uint8_t)Out_Pivots[3],
+        (uint8_t)Out_Pivots[4]
+    );
+
+    // Update previous position at the end
+    prev_x = x;
+    prev_y = y;
+    prev_z = z;
+    
     return 0;
 }
+
 
 // ***************************** FUNCTIONS ************************************* //
 // ----- BASE ROTATION (PIV 0) ----- //
@@ -81,20 +124,21 @@ void BASE_ROTATION(int *Pivots){
     Pivots[0] = (int)roundf(atan2f(y, x) * 180.0f / PI);
 }
 
+
 // ----- ARM ROTATIONS (PIV 1 & 2) ----- //
 // Calculates shoulder and elbow angles using inverse kinematics
 // First gets horizontal distance, then adds vertical offset (height)
 // 'reach' is the 3D straight-line distance from shoulder to target wrist position
 // Uses law of cosines to solve the triangle formed by upper arm, forearm, and reach
 // Returns -1 if target is unreachable (too far or too close)
-int ARM_ROTATIONS(int *In_Coords, int *Pivots) {    
+int ARM_ROTATIONS(int *Pivots) {    
     // Horizontal distance from base to target
     distance = hypotf(x, y);
     
     // Vertical offset and also need to apply
     // compensation based on distance
-    height = 10.0f;
-    
+    height = z;
+
     // 10→15: error 4→5
     if      (distance <= 15.0f) {compensation = -4.0f - (distance - 10.0f) * 0.2f;} 
     // 15→25: error 5→0  
@@ -152,6 +196,7 @@ int ARM_ROTATIONS(int *In_Coords, int *Pivots) {
     return 0;
 }
 
+
 // ----- WRIST ANGLE (PIV 3)----- //
 // Keeps the gripper pointing straight down regardless of arm position
 // Compensates for the combined angles of shoulder and elbow
@@ -183,13 +228,20 @@ void WRIST_ANGLE(int *Pivots){
     Pivots[3] = wrist;
 }
 
+
 // ----- HAND CONTROL (PIV 4) ----- //
-// Controls gripper opening: 0 = fully closed, 125 = fully open
-void HAND_CONTROL(int *Pivots, int Hand_action){
-    if (Hand_action < 0) Hand_action = 0;
-    if (Hand_action > 125) Hand_action = 125;
-    Pivots[4] = Hand_action;
+// Controls gripper opening:
+// 0 Deg = fully opened, 90 Deg = fully closed 
+// Angle = 0.439024 × pwm  (pwm = 0 to 205)
+// later will add a ststem to know if tis holdding something
+void HAND_CONTROL(int *Out_Pivots, bool hand_state) {
+    if (hand_state == OPEN) {
+        Out_Pivots[4] = 0;
+    } else {
+        Out_Pivots[4] = 205;
+    }
 }
+
 
 // ----- TRANSLATE PIVOTS ----- //
 // Converts angle values (degrees) into PWM motor control values (0-205)
@@ -199,11 +251,14 @@ void HAND_CONTROL(int *Pivots, int Hand_action){
 // understand what gpt cooked
 static inline int linear_deg_to_pwm(int deg, int deg0, int deg205){
     int denom = deg205 - deg0;
+    
     if (denom == 0) return 0;
+    
     long long numer = (long long)(deg - deg0) * 205LL;
     long long absden = (denom >= 0) ? denom : - (long long)denom;
     long long adj = absden / 2;
     long long pwm;
+    
     if (denom > 0) {
         if (numer >= 0) pwm = (numer + adj) / denom;
         else pwm = - ( ( -numer + adj ) / denom );
@@ -211,6 +266,7 @@ static inline int linear_deg_to_pwm(int deg, int deg0, int deg205){
         if (numer >= 0) pwm = - ( ( numer + adj ) / absden );
         else pwm = ( ( -numer + adj ) / absden );
     }
+
     if (pwm < 0) pwm = 0;
     if (pwm > 205) pwm = 205;
     return (int)pwm;
@@ -256,6 +312,7 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     else Out_Pivots[4] = Pivots[4];
 }
 
+
 // ----- VERIFY PIVOTS ----- //
 // Converts PWM values back to degrees and checks if they're within mechanical limits
 // Returns false if any motor would be commanded outside its safe range
@@ -268,17 +325,14 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
     int a1 = pwm_to_deg(Out_Pivots[1], 131, 0);
     if (a1 < 0 || a1 > 131) return false;
 
-    // motor2: elbow, wrapped range (300-360 or 0-60 degrees)
-    int a2 = pwm_to_deg(Out_Pivots[2], 34, 375);
-    if (!((a2 >= 300 && a2 <= 360) || (a2 >= 0 && a2 <= 60))) return false;
-
-    // motor3: wrist, wrapped range (300-360 or 0-60 degrees)
-    int a3 = pwm_to_deg(Out_Pivots[3], 34, 375);
-    if (!((a3 >= 300 && a3 <= 360) || (a3 >= 0 && a3 <= 60))) return false;
-
-    // motor4: gripper, 0..125 (already in correct range)
-    int a4 = Out_Pivots[4];
-    if (a4 < 0 || a4 > 125) return false;
-
+    // resteurns good if everythign is good
     return true;
+}
+
+
+// ----- ESTIMATE DELAY ----- //
+//for each 1cm it should take abought 0.5 sec + 1 sec for safety
+void ESTIMATE_DELAY(void) {
+    float movement_distance = hypotf(hypotf(x - prev_x, y - prev_y), z - prev_z);
+    Estim_delay = (int)((distance * (distance)) * + 1000); 
 }
