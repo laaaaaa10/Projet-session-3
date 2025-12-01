@@ -131,12 +131,15 @@ while (1) {
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
 
-  In_Coords[1] = 0; // x (in cm)
-  In_Coords[0] = 40; // y (in cm)
+  In_Coords[1] = 20; // x (in cm)
+  In_Coords[0] = 0; // y (in cm)
 
   ARM_LOGIC(In_Coords, Out_Pivots);
 
-  //Out_Pivots[3] = 135;
+  Out_Pivots[0] = 107;
+  Out_Pivots[1] = 93;
+  Out_Pivots[2] = 35;
+  Out_Pivots[3] = 142;
   Out_Pivots[4] = 95;
   
   UART_Send(
