@@ -10,6 +10,6 @@
 
 
 // ************** FUNCTIONS ************** //
-char Clavier_MX(void);
+uint8_t Clavier_MX(void);
 
 #endif

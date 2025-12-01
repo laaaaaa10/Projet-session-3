@@ -132,8 +132,15 @@ while (1) {
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
   while(1){
-	  Valeur_Prnt[0] = Clavier_MX();
-	  if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
+        for (uint8_t addr = 0x08; addr < 0x78; addr++)
+    {
+        if (HAL_I2C_IsDeviceReady(&hi2c1, addr << 1, 1, 10) == HAL_OK)
+        {
+            printf("Found device at address: 0x%02X\r\n", addr);
+        }
+    }
+	  //Valeur_Prnt[0] = Clavier_MX();
+	  //if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
   }
   
 
