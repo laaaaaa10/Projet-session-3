@@ -132,6 +132,16 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // get the 8 bits fromt the pic
+
+    // test adc
+        uint16_t raw = ADC_Read_Raw();   // lecture ADC
+
+        LCD_Clear();                     // efface l’écran
+        LCD_SetCursor(0, 0);             // ligne 0, colonne 0
+
+        LCD_Print("Raw: ");              // texte
+        LCD_PrintInt(raw);               // affiche la valeur ADC brute
+
   int* temp = UART_Receive();
   for (int i = 0; i < 8; i++) {
     UART_Inputs[i] = temp[i];
