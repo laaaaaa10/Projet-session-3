@@ -7,8 +7,8 @@
 
 // ************** VARIABLES *************** //
 typedef struct {
-    char x;
-    char y;
+    int x;
+    int y;
 } Point;
 
 // ************** FUNCTIONS ************** //
