@@ -130,10 +130,7 @@ while (1) {
   // ----- run main code if pic received shit----- //
   
   // get the 8 bits fromt the pic
-  uint8_t* temp = UART_Receive();
-  for (int i = 0; i < 8; i++) {
-      UART_Inputs[i] = temp[i];  // This now works - uint8_t gets promoted to int
-  }
+  uint8_t* UART_Inputs = UART_Receive();
   Point Table_pos = Lire_Tab(UART_Inputs);
 
 
