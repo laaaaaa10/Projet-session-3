@@ -10,11 +10,7 @@
 #include "Mem_Tac.h"
 
 // ************************* SETUP MAIN PROGRAM **************************** //
-<<<<<<< HEAD
-Point Lire_Tab(uint8_t *KKK) {
-=======
 Point Lire_Tab(int *Coord_Table){
->>>>>>> 75341f04bbc570c82a025d3c8db56cfebcb2b011
     Point Coord_Mem = {0, 0};
     
     // Tableau 2D de Points
@@ -41,13 +37,8 @@ Point Lire_Tab(int *Coord_Table){
 }
 
 // ***************************** FUNCTIONS ********************************* //
-<<<<<<< HEAD
-Point Simple_Tab(uint8_t *data) {
-    Point Tab = {-1, -1};  // Initialize to invalid!
-=======
 Point Simple_Tab(int *data){
-    Point Tab = {0, 0};  // Initialize to invalid!
->>>>>>> 75341f04bbc570c82a025d3c8db56cfebcb2b011
+    Point Tab = {0, 0};
 
     // y index from data[2]
     if ((data[2] > 0x9E) && (data[2] < 0xA2)) Tab.y = 0;
