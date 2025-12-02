@@ -12,7 +12,7 @@ typedef struct {
 } Point;
 
 // ************** FUNCTIONS ************** //
-Point Simple_Tab(int *data);
-Point Lire_Tab(int *coord_Table);
+Point Simple_Tab(uint8_t *data);
+Point Lire_Tab(uint8_t *coord_Table);
 
 #endif
