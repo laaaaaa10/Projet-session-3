@@ -6,6 +6,8 @@
 #include "I2C.h"
 #include "stm32f1xx_hal.h"
 #include <stdbool.h>
+#include "UART_Com.h"
+
 // ************** DEFINES *************** //
 
 
