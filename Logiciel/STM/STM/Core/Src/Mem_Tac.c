@@ -10,7 +10,11 @@
 #include "Mem_Tac.h"
 
 // ************************* SETUP MAIN PROGRAM **************************** //
+<<<<<<< HEAD
 Point Lire_Tab(uint8_t *KKK) {
+=======
+Point Lire_Tab(int *Coord_Table){
+>>>>>>> 75341f04bbc570c82a025d3c8db56cfebcb2b011
     Point Coord_Mem = {0, 0};
     
     // Tableau 2D de Points
@@ -24,7 +28,7 @@ Point Lire_Tab(uint8_t *KKK) {
         {{-3,35},{1,35},{5,35}} 
     };
 
-    Point Tab = Simple_Tab(KKK);
+    Point Tab = Simple_Tab(Coord_Table);
 
     // Bounds check - return {0,0} if invalid
     if (Tab.x < 0 || Tab.x > 6 || Tab.y < 0 || Tab.y > 2){
@@ -37,22 +41,27 @@ Point Lire_Tab(uint8_t *KKK) {
 }
 
 // ***************************** FUNCTIONS ********************************* //
+<<<<<<< HEAD
 Point Simple_Tab(uint8_t *data) {
     Point Tab = {-1, -1};  // Initialize to invalid!
+=======
+Point Simple_Tab(int *data){
+    Point Tab = {0, 0};  // Initialize to invalid!
+>>>>>>> 75341f04bbc570c82a025d3c8db56cfebcb2b011
 
     // y index from data[2]
-    if ((data[2] > 0x7E) && (data[2] < 0xA2)) Tab.y = 0;
-    if ((data[2] > 0x66) && (data[2] < 0x6A)) Tab.y = 1;
-    if ((data[2] > 0x36) && (data[2] < 0x3A)) Tab.y = 2;
+    if ((data[2] > 0x9E) && (data[2] < 0xA2)) Tab.y = 0;
+    else if ((data[2] > 0x66) && (data[2] < 0x6A)) Tab.y = 1;
+    else if ((data[2] > 0x36) && (data[2] < 0x3A)) Tab.y = 2;
 
     // x index from data[3]
     if ((data[3] > 0xD5) && (data[3] < 0xD9)) Tab.x = 0;
-    if ((data[3] > 0xBF) && (data[3] < 0xC3)) Tab.x = 1;
-    if ((data[3] > 0xAC) && (data[3] < 0xB0)) Tab.x = 2;
-    if ((data[3] > 0x96) && (data[3] < 0xA0)) Tab.x = 3;
-    if ((data[3] > 0x7C) && (data[3] < 0x80)) Tab.x = 4;
-    if ((data[3] > 0x66) && (data[3] < 0x70)) Tab.x = 5;
-    if ((data[3] > 0x4C) && (data[3] < 0x50)) Tab.x = 6;
+    else if ((data[3] > 0xBF) && (data[3] < 0xC3)) Tab.x = 1;
+    else if ((data[3] > 0xAC) && (data[3] < 0xB0)) Tab.x = 2;
+    else if ((data[3] > 0x96) && (data[3] < 0x9A)) Tab.x = 3;
+    else if ((data[3] > 0x7C) && (data[3] < 0x80)) Tab.x = 4;
+    else if ((data[3] > 0x66) && (data[3] < 0x6A)) Tab.x = 5;
+    else if ((data[3] > 0x4C) && (data[3] < 0x50)) Tab.x = 6;
 
     return Tab;
 }
