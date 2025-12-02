@@ -1,174 +1,117 @@
-// ************************************************************************* // 
+// ************************************************************************* //
 // File: lcd.c
 // Done by :
-// Description :
+// Description : LCD 16x2 4-bit mode driver
 //
-//
-// ************************************************************************* // 
+// ************************************************************************* //
 
-// *************************** INCLUDES ************************************ // 
-#include "main.h"
-#include "LCD.h"
-#include "string.h"
-#include "stm32f1xx_hal.h"
+// *************************** INCLUDES ************************************ //
+#include "lcd.h"
 
 // *************************** DEFINES ************************************* //
+#define LCD_DELAY 2
+#define LCD_RS(x) HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, (x) ? GPIO_PIN_SET : GPIO_PIN_RESET)
+#define LCD_EN(x) HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, (x) ? GPIO_PIN_SET : GPIO_PIN_RESET)
 
+// *************************** INTERNAL ************************************ //
+static void LCD_Nibble(uint8_t nibble);
+static void LCD_Pulse(void);
 
-// *************************** VARIABLES *********************************** //
-static uint8_t lcd_row = 0;
-static uint8_t lcd_col = 0;
-
-// ************************* SETUP MAIN PROGRAM **************************** //
-
+// ************************* INITIALIZATION ******************************** //
+void LCD_Init(void) {
+    HAL_Delay(50);
+    LCD_Nibble(0x03); HAL_Delay(5);
+    LCD_Nibble(0x03); HAL_Delay(5);
+    LCD_Nibble(0x03); HAL_Delay(1);
+    LCD_Nibble(0x02);
+    LCD_Cmd(0x28);
+    LCD_Cmd(0x0C);
+    LCD_Cmd(0x06);
+    LCD_Cmd(0x01);
+    HAL_Delay(2);
+}
 
 // ***************************** FUNCTIONS ********************************* //
-static void LCD_EnablePulse(void)
-{
-    HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, GPIO_PIN_SET);
-    HAL_Delay(1);
-    HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, GPIO_PIN_RESET);
-    HAL_Delay(1);
+// ----- Command ----- //
+void LCD_Cmd(uint8_t cmd) {
+    LCD_RS(0);
+    LCD_Nibble(cmd >> 4);
+    LCD_Nibble(cmd & 0x0F);
+    HAL_Delay(LCD_DELAY);
 }
 
-static void LCD_Send4Bits(uint8_t data)
-{
-    HAL_GPIO_WritePin(LCD_D4_GPIO_Port, LCD_D4_Pin, (data >> 0) & 0x01);
-    HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (data >> 1) & 0x01);
-    HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (data >> 2) & 0x01);
-    HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (data >> 3) & 0x01);
+// ----- Write ----- //
+void LCD_Write(uint8_t data) {
+    LCD_RS(1);
+    LCD_Nibble(data >> 4);
+    LCD_Nibble(data & 0x0F);
+    HAL_Delay(LCD_DELAY);
 }
 
-static void LCD_SendCommand(uint8_t cmd)
-{
-    HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, GPIO_PIN_RESET);
-    LCD_Send4Bits(cmd >> 4);
-    LCD_EnablePulse();
-    LCD_Send4Bits(cmd & 0x0F);
-    LCD_EnablePulse();
+// ----- Print String ----- //
+void LCD_Print(char *text) {
+    while (*text) LCD_Write(*text++);
 }
 
-void LCD_SendData(uint8_t data)
-{
-    HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, GPIO_PIN_SET);
-    LCD_Send4Bits(data >> 4);
-    LCD_EnablePulse();
-    LCD_Send4Bits(data & 0x0F);
-    LCD_EnablePulse();
-    lcd_col++;
-}
-
-// === Fonctions publiques ===
-
-void LCD_Init(void)
-{
-    HAL_Delay(50);
-    LCD_Send4Bits(0x03);
-    LCD_EnablePulse();
-    HAL_Delay(5);
-    LCD_Send4Bits(0x03);
-    LCD_EnablePulse();
-    HAL_Delay(1);
-    LCD_Send4Bits(0x03);
-    LCD_EnablePulse();
-    LCD_Send4Bits(0x02); // Mode 4 bits
-    LCD_EnablePulse();
-
-    LCD_SendCommand(0x28); // 4 bits, 2 lignes, 5x8
-    LCD_SendCommand(0x0F); // Écran ON, curseur ON, clignotement ON
-    LCD_SendCommand(0x06); // Auto-incrément
-    LCD_Clear();
-}
-
-void LCD_Clear(void)
-{
-    LCD_SendCommand(0x01);
-    HAL_Delay(2);
-    lcd_row = 0;
-    lcd_col = 0;
-}
-
-void LCD_SetCursor(uint8_t col, uint8_t row)
-{
-    uint8_t offsets[] = {0x00, 0x40, 0x14, 0x54};
-    lcd_row = row;
-    lcd_col = col;
-    LCD_SendCommand(0x80 | (col + offsets[row]));
-    HAL_Delay(2);
-}
-
-void LCD_Print(char *str)
-{
-    while (*str)
-    {
-        LCD_SendData(*str++);
-        HAL_Delay(2);
-        // Gérer débordement automatique
-        if (lcd_col >= 20)
-        {
-            lcd_col = 0;
-            lcd_row++;
-
-            if (lcd_row >= 4) {
-            	lcd_row = 0;
-                LCD_SendCommand(0x02);
-                HAL_Delay(2);
-            }
-            else{
-				LCD_SetCursor(lcd_col, lcd_row);
-				HAL_Delay(2);
-            }
-        }
+// ----- Print Integer ----- //
+void LCD_PrintInt(int num) {
+    char buf[8];
+    int i = 0;
+    
+    if (num < 0) {
+        LCD_Write('-');
+        num = -num;
+    }
+    
+    if (num == 0) {
+        LCD_Write('0');
+        return;
+    }
+    
+    while (num > 0) {
+        buf[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+    
+    while (i > 0) {
+        LCD_Write(buf[--i]);
     }
 }
 
+// ----- Clear ----- //
+void LCD_Clear(void) {
+    LCD_Cmd(0x01);
+    HAL_Delay(2);
+}
 
-void LCD_CreateChar(uint8_t location, uint8_t *pattern)
-{
-    location &= 0x07; // max 8 caractères (0-7)
-    LCD_SendCommand(0x40 | (location << 3)); // adresse CGRAM
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        LCD_SendData(pattern[i]);
+// ----- Set Cursor Position ----- //
+void LCD_Set(uint8_t col, uint8_t row) {
+    uint8_t addr[] = {0x00, 0x40, 0x14, 0x54};
+    LCD_Cmd(0x80 | (col + addr[row]));
+}
+
+// ----- Create Custom Character ----- //
+void LCD_CreateChar(uint8_t loc, uint8_t map[]) {
+    if (loc < 8) {
+        LCD_Cmd(0x40 + (loc * 8));
+        for (uint8_t i = 0; i < 8; i++)
+            LCD_Write(map[i]);
+        LCD_Set(0, 0);
     }
-    LCD_Clear();
 }
 
-void LCD_SetBack(void)
-{
-	if ((lcd_col <=19) && (lcd_col > 0) && (lcd_row <=3))
-	{
-		//LCD_Print("AAA");
-		LCD_SetCursor((lcd_col-1), lcd_row);
-	}
-	else if ((lcd_col == 0) && (lcd_row <= 3) && (lcd_row > 0))
-	{
-		//LCD_Print("BBB");
-		LCD_SetCursor(19, (lcd_row-1));
-	}
-	else if ((lcd_col == 0) && (lcd_row == 0))
-	{
-		//LCD_Print("CCC");
-		LCD_SetCursor(19, 3);
-	}
+// *************************** LOW LEVEL *********************************** //
+static void LCD_Nibble(uint8_t nibble) {
+    HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, (nibble & 0x01) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, (nibble & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, (nibble & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(D7_GPIO_Port, D7_Pin, (nibble & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    LCD_Pulse();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+static void LCD_Pulse(void) {
+    LCD_EN(1);
+    HAL_Delay(1);
+    LCD_EN(0);
+    HAL_Delay(1);
+}
