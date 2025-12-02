@@ -145,8 +145,8 @@ while (1) {
   
 
   ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
-  HAL_Delay(1000);
-  ARM_LOGIC(-5, 30, 10, OPEN, Out_Pivots);
+  HAL_Delay(2000);
+  ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
 
   //test ++;
   //if (test > 3) {
