@@ -26,6 +26,7 @@
 #include "arm_logic.h"
 #include "UART_Com.h"
 #include "Mem_Tac.h"
+#include "I2C.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -132,8 +133,13 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // prints all the PIC's values on the LCD
   // Check buttons and set pivot values
-	Valeur_Prnt[0] = Clavier_MX();
-	if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
+  while(1){
+    Valeur_Prnt[0] = Lire_I2C();
+    HAL_UART_Transmit(&huart1, &Valeur_Prnt[0], 1, 1);
+    Ecrire_I2C(0x04);
+    Valeur_Prnt[0] = Lire_I2C();
+    HAL_UART_Transmit(&huart1, &Valeur_Prnt[0], 1, 1);
+  }
   
   test ++;
   if (test > 4) {

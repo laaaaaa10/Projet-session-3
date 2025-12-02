@@ -19,13 +19,14 @@ uint8_t Clavier_MX(void)
         {'*','0','#','D'}   // Row 3
     };
     static uint8_t Ch_Front = 1;
-	for (int ligne = 1; ligne < 5; ligne++){
+	for (char ligne = 1; ligne < 5; ligne++){
 		// Lire les colonnes (entrée)
-		for (int col = 1; col < 5; col++){
-            Ecrire_I2C(col);
-			if ((Lire_I2C() & 0xF0) > 0 ){
+		for (char col = 1; col < 5; col++){
+            Ecrire_I2C(0x01 << (col -1));
+			HAL_Delay(5);
+			if ((Lire_I2C() & 0xF0) > 0){
 				if (Ch_Front == 1){
-					HAL_Delay(10);
+					HAL_Delay(5);
 					Ch_Front = 0;
 					return Symbole_Clavier[col-1][ligne-1];
 				}
