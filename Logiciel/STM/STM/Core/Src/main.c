@@ -141,7 +141,7 @@ while (1) {
   }
   switch (test) {
     case 0:
-        ARM_LOGIC(15, -7, 10, CLOSE, Out_Pivots);  // y=15, x=-7
+        ARM_LOGIC(15, -7, 20, CLOSE, Out_Pivots);  // y=15, x=-7
         break;
     case 1:
         ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
@@ -154,7 +154,7 @@ while (1) {
         break;
   }
 
-  HAL_Delay(5000);
+  HAL_Delay(1000);
 
   for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
     Valeur_Prnt[0] = 1 + i + 0x30;

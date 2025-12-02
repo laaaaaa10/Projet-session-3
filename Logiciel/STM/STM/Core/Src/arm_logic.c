@@ -94,7 +94,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         (uint8_t)Out_Pivots[4]
     );
     // estimated time of deplacement
-    HAL_Delay(Estim_delay);
+    HAL_Delay(1500);
     // changes the arm state
     HAND_CONTROL(Out_Pivots, state);
 
@@ -254,10 +254,10 @@ static inline int linear_deg_to_pwm(int deg, int deg0, int deg205){
     
     if (denom == 0) return 0;
     
-    long long numer = (long long)(deg - deg0) * 205LL;
-    long long absden = (denom >= 0) ? denom : - (long long)denom;
-    long long adj = absden / 2;
-    long long pwm;
+    long numer = (long)(deg - deg0) * 205LL;
+    long absden = (denom >= 0) ? denom : - (long)denom;
+    long adj = absden / 2;
+    long pwm;
     
     if (denom > 0) {
         if (numer >= 0) pwm = (numer + adj) / denom;
@@ -275,10 +275,10 @@ static inline int linear_deg_to_pwm(int deg, int deg0, int deg205){
 // Inverse function: converts PWM back to degrees for verification
 int pwm_to_deg(int pwm, int deg0, int deg205) {
     int denom = 205;
-    long long numer = (long long)(deg205 - deg0) * (long long)pwm;
-    long long adj = denom / 2;
-    long long frac = (numer >= 0) ? ( (numer + adj) / denom ) : ( - ( ( -numer + adj ) / denom ) );
-    long long out = (long long)deg0 + frac;
+    long numer = (long long)(deg205 - deg0) * (long long)pwm;
+    long adj = denom / 2;
+    long frac = (numer >= 0) ? ( (numer + adj) / denom ) : ( - ( ( -numer + adj ) / denom ) );
+    long out = (long long)deg0 + frac;
     return (int)out;
 }
 
@@ -333,6 +333,6 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
 // ----- ESTIMATE DELAY ----- //
 //for each 1cm it should take abought 0.5 sec + 1 sec for safety
 void ESTIMATE_DELAY(void) {
-    float movement_distance = hypotf(hypotf(x - prev_x, y - prev_y), z - prev_z);
-    Estim_delay = (int)((distance * (distance)) * + 1000); 
+    int short movement_distance = hypotf(hypotf(x - prev_x, y - prev_y), z - prev_z);
+    Estim_delay = (int short)(movement_distance * 1500); 
 }
