@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ../Core/Src/arm_logic.c:68:5:ARM_LOGIC	40	static
 ../Core/Src/arm_logic.c:123:6:BASE_ROTATION	16	static
 ../Core/Src/arm_logic.c:134:5:ARM_ROTATIONS	72	static
@@ -8,3 +9,27 @@
 ../Core/Src/arm_logic.c:285:6:PIV_TRANSLATE	32	static
 ../Core/Src/arm_logic.c:319:6:VERIFY_PIVOTS	24	static
 ../Core/Src/arm_logic.c:335:6:ESTIMATE_DELAY	24	static
+=======
+<<<<<<< HEAD
+../Core/Src/arm_logic.c:55:5:ARM_LOGIC	16	static
+../Core/Src/arm_logic.c:80:6:BASE_ROTATION	16	static
+../Core/Src/arm_logic.c:90:5:ARM_ROTATIONS	72	static
+../Core/Src/arm_logic.c:159:6:WRIST_ANGLE	40	static
+../Core/Src/arm_logic.c:188:6:HAND_CONTROL	16	static
+../Core/Src/arm_logic.c:200:19:linear_deg_to_pwm	192	static
+../Core/Src/arm_logic.c:220:5:pwm_to_deg	152	static
+../Core/Src/arm_logic.c:229:6:PIV_TRANSLATE	32	static
+../Core/Src/arm_logic.c:262:6:VERIFY_PIVOTS	40	static
+=======
+../Core/Src/arm_logic.c:64:5:ARM_LOGIC	40	static
+../Core/Src/arm_logic.c:114:6:BASE_ROTATION	16	static
+../Core/Src/arm_logic.c:125:5:ARM_ROTATIONS	72	static
+../Core/Src/arm_logic.c:195:6:WRIST_ANGLE	40	static
+../Core/Src/arm_logic.c:228:6:HAND_CONTROL	16	static
+../Core/Src/arm_logic.c:243:19:linear_deg_to_pwm	184	static
+../Core/Src/arm_logic.c:267:5:pwm_to_deg	152	static
+../Core/Src/arm_logic.c:276:6:PIV_TRANSLATE	32	static
+../Core/Src/arm_logic.c:310:6:VERIFY_PIVOTS	24	static
+../Core/Src/arm_logic.c:326:6:ESTIMATE_DELAY	8	static
+>>>>>>> 83ff4eabc4d09cbed0cef44accc82ff4e8cfb692
+>>>>>>> 8e97ba980b346b5125761684cc2df38ed7a70714
