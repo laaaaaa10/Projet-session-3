@@ -154,20 +154,20 @@ while (1) {
   //}
   //switch (test) {
   //  case 0:
-  //      ARM_LOGIC(15, -7, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
   //      break;
   //  case 1:
-  //      ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
+  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
   //      break;
   //  case 2:
-  //      ARM_LOGIC(37, 7, 10, CLOSE, Out_Pivots);   // y=37, x=7
+  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
   //      break;
   //  case 3:
-  //      ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
   //      break;
   //}
 
-  HAL_Delay(10000);
+  HAL_Delay(1000);
 
   LCD_Clear();
   
@@ -200,7 +200,7 @@ while (1) {
     LCD_Print(Valeur_Prnt); 
     Valeur_Prnt[0] = (Table_pos.y %10)+0x30; // affiche l'unité
     LCD_Print(Valeur_Prnt); 
-    
+
   //  LCD_Print(" ");
     /* USER CODE END WHILE */
 

@@ -7,23 +7,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         00005934  0800010c  0800010c  0000110c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000124  08005a40  08005a40  00006a40  2**2
+  2 .rodata       0000012c  08005a40  08005a40  00006a40  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08005b64  08005b64  00007078  2**0
+  3 .ARM.extab    00000000  08005b6c  08005b6c  00007078  2**0
                   CONTENTS, READONLY
-  4 .ARM          00000000  08005b64  08005b64  00007078  2**0
+  4 .ARM          00000000  08005b6c  08005b6c  00007078  2**0
                   CONTENTS, READONLY
-  5 .preinit_array 00000000  08005b64  08005b64  00007078  2**0
+  5 .preinit_array 00000000  08005b6c  08005b6c  00007078  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000004  08005b64  08005b64  00006b64  2**2
+  6 .init_array   00000004  08005b6c  08005b6c  00006b6c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  7 .fini_array   00000004  08005b68  08005b68  00006b68  2**2
+  7 .fini_array   00000004  08005b70  08005b70  00006b70  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  8 .data         00000078  20000000  08005b6c  00007000  2**2
+  8 .data         00000078  20000000  08005b74  00007000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          000002f8  20000078  08005be4  00007078  2**2
+  9 .bss          000002f8  20000078  08005bec  00007078  2**2
                   ALLOC
- 10 ._user_heap_stack 00000600  20000370  08005be4  00007370  2**0
+ 10 ._user_heap_stack 00000600  20000370  08005bec  00007370  2**0
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  00007078  2**0
                   CONTENTS, READONLY
@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000d26  00000000  00000000  0001b670  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00019615  00000000  00000000  0001c396  2**0
+ 16 .debug_macro  00018caa  00000000  00000000  0001c396  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0001537f  00000000  00000000  000359ab  2**0
+ 17 .debug_line   0001537b  00000000  00000000  00035040  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00092582  00000000  00000000  0004ad2a  2**0
+ 18 .debug_str    00092582  00000000  00000000  0004a3bb  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000dd2ac  2**0
+ 19 .comment      00000043  00000000  00000000  000dc93d  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004adc  00000000  00000000  000dd2f0  2**2
+ 20 .debug_frame  00004adc  00000000  00000000  000dc980  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000005d  00000000  00000000  000e1dcc  2**0
+ 21 .debug_line_str 0000005d  00000000  00000000  000e145c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -796,8 +796,8 @@ uint8_t Clavier_MX(void)
 
 08000844 <Lire_Tab>:
 
-// *************************** VARIABLES *********************************** //
-
+// *************************** INCLUDES ************************************ // 
+#include "Mem_Tac.h"
 
 // ************************* SETUP MAIN PROGRAM **************************** //
 Point Lire_Tab(int *KKK){
@@ -806,253 +806,244 @@ Point Lire_Tab(int *KKK){
  8000848:	af00      	add	r7, sp, #0
  800084a:	6078      	str	r0, [r7, #4]
  800084c:	6039      	str	r1, [r7, #0]
-    Point Coord_Mem = {0,0};   // Initialisation de la variable qui contiendra la coordonnée finale
+    Point Coord_Mem = {0, 0};
  800084e:	2300      	movs	r3, #0
  8000850:	f8c7 30b8 	str.w	r3, [r7, #184]	@ 0xb8
  8000854:	2300      	movs	r3, #0
  8000856:	f8c7 30bc 	str.w	r3, [r7, #188]	@ 0xbc
-
-    // Tableau 2D de Points représentant des coordonnées x et y pour chaque position
-    // 7 lignes (colonnes logiques), 3 colonnes (lignes logiques)
+    
+    // Tableau 2D de Points
     Point Tableau_Mem[7][3] = {
- 800085a:	4a22      	ldr	r2, [pc, #136]	@ (80008e4 <Lire_Tab+0xa0>)
+ 800085a:	4a1f      	ldr	r2, [pc, #124]	@ (80008d8 <Lire_Tab+0x94>)
  800085c:	f107 0310 	add.w	r3, r7, #16
  8000860:	4611      	mov	r1, r2
  8000862:	22a8      	movs	r2, #168	@ 0xa8
  8000864:	4618      	mov	r0, r3
  8000866:	f004 fc3d 	bl	80050e4 <memcpy>
+        {{-3,29},{1,29},{5,29}},
+        {{-3,32},{1,32},{5,32}},
         {{-3,35},{1,35},{5,35}} 
     };
 
-    // Récupération de l'indice correspondant aux données fournies dans KKK
-    // Tab contient les indices x et y pour accéder au tableau
-    Point Tab = Simple_Tab(KKK);   // Appel à Simple_Tab pour traduire les valeurs de KKK en indices Tab.x et Tab.y
+    Point Tab = Simple_Tab(KKK);
  800086a:	f107 0308 	add.w	r3, r7, #8
  800086e:	6839      	ldr	r1, [r7, #0]
  8000870:	4618      	mov	r0, r3
- 8000872:	f000 f839 	bl	80008e8 <Simple_Tab>
+ 8000872:	f000 f833 	bl	80008dc <Simple_Tab>
 
-    // Vérification de sécurité pour éviter un dépassement du tableau
-    if (Tab.y < 0 || Tab.y > 2 || Tab.x < 0 || Tab.x > 6){
- 8000876:	68fb      	ldr	r3, [r7, #12]
+    // Bounds check - return {0,0} if invalid
+    if (Tab.x < 0 || Tab.x > 6 || Tab.y < 0 || Tab.y > 2){
+ 8000876:	68bb      	ldr	r3, [r7, #8]
  8000878:	2b00      	cmp	r3, #0
  800087a:	db08      	blt.n	800088e <Lire_Tab+0x4a>
- 800087c:	68fb      	ldr	r3, [r7, #12]
- 800087e:	2b02      	cmp	r3, #2
+ 800087c:	68bb      	ldr	r3, [r7, #8]
+ 800087e:	2b06      	cmp	r3, #6
  8000880:	dc05      	bgt.n	800088e <Lire_Tab+0x4a>
- 8000882:	68bb      	ldr	r3, [r7, #8]
+ 8000882:	68fb      	ldr	r3, [r7, #12]
  8000884:	2b00      	cmp	r3, #0
  8000886:	db02      	blt.n	800088e <Lire_Tab+0x4a>
- 8000888:	68bb      	ldr	r3, [r7, #8]
- 800088a:	2b06      	cmp	r3, #6
- 800088c:	dd0e      	ble.n	80008ac <Lire_Tab+0x68>
-        Coord_Mem.x = 0;
- 800088e:	2300      	movs	r3, #0
- 8000890:	f8c7 30b8 	str.w	r3, [r7, #184]	@ 0xb8
-        Coord_Mem.y = 0;
- 8000894:	2300      	movs	r3, #0
- 8000896:	f8c7 30bc 	str.w	r3, [r7, #188]	@ 0xbc
-        return Coord_Mem; // valeur par défaut si les indices sont hors limites
- 800089a:	687b      	ldr	r3, [r7, #4]
- 800089c:	461a      	mov	r2, r3
- 800089e:	f107 03b8 	add.w	r3, r7, #184	@ 0xb8
- 80008a2:	e893 0003 	ldmia.w	r3, {r0, r1}
- 80008a6:	e882 0003 	stmia.w	r2, {r0, r1}
- 80008aa:	e017      	b.n	80008dc <Lire_Tab+0x98>
+ 8000888:	68fb      	ldr	r3, [r7, #12]
+ 800088a:	2b02      	cmp	r3, #2
+ 800088c:	dd08      	ble.n	80008a0 <Lire_Tab+0x5c>
+        return Coord_Mem;
+ 800088e:	687b      	ldr	r3, [r7, #4]
+ 8000890:	461a      	mov	r2, r3
+ 8000892:	f107 03b8 	add.w	r3, r7, #184	@ 0xb8
+ 8000896:	e893 0003 	ldmia.w	r3, {r0, r1}
+ 800089a:	e882 0003 	stmia.w	r2, {r0, r1}
+ 800089e:	e017      	b.n	80008d0 <Lire_Tab+0x8c>
     }
 
-    // Récupération de la coordonnée correspondante dans le tableau
-    Coord_Mem = Tableau_Mem[Tab.y][Tab.x];
- 80008ac:	68fa      	ldr	r2, [r7, #12]
- 80008ae:	68b9      	ldr	r1, [r7, #8]
- 80008b0:	4613      	mov	r3, r2
- 80008b2:	005b      	lsls	r3, r3, #1
- 80008b4:	4413      	add	r3, r2
- 80008b6:	440b      	add	r3, r1
- 80008b8:	00db      	lsls	r3, r3, #3
- 80008ba:	33c0      	adds	r3, #192	@ 0xc0
- 80008bc:	443b      	add	r3, r7
- 80008be:	f107 02b8 	add.w	r2, r7, #184	@ 0xb8
- 80008c2:	3bb0      	subs	r3, #176	@ 0xb0
- 80008c4:	e893 0003 	ldmia.w	r3, {r0, r1}
- 80008c8:	e882 0003 	stmia.w	r2, {r0, r1}
+    Coord_Mem = Tableau_Mem[Tab.x][Tab.y];
+ 80008a0:	68ba      	ldr	r2, [r7, #8]
+ 80008a2:	68f9      	ldr	r1, [r7, #12]
+ 80008a4:	4613      	mov	r3, r2
+ 80008a6:	005b      	lsls	r3, r3, #1
+ 80008a8:	4413      	add	r3, r2
+ 80008aa:	440b      	add	r3, r1
+ 80008ac:	00db      	lsls	r3, r3, #3
+ 80008ae:	33c0      	adds	r3, #192	@ 0xc0
+ 80008b0:	443b      	add	r3, r7
+ 80008b2:	f107 02b8 	add.w	r2, r7, #184	@ 0xb8
+ 80008b6:	3bb0      	subs	r3, #176	@ 0xb0
+ 80008b8:	e893 0003 	ldmia.w	r3, {r0, r1}
+ 80008bc:	e882 0003 	stmia.w	r2, {r0, r1}
 
-    return Coord_Mem;  // Retourne la coordonnée finale
- 80008cc:	687b      	ldr	r3, [r7, #4]
- 80008ce:	461a      	mov	r2, r3
- 80008d0:	f107 03b8 	add.w	r3, r7, #184	@ 0xb8
- 80008d4:	e893 0003 	ldmia.w	r3, {r0, r1}
- 80008d8:	e882 0003 	stmia.w	r2, {r0, r1}
+    return Coord_Mem;
+ 80008c0:	687b      	ldr	r3, [r7, #4]
+ 80008c2:	461a      	mov	r2, r3
+ 80008c4:	f107 03b8 	add.w	r3, r7, #184	@ 0xb8
+ 80008c8:	e893 0003 	ldmia.w	r3, {r0, r1}
+ 80008cc:	e882 0003 	stmia.w	r2, {r0, r1}
 }
- 80008dc:	6878      	ldr	r0, [r7, #4]
- 80008de:	37c0      	adds	r7, #192	@ 0xc0
- 80008e0:	46bd      	mov	sp, r7
- 80008e2:	bd80      	pop	{r7, pc}
- 80008e4:	08005a40 	.word	0x08005a40
+ 80008d0:	6878      	ldr	r0, [r7, #4]
+ 80008d2:	37c0      	adds	r7, #192	@ 0xc0
+ 80008d4:	46bd      	mov	sp, r7
+ 80008d6:	bd80      	pop	{r7, pc}
+ 80008d8:	08005a40 	.word	0x08005a40
 
-080008e8 <Simple_Tab>:
+080008dc <Simple_Tab>:
 
 // ***************************** FUNCTIONS ********************************* //
-// ----- Lire_Tableau ----- //
-// Fonction qui convertit les valeurs du tableau data en indices x et y
 Point Simple_Tab(int *data){
- 80008e8:	b480      	push	{r7}
- 80008ea:	b085      	sub	sp, #20
- 80008ec:	af00      	add	r7, sp, #0
- 80008ee:	6078      	str	r0, [r7, #4]
- 80008f0:	6039      	str	r1, [r7, #0]
-    Point Tab = {0,0};  // Initialisation des indices
- 80008f2:	2300      	movs	r3, #0
- 80008f4:	60bb      	str	r3, [r7, #8]
- 80008f6:	2300      	movs	r3, #0
- 80008f8:	60fb      	str	r3, [r7, #12]
+ 80008dc:	b480      	push	{r7}
+ 80008de:	b085      	sub	sp, #20
+ 80008e0:	af00      	add	r7, sp, #0
+ 80008e2:	6078      	str	r0, [r7, #4]
+ 80008e4:	6039      	str	r1, [r7, #0]
+    Point Tab = {-1, -1};  // Initialize to invalid!
+ 80008e6:	4a46      	ldr	r2, [pc, #280]	@ (8000a00 <Simple_Tab+0x124>)
+ 80008e8:	f107 0308 	add.w	r3, r7, #8
+ 80008ec:	e892 0003 	ldmia.w	r2, {r0, r1}
+ 80008f0:	e883 0003 	stmia.w	r3, {r0, r1}
 
-    // Détermination de l'indice y en fonction de la valeur data[2]
+    // y index from data[2]
     if ((data[2] > 0x7E) && (data[2] < 0xA2)) Tab.y = 0;
- 80008fa:	683b      	ldr	r3, [r7, #0]
- 80008fc:	3308      	adds	r3, #8
- 80008fe:	681b      	ldr	r3, [r3, #0]
- 8000900:	2b7e      	cmp	r3, #126	@ 0x7e
- 8000902:	dd06      	ble.n	8000912 <Simple_Tab+0x2a>
- 8000904:	683b      	ldr	r3, [r7, #0]
- 8000906:	3308      	adds	r3, #8
- 8000908:	681b      	ldr	r3, [r3, #0]
- 800090a:	2ba1      	cmp	r3, #161	@ 0xa1
- 800090c:	dc01      	bgt.n	8000912 <Simple_Tab+0x2a>
- 800090e:	2300      	movs	r3, #0
- 8000910:	60fb      	str	r3, [r7, #12]
+ 80008f4:	683b      	ldr	r3, [r7, #0]
+ 80008f6:	3308      	adds	r3, #8
+ 80008f8:	681b      	ldr	r3, [r3, #0]
+ 80008fa:	2b7e      	cmp	r3, #126	@ 0x7e
+ 80008fc:	dd06      	ble.n	800090c <Simple_Tab+0x30>
+ 80008fe:	683b      	ldr	r3, [r7, #0]
+ 8000900:	3308      	adds	r3, #8
+ 8000902:	681b      	ldr	r3, [r3, #0]
+ 8000904:	2ba1      	cmp	r3, #161	@ 0xa1
+ 8000906:	dc01      	bgt.n	800090c <Simple_Tab+0x30>
+ 8000908:	2300      	movs	r3, #0
+ 800090a:	60fb      	str	r3, [r7, #12]
     if ((data[2] > 0x66) && (data[2] < 0x6A)) Tab.y = 1;
- 8000912:	683b      	ldr	r3, [r7, #0]
- 8000914:	3308      	adds	r3, #8
- 8000916:	681b      	ldr	r3, [r3, #0]
- 8000918:	2b66      	cmp	r3, #102	@ 0x66
- 800091a:	dd06      	ble.n	800092a <Simple_Tab+0x42>
- 800091c:	683b      	ldr	r3, [r7, #0]
- 800091e:	3308      	adds	r3, #8
- 8000920:	681b      	ldr	r3, [r3, #0]
- 8000922:	2b69      	cmp	r3, #105	@ 0x69
- 8000924:	dc01      	bgt.n	800092a <Simple_Tab+0x42>
- 8000926:	2301      	movs	r3, #1
- 8000928:	60fb      	str	r3, [r7, #12]
+ 800090c:	683b      	ldr	r3, [r7, #0]
+ 800090e:	3308      	adds	r3, #8
+ 8000910:	681b      	ldr	r3, [r3, #0]
+ 8000912:	2b66      	cmp	r3, #102	@ 0x66
+ 8000914:	dd06      	ble.n	8000924 <Simple_Tab+0x48>
+ 8000916:	683b      	ldr	r3, [r7, #0]
+ 8000918:	3308      	adds	r3, #8
+ 800091a:	681b      	ldr	r3, [r3, #0]
+ 800091c:	2b69      	cmp	r3, #105	@ 0x69
+ 800091e:	dc01      	bgt.n	8000924 <Simple_Tab+0x48>
+ 8000920:	2301      	movs	r3, #1
+ 8000922:	60fb      	str	r3, [r7, #12]
     if ((data[2] > 0x36) && (data[2] < 0x3A)) Tab.y = 2;
- 800092a:	683b      	ldr	r3, [r7, #0]
- 800092c:	3308      	adds	r3, #8
- 800092e:	681b      	ldr	r3, [r3, #0]
- 8000930:	2b36      	cmp	r3, #54	@ 0x36
- 8000932:	dd06      	ble.n	8000942 <Simple_Tab+0x5a>
- 8000934:	683b      	ldr	r3, [r7, #0]
- 8000936:	3308      	adds	r3, #8
- 8000938:	681b      	ldr	r3, [r3, #0]
- 800093a:	2b39      	cmp	r3, #57	@ 0x39
- 800093c:	dc01      	bgt.n	8000942 <Simple_Tab+0x5a>
- 800093e:	2302      	movs	r3, #2
- 8000940:	60fb      	str	r3, [r7, #12]
+ 8000924:	683b      	ldr	r3, [r7, #0]
+ 8000926:	3308      	adds	r3, #8
+ 8000928:	681b      	ldr	r3, [r3, #0]
+ 800092a:	2b36      	cmp	r3, #54	@ 0x36
+ 800092c:	dd06      	ble.n	800093c <Simple_Tab+0x60>
+ 800092e:	683b      	ldr	r3, [r7, #0]
+ 8000930:	3308      	adds	r3, #8
+ 8000932:	681b      	ldr	r3, [r3, #0]
+ 8000934:	2b39      	cmp	r3, #57	@ 0x39
+ 8000936:	dc01      	bgt.n	800093c <Simple_Tab+0x60>
+ 8000938:	2302      	movs	r3, #2
+ 800093a:	60fb      	str	r3, [r7, #12]
 
-    // Détermination de l'indice x en fonction de la valeur data[3]
+    // x index from data[3]
     if ((data[3] > 0xD5) && (data[3] < 0xD9)) Tab.x = 0;
- 8000942:	683b      	ldr	r3, [r7, #0]
- 8000944:	330c      	adds	r3, #12
- 8000946:	681b      	ldr	r3, [r3, #0]
- 8000948:	2bd5      	cmp	r3, #213	@ 0xd5
- 800094a:	dd06      	ble.n	800095a <Simple_Tab+0x72>
- 800094c:	683b      	ldr	r3, [r7, #0]
- 800094e:	330c      	adds	r3, #12
- 8000950:	681b      	ldr	r3, [r3, #0]
- 8000952:	2bd8      	cmp	r3, #216	@ 0xd8
- 8000954:	dc01      	bgt.n	800095a <Simple_Tab+0x72>
- 8000956:	2300      	movs	r3, #0
- 8000958:	60bb      	str	r3, [r7, #8]
+ 800093c:	683b      	ldr	r3, [r7, #0]
+ 800093e:	330c      	adds	r3, #12
+ 8000940:	681b      	ldr	r3, [r3, #0]
+ 8000942:	2bd5      	cmp	r3, #213	@ 0xd5
+ 8000944:	dd06      	ble.n	8000954 <Simple_Tab+0x78>
+ 8000946:	683b      	ldr	r3, [r7, #0]
+ 8000948:	330c      	adds	r3, #12
+ 800094a:	681b      	ldr	r3, [r3, #0]
+ 800094c:	2bd8      	cmp	r3, #216	@ 0xd8
+ 800094e:	dc01      	bgt.n	8000954 <Simple_Tab+0x78>
+ 8000950:	2300      	movs	r3, #0
+ 8000952:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0xBF) && (data[3] < 0xC3)) Tab.x = 1;
- 800095a:	683b      	ldr	r3, [r7, #0]
- 800095c:	330c      	adds	r3, #12
- 800095e:	681b      	ldr	r3, [r3, #0]
- 8000960:	2bbf      	cmp	r3, #191	@ 0xbf
- 8000962:	dd06      	ble.n	8000972 <Simple_Tab+0x8a>
- 8000964:	683b      	ldr	r3, [r7, #0]
- 8000966:	330c      	adds	r3, #12
- 8000968:	681b      	ldr	r3, [r3, #0]
- 800096a:	2bc2      	cmp	r3, #194	@ 0xc2
- 800096c:	dc01      	bgt.n	8000972 <Simple_Tab+0x8a>
- 800096e:	2301      	movs	r3, #1
- 8000970:	60bb      	str	r3, [r7, #8]
+ 8000954:	683b      	ldr	r3, [r7, #0]
+ 8000956:	330c      	adds	r3, #12
+ 8000958:	681b      	ldr	r3, [r3, #0]
+ 800095a:	2bbf      	cmp	r3, #191	@ 0xbf
+ 800095c:	dd06      	ble.n	800096c <Simple_Tab+0x90>
+ 800095e:	683b      	ldr	r3, [r7, #0]
+ 8000960:	330c      	adds	r3, #12
+ 8000962:	681b      	ldr	r3, [r3, #0]
+ 8000964:	2bc2      	cmp	r3, #194	@ 0xc2
+ 8000966:	dc01      	bgt.n	800096c <Simple_Tab+0x90>
+ 8000968:	2301      	movs	r3, #1
+ 800096a:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0xAC) && (data[3] < 0xB0)) Tab.x = 2;
- 8000972:	683b      	ldr	r3, [r7, #0]
- 8000974:	330c      	adds	r3, #12
- 8000976:	681b      	ldr	r3, [r3, #0]
- 8000978:	2bac      	cmp	r3, #172	@ 0xac
- 800097a:	dd06      	ble.n	800098a <Simple_Tab+0xa2>
- 800097c:	683b      	ldr	r3, [r7, #0]
- 800097e:	330c      	adds	r3, #12
- 8000980:	681b      	ldr	r3, [r3, #0]
- 8000982:	2baf      	cmp	r3, #175	@ 0xaf
- 8000984:	dc01      	bgt.n	800098a <Simple_Tab+0xa2>
- 8000986:	2302      	movs	r3, #2
- 8000988:	60bb      	str	r3, [r7, #8]
+ 800096c:	683b      	ldr	r3, [r7, #0]
+ 800096e:	330c      	adds	r3, #12
+ 8000970:	681b      	ldr	r3, [r3, #0]
+ 8000972:	2bac      	cmp	r3, #172	@ 0xac
+ 8000974:	dd06      	ble.n	8000984 <Simple_Tab+0xa8>
+ 8000976:	683b      	ldr	r3, [r7, #0]
+ 8000978:	330c      	adds	r3, #12
+ 800097a:	681b      	ldr	r3, [r3, #0]
+ 800097c:	2baf      	cmp	r3, #175	@ 0xaf
+ 800097e:	dc01      	bgt.n	8000984 <Simple_Tab+0xa8>
+ 8000980:	2302      	movs	r3, #2
+ 8000982:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0x96) && (data[3] < 0xA0)) Tab.x = 3;
- 800098a:	683b      	ldr	r3, [r7, #0]
- 800098c:	330c      	adds	r3, #12
- 800098e:	681b      	ldr	r3, [r3, #0]
- 8000990:	2b96      	cmp	r3, #150	@ 0x96
- 8000992:	dd06      	ble.n	80009a2 <Simple_Tab+0xba>
- 8000994:	683b      	ldr	r3, [r7, #0]
- 8000996:	330c      	adds	r3, #12
- 8000998:	681b      	ldr	r3, [r3, #0]
- 800099a:	2b9f      	cmp	r3, #159	@ 0x9f
- 800099c:	dc01      	bgt.n	80009a2 <Simple_Tab+0xba>
- 800099e:	2303      	movs	r3, #3
- 80009a0:	60bb      	str	r3, [r7, #8]
+ 8000984:	683b      	ldr	r3, [r7, #0]
+ 8000986:	330c      	adds	r3, #12
+ 8000988:	681b      	ldr	r3, [r3, #0]
+ 800098a:	2b96      	cmp	r3, #150	@ 0x96
+ 800098c:	dd06      	ble.n	800099c <Simple_Tab+0xc0>
+ 800098e:	683b      	ldr	r3, [r7, #0]
+ 8000990:	330c      	adds	r3, #12
+ 8000992:	681b      	ldr	r3, [r3, #0]
+ 8000994:	2b9f      	cmp	r3, #159	@ 0x9f
+ 8000996:	dc01      	bgt.n	800099c <Simple_Tab+0xc0>
+ 8000998:	2303      	movs	r3, #3
+ 800099a:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0x7C) && (data[3] < 0x80)) Tab.x = 4;
- 80009a2:	683b      	ldr	r3, [r7, #0]
- 80009a4:	330c      	adds	r3, #12
- 80009a6:	681b      	ldr	r3, [r3, #0]
- 80009a8:	2b7c      	cmp	r3, #124	@ 0x7c
- 80009aa:	dd06      	ble.n	80009ba <Simple_Tab+0xd2>
- 80009ac:	683b      	ldr	r3, [r7, #0]
- 80009ae:	330c      	adds	r3, #12
- 80009b0:	681b      	ldr	r3, [r3, #0]
- 80009b2:	2b7f      	cmp	r3, #127	@ 0x7f
- 80009b4:	dc01      	bgt.n	80009ba <Simple_Tab+0xd2>
- 80009b6:	2304      	movs	r3, #4
- 80009b8:	60bb      	str	r3, [r7, #8]
+ 800099c:	683b      	ldr	r3, [r7, #0]
+ 800099e:	330c      	adds	r3, #12
+ 80009a0:	681b      	ldr	r3, [r3, #0]
+ 80009a2:	2b7c      	cmp	r3, #124	@ 0x7c
+ 80009a4:	dd06      	ble.n	80009b4 <Simple_Tab+0xd8>
+ 80009a6:	683b      	ldr	r3, [r7, #0]
+ 80009a8:	330c      	adds	r3, #12
+ 80009aa:	681b      	ldr	r3, [r3, #0]
+ 80009ac:	2b7f      	cmp	r3, #127	@ 0x7f
+ 80009ae:	dc01      	bgt.n	80009b4 <Simple_Tab+0xd8>
+ 80009b0:	2304      	movs	r3, #4
+ 80009b2:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0x66) && (data[3] < 0x70)) Tab.x = 5;
- 80009ba:	683b      	ldr	r3, [r7, #0]
- 80009bc:	330c      	adds	r3, #12
- 80009be:	681b      	ldr	r3, [r3, #0]
- 80009c0:	2b66      	cmp	r3, #102	@ 0x66
- 80009c2:	dd06      	ble.n	80009d2 <Simple_Tab+0xea>
- 80009c4:	683b      	ldr	r3, [r7, #0]
- 80009c6:	330c      	adds	r3, #12
- 80009c8:	681b      	ldr	r3, [r3, #0]
- 80009ca:	2b6f      	cmp	r3, #111	@ 0x6f
- 80009cc:	dc01      	bgt.n	80009d2 <Simple_Tab+0xea>
- 80009ce:	2305      	movs	r3, #5
- 80009d0:	60bb      	str	r3, [r7, #8]
+ 80009b4:	683b      	ldr	r3, [r7, #0]
+ 80009b6:	330c      	adds	r3, #12
+ 80009b8:	681b      	ldr	r3, [r3, #0]
+ 80009ba:	2b66      	cmp	r3, #102	@ 0x66
+ 80009bc:	dd06      	ble.n	80009cc <Simple_Tab+0xf0>
+ 80009be:	683b      	ldr	r3, [r7, #0]
+ 80009c0:	330c      	adds	r3, #12
+ 80009c2:	681b      	ldr	r3, [r3, #0]
+ 80009c4:	2b6f      	cmp	r3, #111	@ 0x6f
+ 80009c6:	dc01      	bgt.n	80009cc <Simple_Tab+0xf0>
+ 80009c8:	2305      	movs	r3, #5
+ 80009ca:	60bb      	str	r3, [r7, #8]
     if ((data[3] > 0x4C) && (data[3] < 0x50)) Tab.x = 6;
- 80009d2:	683b      	ldr	r3, [r7, #0]
- 80009d4:	330c      	adds	r3, #12
- 80009d6:	681b      	ldr	r3, [r3, #0]
- 80009d8:	2b4c      	cmp	r3, #76	@ 0x4c
- 80009da:	dd06      	ble.n	80009ea <Simple_Tab+0x102>
- 80009dc:	683b      	ldr	r3, [r7, #0]
- 80009de:	330c      	adds	r3, #12
- 80009e0:	681b      	ldr	r3, [r3, #0]
- 80009e2:	2b4f      	cmp	r3, #79	@ 0x4f
- 80009e4:	dc01      	bgt.n	80009ea <Simple_Tab+0x102>
- 80009e6:	2306      	movs	r3, #6
- 80009e8:	60bb      	str	r3, [r7, #8]
+ 80009cc:	683b      	ldr	r3, [r7, #0]
+ 80009ce:	330c      	adds	r3, #12
+ 80009d0:	681b      	ldr	r3, [r3, #0]
+ 80009d2:	2b4c      	cmp	r3, #76	@ 0x4c
+ 80009d4:	dd06      	ble.n	80009e4 <Simple_Tab+0x108>
+ 80009d6:	683b      	ldr	r3, [r7, #0]
+ 80009d8:	330c      	adds	r3, #12
+ 80009da:	681b      	ldr	r3, [r3, #0]
+ 80009dc:	2b4f      	cmp	r3, #79	@ 0x4f
+ 80009de:	dc01      	bgt.n	80009e4 <Simple_Tab+0x108>
+ 80009e0:	2306      	movs	r3, #6
+ 80009e2:	60bb      	str	r3, [r7, #8]
 
     return Tab;
- 80009ea:	687b      	ldr	r3, [r7, #4]
- 80009ec:	461a      	mov	r2, r3
- 80009ee:	f107 0308 	add.w	r3, r7, #8
- 80009f2:	e893 0003 	ldmia.w	r3, {r0, r1}
- 80009f6:	e882 0003 	stmia.w	r2, {r0, r1}
-}
- 80009fa:	6878      	ldr	r0, [r7, #4]
- 80009fc:	3714      	adds	r7, #20
- 80009fe:	46bd      	mov	sp, r7
- 8000a00:	bc80      	pop	{r7}
- 8000a02:	4770      	bx	lr
+ 80009e4:	687b      	ldr	r3, [r7, #4]
+ 80009e6:	461a      	mov	r2, r3
+ 80009e8:	f107 0308 	add.w	r3, r7, #8
+ 80009ec:	e893 0003 	ldmia.w	r3, {r0, r1}
+ 80009f0:	e882 0003 	stmia.w	r2, {r0, r1}
+ 80009f4:	6878      	ldr	r0, [r7, #4]
+ 80009f6:	3714      	adds	r7, #20
+ 80009f8:	46bd      	mov	sp, r7
+ 80009fa:	bc80      	pop	{r7}
+ 80009fc:	4770      	bx	lr
+ 80009fe:	bf00      	nop
+ 8000a00:	08005ae8 	.word	0x08005ae8
 
 08000a04 <UART_Send>:
 extern UART_HandleTypeDef huart1;
@@ -3061,12 +3052,12 @@ while (1) {
  80017bc:	f06f 0004 	mvn.w	r0, #4
  80017c0:	f7ff f9a6 	bl	8000b10 <ARM_LOGIC>
   //  case 3:
-  //      ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
   //      break;
   //}
 
-  HAL_Delay(10000);
- 80017c4:	f242 7010 	movw	r0, #10000	@ 0x2710
+  HAL_Delay(1000);
+ 80017c4:	f44f 707a 	mov.w	r0, #1000	@ 0x3e8
  80017c8:	f000 fc1c 	bl	8002004 <HAL_Delay>
 
   LCD_Clear();
@@ -3157,11 +3148,11 @@ while (1) {
  8001876:	e76a      	b.n	800174e <main+0x2a>
  8001878:	20000200 	.word	0x20000200
  800187c:	20000220 	.word	0x20000220
- 8001880:	08005ae8 	.word	0x08005ae8
- 8001884:	08005aec 	.word	0x08005aec
+ 8001880:	08005af0 	.word	0x08005af0
+ 8001884:	08005af4 	.word	0x08005af4
  8001888:	66666667 	.word	0x66666667
- 800188c:	08005af0 	.word	0x08005af0
- 8001890:	08005af4 	.word	0x08005af4
+ 800188c:	08005af8 	.word	0x08005af8
+ 8001890:	08005afc 	.word	0x08005afc
 
 08001894 <SystemClock_Config>:
 /**
@@ -4514,7 +4505,7 @@ LoopFillZerobss:
   ldr r1, =_edata
  8001f2c:	20000078 	.word	0x20000078
   ldr r2, =_sidata
- 8001f30:	08005b6c 	.word	0x08005b6c
+ 8001f30:	08005b74 	.word	0x08005b74
   ldr r2, =_sbss
  8001f34:	20000078 	.word	0x20000078
   ldr r4, =_ebss
@@ -10443,7 +10434,7 @@ if (((RCC_ClkInitStruct->ClockType) & RCC_CLOCKTYPE_PCLK1) == RCC_CLOCKTYPE_PCLK
  80040ee:	bf00      	nop
  80040f0:	40022000 	.word	0x40022000
  80040f4:	40021000 	.word	0x40021000
- 80040f8:	08005af8 	.word	0x08005af8
+ 80040f8:	08005b00 	.word	0x08005b00
  80040fc:	2000001c 	.word	0x2000001c
  8004100:	20000020 	.word	0x20000020
 
@@ -10578,8 +10569,8 @@ uint32_t HAL_RCC_GetSysClockFreq(void)
  8004196:	bf00      	nop
  8004198:	40021000 	.word	0x40021000
  800419c:	007a1200 	.word	0x007a1200
- 80041a0:	08005b10 	.word	0x08005b10
- 80041a4:	08005b20 	.word	0x08005b20
+ 80041a0:	08005b18 	.word	0x08005b18
+ 80041a4:	08005b28 	.word	0x08005b28
  80041a8:	003d0900 	.word	0x003d0900
 
 080041ac <HAL_RCC_GetHCLKFreq>:
@@ -10625,7 +10616,7 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
  80041dc:	4618      	mov	r0, r3
  80041de:	bd80      	pop	{r7, pc}
  80041e0:	40021000 	.word	0x40021000
- 80041e4:	08005b08 	.word	0x08005b08
+ 80041e4:	08005b10 	.word	0x08005b10
 
 080041e8 <HAL_RCC_GetPCLK2Freq>:
   * @note   Each time PCLK2 changes, this function must be called to update the
@@ -10651,7 +10642,7 @@ uint32_t HAL_RCC_GetPCLK2Freq(void)
  8004204:	4618      	mov	r0, r3
  8004206:	bd80      	pop	{r7, pc}
  8004208:	40021000 	.word	0x40021000
- 800420c:	08005b08 	.word	0x08005b08
+ 800420c:	08005b10 	.word	0x08005b10
 
 08004210 <RCC_Delay>:
   * @brief  This function provides delay (in milliseconds) based on CPU cycles method.
@@ -13432,10 +13423,10 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  80050ce:	4798      	blx	r3
  80050d0:	3601      	adds	r6, #1
  80050d2:	e7f2      	b.n	80050ba <__libc_init_array+0x1e>
- 80050d4:	08005b64 	.word	0x08005b64
- 80050d8:	08005b64 	.word	0x08005b64
- 80050dc:	08005b64 	.word	0x08005b64
- 80050e0:	08005b68 	.word	0x08005b68
+ 80050d4:	08005b6c 	.word	0x08005b6c
+ 80050d8:	08005b6c 	.word	0x08005b6c
+ 80050dc:	08005b6c 	.word	0x08005b6c
+ 80050e0:	08005b70 	.word	0x08005b70
 
 080050e4 <memcpy>:
  80050e4:	440a      	add	r2, r1
@@ -13473,7 +13464,7 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8005136:	4628      	mov	r0, r5
  8005138:	bd38      	pop	{r3, r4, r5, pc}
  800513a:	bf00      	nop
- 800513c:	08005b22 	.word	0x08005b22
+ 800513c:	08005b2a 	.word	0x08005b2a
 
 08005140 <atan2f>:
  8005140:	f000 b9ae 	b.w	80054a0 <__ieee754_atan2f>
@@ -13886,8 +13877,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  800558c:	e7ab      	b.n	80054e6 <__ieee754_atan2f+0x46>
  800558e:	bf00      	nop
  8005590:	3fc90fdb 	.word	0x3fc90fdb
- 8005594:	08005b30 	.word	0x08005b30
- 8005598:	08005b24 	.word	0x08005b24
+ 8005594:	08005b38 	.word	0x08005b38
+ 8005598:	08005b2c 	.word	0x08005b2c
  800559c:	33bbbd2e 	.word	0x33bbbd2e
  80055a0:	40490fdb 	.word	0x40490fdb
  80055a4:	c0490fdb 	.word	0xc0490fdb
@@ -14215,8 +14206,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8005930:	3e4ccccd 	.word	0x3e4ccccd
  8005934:	401bffff 	.word	0x401bffff
  8005938:	bf800000 	.word	0xbf800000
- 800593c:	08005b3c 	.word	0x08005b3c
- 8005940:	08005b4c 	.word	0x08005b4c
+ 800593c:	08005b44 	.word	0x08005b44
+ 8005940:	08005b54 	.word	0x08005b54
  8005944:	bfc90fdb 	.word	0xbfc90fdb
 
 08005948 <__ieee754_sqrtf>:
@@ -14304,8 +14295,8 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8005a18:	f024 0401 	bic.w	r4, r4, #1
  8005a1c:	e7ed      	b.n	80059fa <__ieee754_sqrtf+0xb2>
  8005a1e:	bf00      	nop
- 8005a20:	08005b60 	.word	0x08005b60
- 8005a24:	08005b5c 	.word	0x08005b5c
+ 8005a20:	08005b68 	.word	0x08005b68
+ 8005a24:	08005b64 	.word	0x08005b64
 
 08005a28 <_init>:
  8005a28:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
@@ -14322,3 +14313,4 @@ static void UART_SetConfig(UART_HandleTypeDef *huart)
  8005a3a:	bc08      	pop	{r3}
  8005a3c:	469e      	mov	lr, r3
  8005a3e:	4770      	bx	lr
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
