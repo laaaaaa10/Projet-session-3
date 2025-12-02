@@ -1,7 +1,8 @@
 #ifndef ADC_H
 #define ADC_H
 
-#include "stm32f0xx_hal.h"
+// *************************** INCLUDES ************************************ //
+#include "main.h"
 
 // Initialise l'ADC et PA3
 void ADC_Init(void);
