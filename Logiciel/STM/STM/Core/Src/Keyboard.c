@@ -13,10 +13,10 @@
 uint8_t Clavier_MX(void)
 {	
     static uint8_t Symbole_Clavier[4][4] = {
-        {'1','2','3','A'},  // Row 0
-        {'4','5','6','B'},  // Row 1
-        {'7','8','9','C'},  // Row 2
-        {'*','0','#','D'}   // Row 3
+        {'1','2','3','A'},
+        {'4','5','6','B'},
+        {'7','8','9','C'},
+        {'*','0','#','D'} 
     };
 
     //static bool Ch_Front = 1;
@@ -28,13 +28,7 @@ uint8_t Clavier_MX(void)
 			uint8_t lecture = Lire_I2C();
 			if (~lecture & (0x80 >> ligne))
 			{
-				//if (Ch_Front){
-				//	Ch_Front = 0;
-					return Symbole_Clavier[col][ligne];
-				//}
-				//else{			
-				//	return 0; // aucune touche
-				//}
+				return Symbole_Clavier[col][ligne];
 			}
 			HAL_Delay(5);	
 		}
