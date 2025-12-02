@@ -38,7 +38,7 @@ Point Lire_Tab(int *Coord_Table){
 
 // ***************************** FUNCTIONS ********************************* //
 Point Simple_Tab(int *data){
-    Point Tab = {0, 0};  // Initialize to invalid!
+    Point Tab = {0, 0};
 
     // y index from data[2]
     if ((data[2] > 0x9E) && (data[2] < 0xA2)) Tab.y = 0;
