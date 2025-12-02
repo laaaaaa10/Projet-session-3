@@ -1,3 +1,7 @@
 {
-  "C_Cpp.intelliSenseEngine": "Default"
+  "C_Cpp.intelliSenseEngine": "Default",
+  "files.associations": {
+    "*.rs": "rust",
+    "adc.h": "c"
+  }
 }
