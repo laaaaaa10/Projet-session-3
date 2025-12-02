@@ -50,10 +50,6 @@ float y;
 float z;
 bool state;
 
-float prev_x = 0;
-float prev_y = 0;
-float prev_z = 0;
-
 // calculated values
 float distance;
 float height;
@@ -61,13 +57,15 @@ float reach;
 float compensation;
 
 int Pivots[5] = {0,0,0,0,0};
+int prev_Pivots[5] = {0,0,0,0,0};
+
 int Estim_delay;
 
 //************************* SETUP MAIN PROGRAM *******************************
 // controlls every parts of the arm
 int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots){
-    x = (float)x_coord;
-    y = (float)y_coord;
+    x = (float)y_coord;
+    y = (float)x_coord;
     z = (float)z_coord;
     state = hand_inst;
 
@@ -94,7 +92,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         (uint8_t)Out_Pivots[4]
     );
     // estimated time of deplacement
-    HAL_Delay(1500);
+    HAL_Delay(Estim_delay);
     // changes the arm state
     HAND_CONTROL(Out_Pivots, state);
 
@@ -106,11 +104,11 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
-
-    // Update previous position at the end
-    prev_x = x;
-    prev_y = y;
-    prev_z = z;
+    
+    // Update previous pivots at the end
+    for (int i = 0; i < 5; i++) {
+        prev_Pivots[i] = Pivots[i];
+    }
     
     return 0;
 }
@@ -121,7 +119,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
 // Calculates the base rotation angle to point the arm toward the target
 // Uses atan2(y,x) to get the angle in the horizontal plane
 void BASE_ROTATION(int *Pivots){
-    Pivots[0] = (int)roundf(atan2f(y, x) * 180.0f / PI);
+    Pivots[0] = (int)roundf(atan2f(y, x) * 180.0f / PI) + 3;
 }
 
 
@@ -333,6 +331,13 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
 // ----- ESTIMATE DELAY ----- //
 //for each 1cm it should take abought 0.5 sec + 1 sec for safety
 void ESTIMATE_DELAY(void) {
-    int short movement_distance = hypotf(hypotf(x - prev_x, y - prev_y), z - prev_z);
-    Estim_delay = (int short)(movement_distance * 1500); 
+    // Find maximum angle change across all motors (except hand)
+    float max_change = 0;
+    for (int i = 0; i < 4; i++) {  // Motors 0-3 only
+        float change = fabsf((float)(Pivots[i] - prev_Pivots[i]));
+        if (change > max_change) max_change = change;
+    }
+    
+    // Time = angle * 14ms/degree + 500ms safety margin
+    Estim_delay = (int)(max_change * 14.0f + 500.0f);
 }

@@ -63,6 +63,7 @@ char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
+int UART_Inputs[8];
 int Out_Pivots[5];
 int test = 0;
 
@@ -130,58 +131,77 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // ----- run main code if pic received shit----- //
-  // prints all the PIC's values on the LCD
+  // get the 8 bits fromt the pic
+  int* temp = UART_Receive();
+  for (int i = 0; i < 8; i++) {
+    UART_Inputs[i] = temp[i];
+  }
+  Point Table_pos = Lire_Tab(UART_Inputs);
+
+
   // Check buttons and set pivot values
 	Valeur_Prnt[0] = Clavier_MX();
 	if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
   
-  test ++;
-  if (test > 4) {
-      test = 0;
-  }
-  switch (test) {
-    case 0:
-        ARM_LOGIC(15, -7, 20, CLOSE, Out_Pivots);  // y=15, x=-7
-        break;
-    case 1:
-        ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
-        break;
-    case 2:
-        ARM_LOGIC(37, 7, 10, CLOSE, Out_Pivots);   // y=37, x=7
-        break;
-    case 3:
-        ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
-        break;
-  }
 
+  ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
   HAL_Delay(1000);
+  ARM_LOGIC(-5, 30, 10, OPEN, Out_Pivots);
 
-  for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
-    Valeur_Prnt[0] = 1 + i + 0x30;
-    if(i == 3) LCD_SetCursor(0,1);
-    LCD_Print(Valeur_Prnt); 
+  //test ++;
+  //if (test > 3) {
+  //    test = 0;
+  //}
+  //switch (test) {
+  //  case 0:
+  //      ARM_LOGIC(15, -7, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+  //      break;
+  //  case 1:
+  //      ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
+  //      break;
+  //  case 2:
+  //      ARM_LOGIC(37, 7, 10, CLOSE, Out_Pivots);   // y=37, x=7
+  //      break;
+  //  case 3:
+  //      ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      break;
+  //}
+
+  HAL_Delay(10000);
+
+  LCD_Clear();
+  
+
+  // prints all the PIC's values on the LCD
+  //for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
+  //      Valeur_Prnt[0] = 1 + i + 0x30;
+  //      if(i == 3) LCD_SetCursor(0,1);
+  //      LCD_Print(Valeur_Prnt); 
+  //      LCD_Print(":"); 
+  //      Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
+  //      LCD_Print(Valeur_Prnt); 
+  //      Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
+  //      LCD_Print(Valeur_Prnt); 
+  //      Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
+  //      LCD_Print(Valeur_Prnt); 
+  //      LCD_Print(" ");
+  //  }
+  //
+    LCD_Print("X"); 
     LCD_Print(":"); 
-    Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
+    Valeur_Prnt[0] = (Table_pos.x /10) + 0x30; // affiche la dizaine
     LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
+    Valeur_Prnt[0] = (Table_pos.x %10)+0x30; // affiche l'unité
     LCD_Print(Valeur_Prnt); 
     LCD_Print(" ");
-  }
-  LCD_Print("X"); 
-  LCD_Print(":"); 
-  Valeur_Prnt[0] = (Membrane.x /10)+0x30; // affiche la dizaine
-  LCD_Print(Valeur_Prnt); 
-  Valeur_Prnt[0] = (Membrane.x %10)+0x30; // affiche l'unité
-  LCD_Print(Valeur_Prnt); 
-  LCD_Print("Y"); 
-  LCD_Print(":"); 
-  Valeur_Prnt[0] = (Membrane.y /10)+0x30; // affiche la dizaine
-  LCD_Print(Valeur_Prnt); 
-  Valeur_Prnt[0] = (Membrane.y %10)+0x30; // affiche l'unité
-  LCD_Print(Valeur_Prnt); 
-  LCD_Print(" ");
+    LCD_Print("Y"); 
+    LCD_Print(":"); 
+    Valeur_Prnt[0] = (Table_pos.y /10)+0x30; // affiche la dizaine
+    LCD_Print(Valeur_Prnt); 
+    Valeur_Prnt[0] = (Table_pos.y %10)+0x30; // affiche l'unité
+    LCD_Print(Valeur_Prnt); 
+    
+  //  LCD_Print(" ");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
