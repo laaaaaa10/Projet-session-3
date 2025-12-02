@@ -1,6 +1,6 @@
-15:25:18 **** Incremental Build of configuration Debug for project STM ****
+17:48:41 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
-arm-none-eabi-gcc "../Core/Src/Keyboard.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Keyboard.d" -MT"Core/Src/Keyboard.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Keyboard.o"
+arm-none-eabi-gcc "../Core/Src/I2C.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/I2C.d" -MT"Core/Src/I2C.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/I2C.o"
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -8,10 +8,10 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  15152	     28	   1852	  17032	   4288	STM.elf
+  14804	     32	   1848	  16684	   412c	STM.elf
 Finished building: default.size.stdout
- 
 Finished building: STM.bin
+ 
  
 Finished building: STM.list
  

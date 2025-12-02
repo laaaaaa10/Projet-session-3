@@ -51,11 +51,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
-
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -131,15 +128,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // ----- run main code if pic received shit----- //
+  
   // get the 8 bits fromt the pic
-  while(1){
-    Valeur_Prnt[0] = Clavier_MX();
-    HAL_UART_Transmit(&huart1, &Valeur_Prnt[0], 1, 1);
-  }
-
-  int* temp = UART_Receive();
+  uint8_t* temp = UART_Receive();
   for (int i = 0; i < 8; i++) {
-    UART_Inputs[i] = temp[i];
+      UART_Inputs[i] = temp[i];  // This now works - uint8_t gets promoted to int
   }
   Point Table_pos = Lire_Tab(UART_Inputs);
 
@@ -192,21 +185,11 @@ while (1) {
   //      LCD_Print(" ");
   //  }
   //
-    LCD_Print("X"); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Table_pos.x /10) + 0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Table_pos.x %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(" ");
-    LCD_Print("Y"); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Table_pos.y /10)+0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Table_pos.y %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
+    LCD_Print("X:"); 
+    LCD_PrintInt(Table_pos.x); 
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y); 
 
-  //  LCD_Print(" ");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -37,7 +37,7 @@ nb-configuration.xml
 funclist
 nbproject/Makefile-*
 disassembly/
-.generated_files/
 .metadata/
+.generated_files/
 
 # End of https://www.toptal.com/developers/gitignore/api/mplabx
