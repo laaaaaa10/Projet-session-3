@@ -13,6 +13,10 @@ typedef struct {
 
 // ************** FUNCTIONS ************** //
 Point Simple_Tab(int *data);
+<<<<<<< HEAD
 Point Lire_Tab(int *Coord_Table);
+=======
+Point Lire_Tab(int *coord_Table);
+>>>>>>> 7582472e49b272c8f873fb4cd3f610f8d8681083
 
 #endif
