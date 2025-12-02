@@ -28,9 +28,6 @@ uint8_t Clavier_MX(void)
 			uint8_t lecture = Lire_I2C();
 			if (~lecture & (0x80 >> ligne))  // check les pipi selectionner
 			{
-<<<<<<< HEAD
-				return Symbole_Clavier[col][ligne];
-=======
 				//if (Ch_Front){
 				//	Ch_Front = 0;
 					return Symbole_Clavier[col][ligne]; 
@@ -38,7 +35,6 @@ uint8_t Clavier_MX(void)
 				//else{			
 				//	return 0; // aucune touche
 				//}
->>>>>>> aee04b05bda67c0ac354960acd4d81bf657f8a75
 			}
 			HAL_Delay(1);	 // delai de configuration de l'i2c
 		}

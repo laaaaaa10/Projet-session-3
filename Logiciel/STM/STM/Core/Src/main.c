@@ -60,7 +60,6 @@ char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
-int UART_Inputs[8];
 int Out_Pivots[5];
 int test = 0;
 
@@ -130,10 +129,7 @@ while (1) {
   // ----- run main code if pic received shit----- //
   
   // get the 8 bits fromt the pic
-  uint8_t* temp = UART_Receive();
-  for (int i = 0; i < 8; i++) {
-      UART_Inputs[i] = temp[i];  // This now works - uint8_t gets promoted to int
-  }
+  uint8_t* UART_Inputs = UART_Receive();
   Point Table_pos = Lire_Tab(UART_Inputs);
 
 
@@ -165,26 +161,9 @@ while (1) {
   //      break;
   //}
 
-  HAL_Delay(1000);
+    HAL_Delay(1000);
 
-  LCD_Clear();
-  
-
-  // prints all the PIC's values on the LCD
-  //for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
-  //      Valeur_Prnt[0] = 1 + i + 0x30;
-  //      if(i == 3) LCD_SetCursor(0,1);
-  //      LCD_Print(Valeur_Prnt); 
-  //      LCD_Print(":"); 
-  //      Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
-  //      LCD_Print(Valeur_Prnt); 
-  //      Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
-  //      LCD_Print(Valeur_Prnt); 
-  //      Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
-  //      LCD_Print(Valeur_Prnt); 
-  //      LCD_Print(" ");
-  //  }
-  //
+    LCD_Clear();
     LCD_Print("X:"); 
     LCD_PrintInt(Table_pos.x); 
     LCD_Print(" Y:"); 
