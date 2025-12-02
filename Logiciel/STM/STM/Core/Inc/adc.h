@@ -1,14 +1,13 @@
-#ifndef ADC_H
-#define ADC_H
+#ifndef INC_ADC_H_
+#define INC_ADC_H_
 
 // *************************** INCLUDES ************************************ //
 #include "main.h"
 
-// Initialise l'ADC et PA3
-void ADC_Init(void);
+// *************************** VARIABLES ************************************ //
 
-// Lit PA3 et renvoie la valeur brute ADC (0-4095)
-uint32_t ADC_Read(void);
 
-#endif // ADC_H
+// ************************ FUNCTION PROTOTYPES **************************** //
+uint16_t ADC_Read_Raw(void);
 
+#endif
