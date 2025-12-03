@@ -95,8 +95,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int Valeur_Prnt[2];
-  Valeur_Prnt[1] = '\0';     // NE PAS TOUCHER C'EST TRÈS IMPORTANT POUR LE LCD
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -151,6 +149,9 @@ while (1) {
     ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
     HAL_Delay(1000);
     ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
+    Point Table_pos = Lire_Tab(UART_Inputs);    
+  
+    HAL_Delay(1000);
 
     //test ++;
     //if (test > 3) {
@@ -170,8 +171,6 @@ while (1) {
     //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
     //      break;
     //}
-
-    HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 
