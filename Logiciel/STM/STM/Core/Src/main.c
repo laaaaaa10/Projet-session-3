@@ -131,6 +131,11 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
+  while(1){
+  uint8_t AAA = Clavier_MX();
+  LCD_PrintInt(AAA);
+  }
+
     uint16_t raw = ADC_Read_Raw();   // lecture ADC
     HAL_Delay(100);
     LCD_Clear();                     // efface l’écran
