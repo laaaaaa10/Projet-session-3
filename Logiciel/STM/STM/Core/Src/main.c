@@ -34,7 +34,6 @@
 /* USER CODE BEGIN PTD */
 /* USER CODE END PTD */
 
-
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TRUE  1
@@ -53,8 +52,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -276,7 +278,7 @@ static void MX_ADC1_Init(void)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -288,9 +290,9 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_41CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -431,7 +433,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RW_Pin|EN_Pin|D4_Pin|D5_Pin
@@ -443,8 +445,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LED_BP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : P1_0_Pin P1_1_Pin P1_2_Pin P1_3_Pin */
-  GPIO_InitStruct.Pin = P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin;
+  /*Configure GPIO pins : P1_1_Pin P1_2_Pin P1_3_Pin */
+  GPIO_InitStruct.Pin = P1_1_Pin|P1_2_Pin|P1_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
