@@ -1,6 +1,6 @@
 // ************************************************************************* //
-// File: 12C.c
-// Done by :
+// File: ADC.c
+// Done by : Jessica Di Stefano
 // Description :
 //
 //
