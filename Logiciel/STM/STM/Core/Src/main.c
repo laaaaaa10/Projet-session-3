@@ -95,8 +95,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int Valeur_Prnt[2];
-  Valeur_Prnt[1] = '\0';     // NE PAS TOUCHER C'EST TRÈS IMPORTANT POUR LE LCD
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -131,20 +129,41 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
-    uint16_t raw = ADC_Read_Raw();   // lecture ADC
+
+    //uint16_t raw = ADC_Read_Raw();   // lecture ADC
     LCD_Clear();                     // efface l’écran
-    LCD_Print("Raw: ");
-    LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    //LCD_Print("Raw: ");
+    //LCD_PrintInt(raw);               // affiche la valeur ADC brute
   
     
     // get the 8 bits fromt the pic
     uint8_t* UART_Inputs = UART_Receive();
-    Point Table_pos = Lire_Tab(UART_Inputs);
-
+    Point Table_pos = Lire_Tab(UART_Inputs);    
+    LCD_Print(" X:");
+    LCD_PrintInt(Table_pos.x); 
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y);
+    LCD_PrintInt(UART_Inputs[0]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[1]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[2]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[3]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[4]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[5]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[6]);
+    LCD_Print(" ");
+    LCD_PrintInt(UART_Inputs[7]);
+    LCD_Print(" ");
   
-    ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-    HAL_Delay(1500);
-    ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
+HAL_Delay(1000);
+    //ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+    //HAL_Delay(1500);
+    //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
 
     //test ++;
     //if (test > 3) {
@@ -165,12 +184,8 @@ while (1) {
     //      break;
     //}
 
-    HAL_Delay(1000);
 
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
+
 
     /* USER CODE END WHILE */
 
