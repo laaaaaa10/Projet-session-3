@@ -75,52 +75,81 @@ int  Estim_delay;
 bool RUN_ONCE = TRUE;
 bool loop = TRUE;
 
+//************************* HELPER FUNCTION *******************************
+// Calculates IK and sends to PIC - returns 0 on success, -1 on failure
+static int MOVE_ARM(int *Out_Pivots, int delay_ms) {
+    BASE_ROTATION(Pivots);
+
+    if (ARM_ROTATIONS(Pivots) != 0) {
+        return -1; // return error code
+    }    
+
+    WRIST_ANGLE(Pivots);
+    PIV_TRANSLATE(Pivots, Out_Pivots);
+
+    if (!VERIFY_PIVOTS(Out_Pivots)) {
+        return -1; // return error code
+    }
+
+    // sends the pivots value to the PIC
+    UART_Send(
+        (uint8_t)Out_Pivots[0],
+        (uint8_t)Out_Pivots[1],
+        (uint8_t)Out_Pivots[2],
+        (uint8_t)Out_Pivots[3],
+        (uint8_t)Out_Pivots[4]
+    );
+
+    HAL_Delay(delay_ms);
+    return 0;
+}
+
 //************************* SETUP MAIN PROGRAM *******************************
 // controlls every parts of the arm
 int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots) {
-    bool RUN_ONCE = TRUE;  // Local, fresh each call
-    bool loop = FALSE;
+    bool was_auto = (z_coord == AUTO);
+    
+    x = (float)y_coord;
+    y = (float)x_coord;
+    state = hand_inst;
 
-    // shitty fix to make it move in 2 steps if you put the height at AUTO
-    while (RUN_ONCE || loop) {
-        RUN_ONCE = FALSE;
-        loop = FALSE;
+    // Move to position (at z=10 if AUTO, else z_coord)
+    z = (z_coord == AUTO) ? 10.0f : (float)z_coord;
+    ESTIMATE_DELAY();
 
-        x = (float)y_coord;
-        y = (float)x_coord;
-        z = (float)z_coord;
-        state = hand_inst;
-
-        BASE_ROTATION(Pivots);
-
-        if (ARM_ROTATIONS(Pivots) != 0) {
-            return -1; // return error code
-        }    
-
-        WRIST_ANGLE(Pivots);
-        PIV_TRANSLATE(Pivots, Out_Pivots);
-        ESTIMATE_DELAY();
-
-        if (!VERIFY_PIVOTS(Out_Pivots)) {
+    // Linear interpolation: 2 steps if distance > 15cm to help move straight
+    if (estim_distance > 15) {
+        float final_x = x;
+        float final_y = y;
+        int half_delay = Estim_delay / 2;
+        
+        // 3/4 of the way
+        x = Old_x + (final_x - Old_x) * 0.75f;
+        y = Old_y + (final_y - Old_y) * 0.75f;
+        
+        if (MOVE_ARM(Out_Pivots, half_delay) != 0) {
             return -1; // return error code
         }
+        
+        // final position
+        x = final_x;
+        y = final_y;
+        
+        if (MOVE_ARM(Out_Pivots, half_delay) != 0) {
+            return -1; // return error code
+        }
+    } else {
+        if (MOVE_ARM(Out_Pivots, Estim_delay) != 0) {
+            return -1; // return error code
+        }
+    }
 
-        // sends the pivots value to the PIC
-        UART_Send(
-            (uint8_t)Out_Pivots[0],
-            (uint8_t)Out_Pivots[1],
-            (uint8_t)Out_Pivots[2],
-            (uint8_t)Out_Pivots[3],
-            (uint8_t)Out_Pivots[4]
-        );
+    // If AUTO, lower to z=6
+    if (was_auto) {
+        z = 6.0f;
 
-        // estimated time of deplacement
-        HAL_Delay(Estim_delay);
-
-        // if when to position lower z and redo the logic
-        if (z_coord == AUTO) {
-            loop = TRUE;
-            z_coord = 7;
+        if (MOVE_ARM(Out_Pivots, 800) != 0) {
+            return -1; // return error code
         }
     }
     
@@ -133,6 +162,13 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
+    HAL_Delay(500);  // wait for hand to grab/release
+    
+    // If AUTO, raise back up after grabbing
+    if (was_auto) {
+        z = 16.0f;
+        MOVE_ARM(Out_Pivots, 800);  // ignore error, just skip if unreachable
+    }
     
     // Update previous pivots at the end
     Old_x = x;
@@ -163,7 +199,7 @@ int ARM_ROTATIONS(int *Pivots) {
     
     height = z;
     // used later to have a 2 step movement
-    if ((int)height == AUTO) height = 10.0f;
+    if ((int)height == AUTO) height = 12.0f;
     
     // Vertical offset and also need to apply
     // compensation based on distance
@@ -363,7 +399,7 @@ void ESTIMATE_DELAY(void) {
     estim_distance = (int)hypotf(Old_x-x, Old_y-y);
 
     // i genuenly dont know how i cam up with that but it works
-    Estim_delay = (int)((estim_distance * 100) + 500.0f);
+    Estim_delay = (int)(estim_distance * 350);
     
     // caps it to not be too long
     if (Estim_delay > 3000) Estim_delay = 3000;

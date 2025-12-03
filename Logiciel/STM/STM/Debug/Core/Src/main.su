@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ../Core/Src/main.c:96:5:main	16	static
+=======
+../Core/Src/main.c:94:5:main	32	static
+>>>>>>> 0a56eeec5dc352a66d6a7f3c10171f8649d9ae26
 ../Core/Src/main.c:189:6:SystemClock_Config	88	static
 ../Core/Src/main.c:236:13:MX_ADC1_Init	24	static
 ../Core/Src/main.c:283:13:MX_I2C1_Init	8	static

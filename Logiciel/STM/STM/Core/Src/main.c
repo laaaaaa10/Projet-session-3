@@ -131,21 +131,34 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
-
     uint16_t raw = ADC_Read_Raw();   // lecture ADC
+    HAL_Delay(100);
     LCD_Clear();                     // efface l’écran
-    //LCD_Print("Raw: ");
-    //LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    LCD_Print("Raw: ");              // oh yeah print me raw baby
+    LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    LCD_Print("we gay fr");
   
     
     // get the 8 bits fromt the pic
-    //uint8_t* UART_Inputs = UART_Receive();
-    //Point Table_pos = Lire_Tab(UART_Inputs);
+    uint8_t* UART_Inputs = UART_Receive();
+    Point Table_pos = Lire_Tab(UART_Inputs);
 
-  
-    //ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-    //HAL_Delay(1500);
-    //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
+    
+    LCD_Print(" X:");
+    LCD_PrintInt(Table_pos.x); 
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y);
+
+    if ((Table_pos.x != 0) && (Table_pos.y != 0)) {
+        ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+        HAL_Delay(1000);
+        ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
+    }
+    else {
+        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+    }
+
+    HAL_Delay(1000);
 
     //test ++;
     //if (test > 3) {
@@ -166,15 +179,6 @@ while (1) {
     //      break;
     //}
 
-
-
-    //LCD_Print(" X:");
-    //LCD_PrintInt(Table_pos.x);
-    //LCD_Print(" Y:");
-    //LCD_PrintInt(Table_pos.y);
-    //LCD_Print(" ");
-    LCD_PrintInt(raw);
-HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
