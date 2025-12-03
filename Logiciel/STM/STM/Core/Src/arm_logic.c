@@ -65,7 +65,11 @@ float compensation;
 int Pivots[5] = {0,0,0,0,0};
 int prev_Pivots[5] = {0,0,0,0,0};
 
-int Estim_delay;
+// estim delay variables
+float Old_x; 
+float Old_y; 
+short estim_distance;
+short Estim_delay;
 
 bool RUN_ONCE = TRUE;
 bool loop = TRUE;
@@ -116,7 +120,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         // if when to position lower z and redo the logic
         if (z_coord == AUTO) {
             loop = TRUE;
-            z_coord = 10;
+            z_coord = 7;
         }
     }
 
@@ -130,10 +134,9 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     );
     
     // Update previous pivots at the end
-    for (int i = 0; i < 5; i++) {
-        prev_Pivots[i] = Pivots[i];
-    }
-    
+    Old_x = x;
+    Old_y = y;
+
     return 0;
 }
 
@@ -159,7 +162,7 @@ int ARM_ROTATIONS(int *Pivots) {
     
     height = z;
     // used later to have a 2 step movement
-    if ((int)height == AUTO) height = 15.0f;
+    if ((int)height == AUTO) height = 10.0f;
     
     // Vertical offset and also need to apply
     // compensation based on distance
@@ -357,13 +360,11 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
 // ----- ESTIMATE DELAY ----- //
 //for each 1cm it should take abought 0.5 sec + 1 sec for safety
 void ESTIMATE_DELAY(void) {
-    // Find maximum angle change across all motors (except hand)
-    float max_change = 0;
-    for (int i = 0; i < 4; i++) {  // Motors 0-3 only
-        float change = fabsf((float)(Pivots[i] - prev_Pivots[i]));
-        if (change > max_change) max_change = change;
-    }
+    estim_distance = hypotf(Old_x-x, Old_y-y);
+
+    // i genuenly dont know how i cam up with that but it works
+    Estim_delay = (int)((estim_distance * 400) + 500.0f);
     
-    // Time = angle * 14ms/degree + 500ms safety margin
-    Estim_delay = (int)(max_change * 14.0f + 500.0f);
+    // caps it to not be too long
+    if (Estim_delay > 7500) Estim_delay = 7500;
 }
