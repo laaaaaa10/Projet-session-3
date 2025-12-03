@@ -51,11 +51,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
-
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -63,7 +60,6 @@ char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
-int UART_Inputs[8];
 int Out_Pivots[5];
 int test = 0;
 
@@ -131,6 +127,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // ----- run main code if pic received shit----- //
+  
   // get the 8 bits fromt the pic
 
     // test adc
@@ -148,15 +145,9 @@ while (1) {
   }
   Point Table_pos = Lire_Tab(UART_Inputs);
 
-
-  // Check buttons and set pivot values
-	Valeur_Prnt[0] = Clavier_MX();
-	if (Valeur_Prnt[0] != 0){LCD_Print(Valeur_Prnt);} 
-  
-
   ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
-  HAL_Delay(1000);
-  ARM_LOGIC(-5, 30, 10, OPEN, Out_Pivots);
+  HAL_Delay(1500);
+  ARM_LOGIC(-5, 35, 10, OPEN, Out_Pivots);
 
   //test ++;
   //if (test > 3) {
@@ -164,54 +155,27 @@ while (1) {
   //}
   //switch (test) {
   //  case 0:
-  //      ARM_LOGIC(15, -7, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
   //      break;
   //  case 1:
-  //      ARM_LOGIC(37, -7, 10, OPEN, Out_Pivots);  // y=37, x=-7
+  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
   //      break;
   //  case 2:
-  //      ARM_LOGIC(37, 7, 10, CLOSE, Out_Pivots);   // y=37, x=7
+  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
   //      break;
   //  case 3:
-  //      ARM_LOGIC(15, 7, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
   //      break;
   //}
 
-  HAL_Delay(10000);
+    HAL_Delay(5000);
 
-  LCD_Clear();
-  
+    LCD_Clear();
+    LCD_Print("X:"); 
+    LCD_PrintInt(Table_pos.x); 
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y);
 
-  // prints all the PIC's values on the LCD
-  //for (int i = 0; i < 5; i++){   // code pour afficher chaque valeur ds moteur sur le lcd
-  //      Valeur_Prnt[0] = 1 + i + 0x30;
-  //      if(i == 3) LCD_SetCursor(0,1);
-  //      LCD_Print(Valeur_Prnt); 
-  //      LCD_Print(":"); 
-  //      Valeur_Prnt[0] = (Out_Pivots[i] /100)+0x30; // affiche la centaine
-  //      LCD_Print(Valeur_Prnt); 
-  //      Valeur_Prnt[0] = ((Out_Pivots[i] /10)%10)+0x30; // affiche la dizaine
-  //      LCD_Print(Valeur_Prnt); 
-  //      Valeur_Prnt[0] = (Out_Pivots[i] %10)+0x30; // affiche l'unité
-  //      LCD_Print(Valeur_Prnt); 
-  //      LCD_Print(" ");
-  //  }
-  //
-    LCD_Print("X"); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Table_pos.x /10) + 0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Table_pos.x %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
-    LCD_Print(" ");
-    LCD_Print("Y"); 
-    LCD_Print(":"); 
-    Valeur_Prnt[0] = (Table_pos.y /10)+0x30; // affiche la dizaine
-    LCD_Print(Valeur_Prnt); 
-    Valeur_Prnt[0] = (Table_pos.y %10)+0x30; // affiche l'unité
-    LCD_Print(Valeur_Prnt); 
-    
-  //  LCD_Print(" ");
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
