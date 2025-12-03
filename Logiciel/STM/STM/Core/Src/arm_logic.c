@@ -64,12 +64,13 @@ float compensation;
 
 int Pivots[5] = {0,0,0,0,0};
 int prev_Pivots[5] = {0,0,0,0,0};
+int prev_hand_pwm = 0;
 
 // estim delay variables
 float Old_x; 
 float Old_y; 
-short estim_distance;
-short Estim_delay;
+int  estim_distance;
+int  Estim_delay;
 
 bool RUN_ONCE = TRUE;
 bool loop = TRUE;
@@ -112,10 +113,9 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
             (uint8_t)Out_Pivots[3],
             (uint8_t)Out_Pivots[4]
         );
+
         // estimated time of deplacement
         HAL_Delay(Estim_delay);
-        // changes the arm state
-        HAND_CONTROL(Out_Pivots, state);
 
         // if when to position lower z and redo the logic
         if (z_coord == AUTO) {
@@ -123,8 +123,9 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
             z_coord = 7;
         }
     }
-
+    
     // controll the hand (keeps the arm at the same pos)
+    HAND_CONTROL(Out_Pivots, state);
     UART_Send(
         (uint8_t)Out_Pivots[0],
         (uint8_t)Out_Pivots[1],
@@ -267,6 +268,7 @@ void HAND_CONTROL(int *Out_Pivots, bool hand_state) {
     } else {
         Out_Pivots[4] = 205;
     }
+    prev_hand_pwm = Out_Pivots[4];  // save for next time
 }
 
 
@@ -333,10 +335,8 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     // pivot3: wrist, 327° → PWM 0, 25° → PWM 205
     Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 327, 25);
     
-    // pivot4: gripper, direct mapping (0-125)
-    if (Pivots[4] < 0) Out_Pivots[4] = 0;
-    else if (Pivots[4] > 125) Out_Pivots[4] = 125;
-    else Out_Pivots[4] = Pivots[4];
+    // pivot4: keep PREVIOUS hand state for now
+    Out_Pivots[4] = prev_hand_pwm;
 }
 
 
@@ -360,11 +360,11 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
 // ----- ESTIMATE DELAY ----- //
 //for each 1cm it should take abought 0.5 sec + 1 sec for safety
 void ESTIMATE_DELAY(void) {
-    estim_distance = hypotf(Old_x-x, Old_y-y);
+    estim_distance = (int)hypotf(Old_x-x, Old_y-y);
 
     // i genuenly dont know how i cam up with that but it works
-    Estim_delay = (int)((estim_distance * 400) + 500.0f);
+    Estim_delay = (int)((estim_distance * 100) + 500.0f);
     
     // caps it to not be too long
-    if (Estim_delay > 7500) Estim_delay = 7500;
+    if (Estim_delay > 3000) Estim_delay = 3000;
 }
