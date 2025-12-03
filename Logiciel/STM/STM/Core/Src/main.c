@@ -145,12 +145,15 @@ while (1) {
     LCD_Print(" Y:"); 
     LCD_PrintInt(Table_pos.y);
 
+    if ((Table_pos.x != 0) && (Table_pos.y != 0)) {
+        ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+        HAL_Delay(1000);
+        ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
+    }
+    else {
+        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+    }
 
-    ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-    HAL_Delay(1000);
-    ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
-    Point Table_pos = Lire_Tab(UART_Inputs);    
-  
     HAL_Delay(1000);
 
     //test ++;
