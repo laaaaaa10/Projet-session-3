@@ -1,5 +1,5 @@
 // ************************************************************************* // 
-// File: Me_Tac.c
+// File: Mem_Tac.c
 // Done by :
 // Description :
 //
@@ -15,19 +15,19 @@ Point Lire_Tab(uint8_t* Coord_Table){
     
     // Tableau 2D de Points
     Point Tableau_Mem[7][3] = {
-        {{-3,17},{1,17},{5,17}},
-        {{-3,20},{1,20},{5,20}},
-        {{-3,23},{1,23},{5,23}},
-        {{-3,26},{1,26},{5,26}},
-        {{-3,29},{1,29},{5,29}},
-        {{-3,32},{1,32},{5,32}},
-        {{-3,35},{1,35},{5,35}} 
+        {{-3,17},{0,17},{6,17}},
+        {{-3,20},{0,20},{6,20}},
+        {{-3,23},{0,23},{6,23}},
+        {{-3,26},{0,26},{6,26}},
+        {{-3,29},{0,29},{6,29}},
+        {{-3,32},{0,32},{6,32}},
+        {{-3,35},{0,35},{6,35}} 
     };
 
     Point Tab = Simple_Tab(Coord_Table);
 
     // Bounds check - return {0,0} if invalid
-    if ((Tab.x < 0) && (Tab.y < 0)){
+    if ((Tab.x < 0) || (Tab.y < 0)){  // FIX: was && (would miss single -1)
         return Coord_Mem;
     }
 
@@ -40,14 +40,14 @@ Point Lire_Tab(uint8_t* Coord_Table){
 Point Simple_Tab(uint8_t* data){
     Point Tab = {-1, -1};
 
-    if ((data[4] == 255) && (data[4] == 255)) return Tab; // Vérif si pas de poids
+    if ((data[3] == 255) && (data[4] == 255)) return Tab;  // FIX: was data[4] twice
 
-    // y index from data[2]
+    // y index from data[4]
     if       (data[4] >  130)                     Tab.y = 0;
     else if ((data[4] <= 130) && (data[4] > 80))  Tab.y = 1;
     else if  (data[4] <= 80 )                     Tab.y = 2;
 
-    // x index from data[4]
+    // x index from data[3]
     if       (data[3] >  220)                     Tab.x = 0;
     else if ((data[3] <= 220) && (data[3] > 210)) Tab.x = 1;
     else if ((data[3] <= 210) && (data[3] > 190)) Tab.x = 2;

@@ -27,7 +27,6 @@
 #include "UART_Com.h"
 #include "Mem_Tac.h"
 #include <stdbool.h>
-#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -59,7 +58,6 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
@@ -130,11 +128,10 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
     uint16_t raw = ADC_Read_Raw();   // lecture ADC
-    HAL_Delay(100);
+    
     LCD_Clear();                     // efface l’écran
     LCD_Print("Raw: ");              // oh yeah print me raw baby
     LCD_PrintInt(raw);               // affiche la valeur ADC brute
-    LCD_Print("we gay fr");
   
     
     // get the 8 bits fromt the pic
@@ -147,14 +144,22 @@ while (1) {
     LCD_Print(" Y:"); 
     LCD_PrintInt(Table_pos.y);
 
-    if ((Table_pos.x != 0) && (Table_pos.y != 0)) {
+    // execute the full arm logic if there is something onn the table
+    if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
         ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
         HAL_Delay(1000);
-        ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
+        ARM_LOGIC(-4, 40, 13, CLOSE, Out_Pivots);
+        HAL_Delay(750);
+        ARM_LOGIC(-3.5, 40, 9,  OPEN,  Out_Pivots);
+        HAL_Delay(750);
+        ARM_LOGIC(-3.5, 37, 12, OPEN,  Out_Pivots);
     }
     else {
         ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
     }
+
+    LCD_Set(0, 3);
+    LCD_Print("we gay fr");
 
     HAL_Delay(1000);
 
