@@ -63,6 +63,7 @@ Point Membrane = {0,0};
 
 int Out_Pivots[5];
 int test = 0;
+int weight;
 
 /* USER CODE END PV */
 
@@ -127,7 +128,7 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
-    uint16_t raw = ADC_Read_Raw();   // lecture ADC
+  // lecture ADC
     
     LCD_Clear();                     // efface l’écran
     LCD_Print("Raw: ");              // oh yeah print me raw baby
@@ -137,7 +138,6 @@ while (1) {
     // get the 8 bits fromt the pic
     uint8_t* UART_Inputs = UART_Receive();
     Point Table_pos = Lire_Tab(UART_Inputs);
-
     
     LCD_Print(" X:");
     LCD_PrintInt(Table_pos.x); 
@@ -148,9 +148,31 @@ while (1) {
     if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
         ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
         HAL_Delay(1500);
-        ARM_LOGIC(-3.75, 41, 10, OPEN,  Out_Pivots);
+        ARM_LOGIC(-3.75, 41, 11.5, OPEN,  Out_Pivots);
+        HAL_Delay(2000);
+        
+        // test for the wight and the go to its desired section
+        uint16_t weight = ADC_Read_Raw();
+        ARM_LOGIC(-3.75, 41, 7, CLOSE,  Out_Pivots);
         HAL_Delay(1000);
+        ARM_LOGIC(-3.75, 41, 11.5, CLOSE,  Out_Pivots);
+    
+      // weight 20G 
+        if (weight = 1500) {
+            ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); }
+      // weight 50G 
+        else if (weight = 2500) {
+            ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); }
+      // weight 80G 
+        else if (weight = 3500) {
+            ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        }
+
+      // once done proceed to kill itself
+        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
     }
+
+    // if no wieght just wait at the center of the table
     else {
         ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
     }
