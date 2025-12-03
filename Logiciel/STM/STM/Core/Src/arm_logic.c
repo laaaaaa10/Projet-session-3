@@ -115,7 +115,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         // mid way pos (raised +5cm) - best effort, skip if unreachable
         x = Old_x + (final_x - Old_x) * 0.60f;
         y = Old_y + (final_y - Old_y) * 0.60f;
-        z = final_z + 5.0f;
+        z = final_z + 9.0f;
         
         MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness
         
@@ -135,7 +135,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
 
     // If AUTO, lower to z=6 (grab position)
     if (was_auto) {
-        z = 6.0f;
+        z = 7.0f;
         MOVE_ARM(Out_Pivots, 800);  // best effort, arm is already close
     }
     
@@ -185,7 +185,7 @@ int ARM_ROTATIONS(int *Pivots) {
     
     height = z;
     // used later to have a 2 step movement
-    if ((int)height == AUTO) height = 11.0f;
+    if ((int)height == AUTO) height = 12.0f;
     
     // Vertical offset and also need to apply
     // compensation based on distance
@@ -382,7 +382,7 @@ void ESTIMATE_DELAY(void) {
     estim_distance = (int)hypotf(Old_x-x, Old_y-y);
 
     // i genuenly dont know how i cam up with that but it works
-    Estim_delay = (int)(estim_distance * 200);
+    Estim_delay = (int)(estim_distance * 350);
     
     // caps it to not be too long
     if (Estim_delay > 4000) Estim_delay = 4000;

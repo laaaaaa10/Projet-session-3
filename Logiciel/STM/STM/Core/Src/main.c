@@ -147,12 +147,9 @@ while (1) {
     // execute the full arm logic if there is something onn the table
     if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
         ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+        HAL_Delay(1500);
+        ARM_LOGIC(-3.75, 41, 10, OPEN,  Out_Pivots);
         HAL_Delay(1000);
-        ARM_LOGIC(-4, 40, 13, CLOSE, Out_Pivots);
-        HAL_Delay(750);
-        ARM_LOGIC(-3.5, 40, 9,  OPEN,  Out_Pivots);
-        HAL_Delay(750);
-        ARM_LOGIC(-3.5, 37, 12, OPEN,  Out_Pivots);
     }
     else {
         ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
