@@ -27,7 +27,6 @@
 #include "UART_Com.h"
 #include "Mem_Tac.h"
 #include <stdbool.h>
-#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -61,12 +60,12 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
 int Out_Pivots[5];
 int test = 0;
+int weight;
 
 /* USER CODE END PV */
 
@@ -131,37 +130,57 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
-  while(1){
-  uint8_t AAA = Clavier_MX();
-  LCD_PrintInt(AAA);
-  }
-
-    uint16_t raw = ADC_Read_Raw();   // lecture ADC
-    HAL_Delay(100);
+  // lecture ADC
+    
     LCD_Clear();                     // efface l’écran
     LCD_Print("Raw: ");              // oh yeah print me raw baby
     LCD_PrintInt(raw);               // affiche la valeur ADC brute
-    LCD_Print("we gay fr");
   
     
     // get the 8 bits fromt the pic
     uint8_t* UART_Inputs = UART_Receive();
     Point Table_pos = Lire_Tab(UART_Inputs);
-
     
     LCD_Print(" X:");
     LCD_PrintInt(Table_pos.x); 
     LCD_Print(" Y:"); 
     LCD_PrintInt(Table_pos.y);
 
-    if ((Table_pos.x != 0) && (Table_pos.y != 0)) {
+    // execute the full arm logic if there is something onn the table
+    if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
         ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+        HAL_Delay(1500);
+        ARM_LOGIC(-3.75, 41, 11.5, OPEN,  Out_Pivots);
+        HAL_Delay(2000);
+        
+        // test for the wight and the go to its desired section
+        uint16_t weight = ADC_Read_Raw();
+        ARM_LOGIC(-3.75, 41, 7, CLOSE,  Out_Pivots);
         HAL_Delay(1000);
-        ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
+        ARM_LOGIC(-3.75, 41, 11.5, CLOSE,  Out_Pivots);
+    
+      // weight 20G 
+        if (weight = 1500) {
+            ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); }
+      // weight 50G 
+        else if (weight = 2500) {
+            ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); }
+      // weight 80G 
+        else if (weight = 3500) {
+            ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        }
+
+      // once done proceed to kill itself
+        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
     }
+
+    // if no wieght just wait at the center of the table
     else {
         ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
     }
+
+    LCD_Set(0, 3);
+    LCD_Print("we gay fr");
 
     HAL_Delay(1000);
 
