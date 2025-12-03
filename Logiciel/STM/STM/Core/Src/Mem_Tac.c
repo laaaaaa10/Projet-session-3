@@ -40,24 +40,21 @@ Point Lire_Tab(uint8_t* Coord_Table){
 Point Simple_Tab(uint8_t* data){
     Point Tab = {-1, -1};
 
-    if (_data == NULL) return Tab;
+    if (data == NULL) return Tab;
 
     // y index from data[2]
-    if       (_data[4] >  210)                      Tab.y = 0;
-    else if ((_data[4] <= 210) && (_data[4] > 100)) Tab.y = 1;
-    else if  (_data[4] <= 100)                      Tab.y = 2;
+    if       (data[4] >  210)                     Tab.y = 0;
+    else if ((data[4] <= 210) && (data[4] > 100)) Tab.y = 1;
+    else if  (data[4] <= 100)                     Tab.y = 2;
 
     // x index from data[4]
-    if       (_data[3] >  220)                      Tab.x = 0;
-    else if ((_data[3] <= 220) && (_data[3] > 210)) Tab.x = 1;
-    else if ((_data[3] <= 210) && (_data[3] > 170)) Tab.x = 2;
-    else if ((_data[3] <= 170) && (_data[3] > 160)) Tab.x = 3;
-    else if ((_data[3] <= 160) && (_data[3] > 140)) Tab.x = 4;
-    else if ((_data[3] <= 140) && (_data[3] > 100)) Tab.x = 5;
-    else if (_data[3] <= 100 )                      Tab.x = 6;
-
-
-    LCD_PrintInt(Tab.x); 
-    LCD_PrintInt(Tab.y); 
+    if       (data[3] >  220)                     Tab.x = 0;
+    else if ((data[3] <= 220) && (data[3] > 210)) Tab.x = 1;
+    else if ((data[3] <= 210) && (data[3] > 170)) Tab.x = 2;
+    else if ((data[3] <= 170) && (data[3] > 160)) Tab.x = 3;
+    else if ((data[3] <= 160) && (data[3] > 140)) Tab.x = 4;
+    else if ((data[3] <= 140) && (data[3] > 100)) Tab.x = 5;
+    else if  (data[3] <= 100 )                    Tab.x = 6;
+    
     return Tab;
 }
