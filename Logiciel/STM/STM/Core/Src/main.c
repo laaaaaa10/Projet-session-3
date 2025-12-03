@@ -141,10 +141,16 @@ while (1) {
     uint8_t* UART_Inputs = UART_Receive();
     Point Table_pos = Lire_Tab(UART_Inputs);
 
-  
+    
+    LCD_Print(" X:");
+    LCD_PrintInt(Table_pos.x); 
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y);
+
+
     ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-    HAL_Delay(1500);
-    ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
+    HAL_Delay(1000);
+    ARM_LOGIC(-3, 40, 13, OPEN, Out_Pivots);
 
     //test ++;
     //if (test > 3) {
@@ -166,11 +172,6 @@ while (1) {
     //}
 
     HAL_Delay(1000);
-
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
 
     /* USER CODE END WHILE */
 
