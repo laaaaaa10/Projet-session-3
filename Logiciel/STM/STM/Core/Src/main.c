@@ -38,10 +38,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TRUE 1
+#define TRUE  1
 #define FALSE 0
-#define OPEN 1
+
+#define OPEN  1
 #define CLOSE 0
+
+#define AUTO 67
 
 /* USER CODE END PD */
 
@@ -145,9 +148,9 @@ while (1) {
   }
   Point Table_pos = Lire_Tab(UART_Inputs);
 
-  ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
+  ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
   HAL_Delay(1500);
-  ARM_LOGIC(-5, 35, 10, OPEN, Out_Pivots);
+  ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
 
   //test ++;
   //if (test > 3) {

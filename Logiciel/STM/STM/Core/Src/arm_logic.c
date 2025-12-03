@@ -27,6 +27,7 @@ Z
 #include "main.h"
 #include "arm_logic.h"
 #include "UART_Com.h"
+#include "lcd.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
@@ -34,8 +35,13 @@ Z
 // *************************** DEFINES ************************************ //
 #define PI 3.14159f
 
-#define OPEN 1
-#define CLOSE 0
+#define OPEN   1
+#define CLOSE  0
+
+#define TRUE   1
+#define FALSE  0
+
+#define AUTO   67
 
 // *************************** VARIABLES ************************************ //
 extern UART_HandleTypeDef huart1;
@@ -61,40 +67,58 @@ int prev_Pivots[5] = {0,0,0,0,0};
 
 int Estim_delay;
 
+bool RUN_ONCE = TRUE;
+bool loop = TRUE;
+
 //************************* SETUP MAIN PROGRAM *******************************
 // controlls every parts of the arm
-int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots){
-    x = (float)y_coord;
-    y = (float)x_coord;
-    z = (float)z_coord;
-    state = hand_inst;
+int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots) {
+    bool RUN_ONCE = TRUE;  // Local, fresh each call
+    bool loop = FALSE;
 
-    BASE_ROTATION(Pivots);
-    
-    if (ARM_ROTATIONS(Pivots) != 0) {
-        return -1; // return error code
-    }    
-    
-    WRIST_ANGLE(Pivots);
-    PIV_TRANSLATE(Pivots, Out_Pivots);
-    ESTIMATE_DELAY();
+    // shitty fix to make it move in 2 steps if you put the height at AUTO
+    while (RUN_ONCE || loop) {
+        RUN_ONCE = FALSE;
+        loop = FALSE;
 
-    if (!VERIFY_PIVOTS(Out_Pivots)) {
-        return -1; // return error code
+        x = (float)y_coord;
+        y = (float)x_coord;
+        z = (float)z_coord;
+        state = hand_inst;
+
+        BASE_ROTATION(Pivots);
+
+        if (ARM_ROTATIONS(Pivots) != 0) {
+            return -1; // return error code
+        }    
+
+        WRIST_ANGLE(Pivots);
+        PIV_TRANSLATE(Pivots, Out_Pivots);
+        ESTIMATE_DELAY();
+
+        if (!VERIFY_PIVOTS(Out_Pivots)) {
+            return -1; // return error code
+        }
+
+        // sends the pivots value to the PIC
+        UART_Send(
+            (uint8_t)Out_Pivots[0],
+            (uint8_t)Out_Pivots[1],
+            (uint8_t)Out_Pivots[2],
+            (uint8_t)Out_Pivots[3],
+            (uint8_t)Out_Pivots[4]
+        );
+        // estimated time of deplacement
+        HAL_Delay(Estim_delay);
+        // changes the arm state
+        HAND_CONTROL(Out_Pivots, state);
+
+        // if when to position lower z and redo the logic
+        if (z_coord == AUTO) {
+            loop = TRUE;
+            z_coord = 10;
+        }
     }
-
-    // sends the pivots value to the PIC
-    UART_Send(
-        (uint8_t)Out_Pivots[0],
-        (uint8_t)Out_Pivots[1],
-        (uint8_t)Out_Pivots[2],
-        (uint8_t)Out_Pivots[3],
-        (uint8_t)Out_Pivots[4]
-    );
-    // estimated time of deplacement
-    HAL_Delay(Estim_delay);
-    // changes the arm state
-    HAND_CONTROL(Out_Pivots, state);
 
     // controll the hand (keeps the arm at the same pos)
     UART_Send(
@@ -133,10 +157,12 @@ int ARM_ROTATIONS(int *Pivots) {
     // Horizontal distance from base to target
     distance = hypotf(x, y);
     
+    height = z;
+    // used later to have a 2 step movement
+    if ((int)height == AUTO) height = 15.0f;
+    
     // Vertical offset and also need to apply
     // compensation based on distance
-    height = z;
-
     // 10→15: error 4→5
     if      (distance <= 15.0f) {compensation = -4.0f - (distance - 10.0f) * 0.2f;} 
     // 15→25: error 5→0  
