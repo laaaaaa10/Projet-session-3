@@ -35,7 +35,6 @@
 /* USER CODE BEGIN PTD */
 /* USER CODE END PTD */
 
-
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TRUE  1
@@ -54,8 +53,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -130,37 +132,17 @@ while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
 
-    //uint16_t raw = ADC_Read_Raw();   // lecture ADC
+    uint16_t raw = ADC_Read_Raw();   // lecture ADC
     LCD_Clear();                     // efface l’écran
     //LCD_Print("Raw: ");
     //LCD_PrintInt(raw);               // affiche la valeur ADC brute
   
     
     // get the 8 bits fromt the pic
-    uint8_t* UART_Inputs = UART_Receive();
-    Point Table_pos = Lire_Tab(UART_Inputs);    
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
-    LCD_PrintInt(UART_Inputs[0]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[1]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[2]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[3]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[4]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[5]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[6]);
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[7]);
-    LCD_Print(" ");
+    //uint8_t* UART_Inputs = UART_Receive();
+    //Point Table_pos = Lire_Tab(UART_Inputs);
+
   
-HAL_Delay(1000);
     //ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
     //HAL_Delay(1500);
     //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
@@ -186,7 +168,13 @@ HAL_Delay(1000);
 
 
 
-
+    //LCD_Print(" X:");
+    //LCD_PrintInt(Table_pos.x);
+    //LCD_Print(" Y:");
+    //LCD_PrintInt(Table_pos.y);
+    //LCD_Print(" ");
+    LCD_PrintInt(raw);
+HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -262,7 +250,7 @@ static void MX_ADC1_Init(void)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -274,9 +262,9 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_41CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -417,7 +405,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RW_Pin|EN_Pin|D4_Pin|D5_Pin
@@ -429,8 +417,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LED_BP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : P1_0_Pin P1_1_Pin P1_2_Pin P1_3_Pin */
-  GPIO_InitStruct.Pin = P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin;
+  /*Configure GPIO pins : P1_1_Pin P1_2_Pin P1_3_Pin */
+  GPIO_InitStruct.Pin = P1_1_Pin|P1_2_Pin|P1_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
