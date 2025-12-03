@@ -131,27 +131,10 @@ while (1) {
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
   Point Table_pos = Lire_Tab(UART_Inputs);
-  
-    LCD_PrintInt(UART_Inputs[0]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[1]);
-    LCD_Print(" "); 
-    LCD_PrintInt(UART_Inputs[2]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[3]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[4]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[5]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[6]); 
-    LCD_Print(" ");
-    LCD_PrintInt(UART_Inputs[7]); 
-    LCD_Print(" ");
 
-  //ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
-  //HAL_Delay(1000);
-  //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
+  ARM_LOGIC(Table_pos.x, Table_pos.y, 10, CLOSE, Out_Pivots);
+  HAL_Delay(1500);
+  ARM_LOGIC(-5, 35, 10, OPEN, Out_Pivots);
 
   //test ++;
   //if (test > 3) {
@@ -172,13 +155,13 @@ while (1) {
   //      break;
   //}
 
-    HAL_Delay(1000);
+    HAL_Delay(5000);
 
     LCD_Clear();
     LCD_Print("X:"); 
     LCD_PrintInt(Table_pos.x); 
     LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y); 
+    LCD_PrintInt(Table_pos.y);
 
     /* USER CODE END WHILE */
 
