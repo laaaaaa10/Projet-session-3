@@ -28,7 +28,7 @@ uint16_t ADC_Read_Raw(void)
     // Lire valeur brute (0–4095)
     adcVal = HAL_ADC_GetValue(&hadc1);
 
-    HAL_ADC_Stop(&hadc1);
+    // HAL_ADC_Stop(&hadc1);
 
     return adcVal;
 }
