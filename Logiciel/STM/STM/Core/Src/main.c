@@ -130,51 +130,44 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // ----- run main code if pic received shit----- //
+  // test adc
+    uint16_t raw = ADC_Read_Raw();   // lecture ADC
+    LCD_Clear();                     // efface l’écran
+    LCD_Print("Raw: ");
+    LCD_PrintInt(raw);               // affiche la valeur ADC brute
   
-  // get the 8 bits fromt the pic
+    
+    // get the 8 bits fromt the pic
+    uint8_t* UART_Inputs = UART_Receive();
+    Point Table_pos = Lire_Tab(UART_Inputs);
 
-    // test adc
-        uint16_t raw = ADC_Read_Raw();   // lecture ADC
+  
+    //ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+    //HAL_Delay(1500);
+    //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
 
-        LCD_Clear();                     // efface l’écran
-        LCD_SetCursor(0, 0);             // ligne 0, colonne 0
+    test ++;
+    if (test > 3) {
+        test = 0;
+    }
+    switch (test) {
+      case 0:
+          ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+          break;
+      case 1:
+          ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
+          break;
+      case 2:
+          ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
+          break;
+      case 3:
+          ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
+          break;
+    }
 
-        LCD_Print("Raw: ");              // texte
-        LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    HAL_Delay(1000);
 
-  int* temp = UART_Receive();
-  for (int i = 0; i < 8; i++) {
-    UART_Inputs[i] = temp[i];
-  }
-  Point Table_pos = Lire_Tab(UART_Inputs);
-
-  ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-  HAL_Delay(1500);
-  ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
-
-  //test ++;
-  //if (test > 3) {
-  //    test = 0;
-  //}
-  //switch (test) {
-  //  case 0:
-  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
-  //      break;
-  //  case 1:
-  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
-  //      break;
-  //  case 2:
-  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
-  //      break;
-  //  case 3:
-  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
-  //      break;
-  //}
-
-    HAL_Delay(5000);
-
-    LCD_Clear();
-    LCD_Print("X:"); 
+    LCD_Print(" X:");
     LCD_PrintInt(Table_pos.x); 
     LCD_Print(" Y:"); 
     LCD_PrintInt(Table_pos.y);
