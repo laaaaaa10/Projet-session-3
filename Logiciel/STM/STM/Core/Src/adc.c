@@ -1,7 +1,7 @@
 // ************************************************************************* //
 // File: ADC.c
 // Done by : Jessica Di Stefano
-// Description :
+// Description : used to get the wieght of the cylinders
 //
 //
 // ************************************************************************* //

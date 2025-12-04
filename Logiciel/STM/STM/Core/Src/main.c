@@ -26,6 +26,7 @@
 #include "arm_logic.h"
 #include "UART_Com.h"
 #include "Mem_Tac.h"
+#include "Gui.h"
 #include <stdbool.h>
 
 /* USER CODE END Includes */
@@ -42,6 +43,7 @@
 #define OPEN  1
 #define CLOSE 0
 
+#define MANUAL 69
 #define AUTO 67
 
 /* USER CODE END PD */
@@ -66,6 +68,23 @@ Point Membrane = {0,0};
 int Out_Pivots[5];
 int test = 0;
 int weight;
+int ctrl_mode = AUTO;
+int key;
+
+// non blocking delay:
+typedef enum {
+    STATE_IDLE,
+    STATE_WAIT_1,
+    STATE_WAIT_2,
+    STATE_WAIT_3,
+    STATE_WAIT_4,
+    STATE_SORT
+} ArmState;
+
+ArmState arm_state = STATE_IDLE;
+uint32_t state_timer = 0;
+uint16_t saved_weight = 0;
+Point saved_pos = {0, 0};
 
 /* USER CODE END PV */
 
@@ -127,87 +146,148 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
 while (1) {
   // ----- run main code if pic received shit----- //
-  // test adc
-  // lecture ADC
-    
-    LCD_Clear();                     // efface l’écran
-    LCD_Print("Raw: ");              // oh yeah print me raw baby
-    LCD_PrintInt(raw);               // affiche la valeur ADC brute
-  
-    
-    // get the 8 bits fromt the pic
-    uint8_t* UART_Inputs = UART_Receive();
-    Point Table_pos = Lire_Tab(UART_Inputs);
-    
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
+  // get the 8 bits fromt the pic
+  uint8_t* UART_Inputs = UART_Receive();
+  Point Table_pos = Lire_Tab(UART_Inputs);
 
-    // execute the full arm logic if there is something onn the table
-    if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
-        ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-        HAL_Delay(1500);
-        ARM_LOGIC(-3.75, 41, 11.5, OPEN,  Out_Pivots);
-        HAL_Delay(2000);
-        
+
+  // here check * button to see fi manue or automatic
+  key = Clavier_MX();    
+  if ((key == '*') && (ctrl_mode == AUTO)) {
+    ctrl_mode = MANUAL;
+    arm_state = STATE_IDLE;
+  }
+  else if ((key == '*') && (ctrl_mode == MANUAL)){
+    ctrl_mode = AUTO;
+  }
+
+
+  // display every info and check for manue ctrl 
+  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
+
+  
+  // ----- mode auto -----//
+  if (ctrl_mode == AUTO) {
+    uint32_t now = HAL_GetTick();
+
+    switch (arm_state) {
+      // if no wieght just wait at the center of the table
+      case STATE_IDLE:
+        // execute the full arm logic if there is something onn the table
+        if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
+          saved_pos = Table_pos;
+          ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_1;
+        } else if (now - state_timer >= 500) {  // only update idle position every 500ms
+          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+          state_timer = now;
+        }
+        break;
+
+      case STATE_WAIT_1:  // was: HAL_Delay(1500)
+        if (now - state_timer >= 1500) {
+          ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_2;
+        }
+        break;
+
+      case STATE_WAIT_2:  // was: HAL_Delay(2000)
         // test for the wight and the go to its desired section
-        uint16_t weight = ADC_Read_Raw();
-        ARM_LOGIC(-3.75, 41, 7, CLOSE,  Out_Pivots);
-        HAL_Delay(1000);
-        ARM_LOGIC(-3.75, 41, 11.5, CLOSE,  Out_Pivots);
-    
-      // weight 20G 
-        if (weight = 1500) {
-            ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); }
-      // weight 50G 
-        else if (weight = 2500) {
-            ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); }
-      // weight 80G 
-        else if (weight = 3500) {
-            ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        if (now - state_timer >= 2000) {
+          saved_weight = ADC_Read_Raw();
+          ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_3;
+        }
+        break;
+
+      case STATE_WAIT_3:  // was: HAL_Delay(1000)
+        if (now - state_timer >= 1000) {
+          ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
+          arm_state = STATE_SORT;
+        }
+        break;
+
+      case STATE_SORT:
+        // weight 20G (1500 ± 500)
+        if (saved_weight >= 1000 && saved_weight <= 2000) {
+          ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
+        }
+        // weight 50G (2500 ± 500)
+        else if (saved_weight >= 2000 && saved_weight <= 3000) {
+          ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
+        }
+        // weight 80G (3500 ± 500)
+        else if (saved_weight >= 3000 && saved_weight <= 4000) {
+          ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
         }
 
-      // once done proceed to kill itself
+        // once done proceed to kill itself
         //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        state_timer = HAL_GetTick();
+        arm_state = STATE_IDLE;
+        break;
+    }
+  }
+
+  // ----- mode manuel -----//
+  else {
+    key = Clavier_MX();        
+    // pivot 0
+    if (key == '1') Out_Pivots[0] ++;
+    if (key == '4') Out_Pivots[0] --;
+    // pivot 1    
+    if (key == '2') Out_Pivots[1] ++;
+    if (key == '5') Out_Pivots[1] --;
+    // pivot 2
+    if (key == '3') Out_Pivots[2] ++;
+    if (key == '6') Out_Pivots[2] --;
+    // pivot 3    
+    if (key == 'A') Out_Pivots[3] ++;
+    if (key == 'B') Out_Pivots[3] --;
+    // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
+    if (key == 'C') {
+      Out_Pivots[4] = (Out_Pivots[4] == 0) ? 205 : 0;
     }
 
-    // if no wieght just wait at the center of the table
-    else {
-        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
-    }
+    UART_Send(
+      (uint8_t)Out_Pivots[0],
+      (uint8_t)Out_Pivots[1],
+      (uint8_t)Out_Pivots[2],
+      (uint8_t)Out_Pivots[3],
+      (uint8_t)Out_Pivots[4]
+    );
+  }
 
-    LCD_Set(0, 3);
-    LCD_Print("we gay fr");
+  //test ++;
+  //if (test > 3) {
+  //    test = 0;
+  //}
+  //switch (test) {
+  //  case 0:
+  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+  //      break;
+  //  case 1:
+  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
+  //      break;
+  //  case 2:
+  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
+  //      break;
+  //  case 3:
+  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      break;
+  //}
 
-    HAL_Delay(1000);
+  /* USER CODE END WHILE */
 
-    //test ++;
-    //if (test > 3) {
-    //    test = 0;
-    //}
-    //switch (test) {
-    //  case 0:
-    //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
-    //      break;
-    //  case 1:
-    //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
-    //      break;
-    //  case 2:
-    //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
-    //      break;
-    //  case 3:
-    //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
-    //      break;
-    //}
+  /* USER CODE BEGIN 3 */
+ }
 
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
- } 
-  /* USER CODE END 3 */
 }
 
 /**
