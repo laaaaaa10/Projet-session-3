@@ -3,7 +3,7 @@
 // Done by : Javier
 // Description :
 // send coordfs and return the pwm of each motors
-//
+// this is the most interesting code ive made so far
 // ************************************************************************* // 
 
 /* important info:
@@ -29,18 +29,12 @@ Z
 #include "UART_Com.h"
 #include "lcd.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <math.h>
 
 // *************************** DEFINES ************************************ //
 #define PI 3.14159f
 
 #define OPEN   1
-#define CLOSE  0
-
-#define TRUE   1
-#define FALSE  0
-
 #define AUTO   67
 
 // *************************** VARIABLES ************************************ //
@@ -54,7 +48,6 @@ float L2 = 25.5;
 float x;
 float y;
 float z;
-bool state;
 
 // calculated values
 float distance;
@@ -63,68 +56,31 @@ float reach;
 float compensation;
 
 int Pivots[5] = {0,0,0,0,0};
-int prev_Pivots[5] = {0,0,0,0,0};
+int prev_hand_pwm = 0;
 
 // estim delay variables
 float Old_x; 
 float Old_y; 
-short estim_distance;
-short Estim_delay;
+int  estim_distance;
+int  Estim_delay;
 
-bool RUN_ONCE = TRUE;
-bool loop = TRUE;
+//************************* HELPER FUNCTION *******************************
+// Calculates IK and sends to PIC - returns 0 on success, -1 on failure
+static int MOVE_ARM(int *Out_Pivots, int delay_ms) {
+    BASE_ROTATION(Pivots);
 
-//************************* SETUP MAIN PROGRAM *******************************
-// controlls every parts of the arm
-int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots) {
-    bool RUN_ONCE = TRUE;  // Local, fresh each call
-    bool loop = FALSE;
+    if (ARM_ROTATIONS(Pivots) != 0) {
+        return -1; // KEEP: prevents impossible IK math
+    }    
 
-    // shitty fix to make it move in 2 steps if you put the height at AUTO
-    while (RUN_ONCE || loop) {
-        RUN_ONCE = FALSE;
-        loop = FALSE;
+    WRIST_ANGLE(Pivots);
+    PIV_TRANSLATE(Pivots, Out_Pivots);
 
-        x = (float)y_coord;
-        y = (float)x_coord;
-        z = (float)z_coord;
-        state = hand_inst;
-
-        BASE_ROTATION(Pivots);
-
-        if (ARM_ROTATIONS(Pivots) != 0) {
-            return -1; // return error code
-        }    
-
-        WRIST_ANGLE(Pivots);
-        PIV_TRANSLATE(Pivots, Out_Pivots);
-        ESTIMATE_DELAY();
-
-        if (!VERIFY_PIVOTS(Out_Pivots)) {
-            return -1; // return error code
-        }
-
-        // sends the pivots value to the PIC
-        UART_Send(
-            (uint8_t)Out_Pivots[0],
-            (uint8_t)Out_Pivots[1],
-            (uint8_t)Out_Pivots[2],
-            (uint8_t)Out_Pivots[3],
-            (uint8_t)Out_Pivots[4]
-        );
-        // estimated time of deplacement
-        HAL_Delay(Estim_delay);
-        // changes the arm state
-        HAND_CONTROL(Out_Pivots, state);
-
-        // if when to position lower z and redo the logic
-        if (z_coord == AUTO) {
-            loop = TRUE;
-            z_coord = 7;
-        }
+    if (!VERIFY_PIVOTS(Out_Pivots)) {
+        return -1; // KEEP: prevents out-of-range motor commands
     }
 
-    // controll the hand (keeps the arm at the same pos)
+    // sends the pivots value to the PIC
     UART_Send(
         (uint8_t)Out_Pivots[0],
         (uint8_t)Out_Pivots[1],
@@ -132,6 +88,73 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         (uint8_t)Out_Pivots[3],
         (uint8_t)Out_Pivots[4]
     );
+
+    HAL_Delay(delay_ms);
+    return 0;
+}
+
+//************************* SETUP MAIN PROGRAM *******************************
+// controlls every parts of the arm
+int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pivots) {
+    bool was_auto = (z_coord == AUTO);
+    
+    x = (float)y_coord;
+    y = (float)x_coord;
+
+    // Move to position (at z=10 if AUTO, else z_coord)
+    z = (z_coord == AUTO) ? 10.0f : (float)z_coord;
+    ESTIMATE_DELAY();
+
+    // Linear interpolation: 2 steps if distance > 10cm to help move straight
+    if (estim_distance > 10) {
+        float final_x = x;
+        float final_y = y;
+        float final_z = z;
+        int half_delay = (Estim_delay / 2);
+        
+        // mid way pos (raised +5cm) - best effort, skip if unreachable
+        x = Old_x + (final_x - Old_x) * 0.60f;
+        y = Old_y + (final_y - Old_y) * 0.60f;
+        z = final_z + 9.0f;
+        
+        MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness
+        
+        // final position - this one matters
+        x = final_x;
+        y = final_y;
+        z = final_z;
+        
+        if (MOVE_ARM(Out_Pivots, half_delay) != 0) {
+            return -1; // KEEP: final target unreachable
+        }
+    } else {
+        if (MOVE_ARM(Out_Pivots, Estim_delay) != 0) {
+            return -1; // KEEP: target unreachable
+        }
+    }
+
+    // If AUTO, lower to z=6 (grab position)
+    if (was_auto) {
+        z = 7.0f;
+        MOVE_ARM(Out_Pivots, 800);  // best effort, arm is already close
+    }
+    
+    // controll the hand (keeps the arm at the same pos)
+    HAND_CONTROL(Out_Pivots, hand_inst);
+    UART_Send(
+        (uint8_t)Out_Pivots[0],
+        (uint8_t)Out_Pivots[1],
+        (uint8_t)Out_Pivots[2],
+        (uint8_t)Out_Pivots[3],
+        (uint8_t)Out_Pivots[4]
+    );
+    HAL_Delay(500);  // wait for hand to grab/release
+    
+    // If AUTO, raise back up after grabbing
+    if (was_auto) {
+        z = 14.0f;
+        MOVE_ARM(Out_Pivots, 800);  // ignore error, just skip if unreachable
+    }
     
     // Update previous pivots at the end
     Old_x = x;
@@ -162,7 +185,7 @@ int ARM_ROTATIONS(int *Pivots) {
     
     height = z;
     // used later to have a 2 step movement
-    if ((int)height == AUTO) height = 10.0f;
+    if ((int)height == AUTO) height = 12.0f;
     
     // Vertical offset and also need to apply
     // compensation based on distance
@@ -180,16 +203,13 @@ int ARM_ROTATIONS(int *Pivots) {
     // 3D distance in vertical plane from shoulder to wrist
     reach = hypotf(distance, height);
     
-    float L1f = L1;
-    float L2f = L2;
-    
-    // Check if target is reachable
-    if (reach > (L1f + L2f) - 0.001f) return -1;  // too far
-    if (reach < fabsf(L1f - L2f) + 0.001f) return -1;  // too close
+    // KEEP: prevents impossible IK solutions that would break the arm
+    if (reach > (L1 + L2) + 5.0f) return -1;  // too far
+    if (reach < fabsf(L1 - L2) + 0.001f) return -1;  // too close
     
     // Calculate elbow angle using law of cosines
     // This is the internal angle between upper arm and forearm
-    float cos_internal = (L1f*L1f + L2f*L2f - reach*reach) / (2.0f * L1f * L2f);
+    float cos_internal = (L1*L1 + L2*L2 - reach*reach) / (2.0f * L1 * L2);
     if (cos_internal > 1.0f) cos_internal = 1.0f;
     if (cos_internal < -1.0f) cos_internal = -1.0f;
     float internal_rad = acosf(cos_internal);
@@ -200,7 +220,7 @@ int ARM_ROTATIONS(int *Pivots) {
     // beta = angle offset due to arm triangle geometry
     float alpha = atan2f(height, distance);
     
-    float cos_beta = (L1f*L1f + reach*reach - L2f*L2f) / (2.0f * L1f * reach);
+    float cos_beta = (L1*L1 + reach*reach - L2*L2) / (2.0f * L1 * reach);
     if (cos_beta > 1.0f) cos_beta = 1.0f;
     if (cos_beta < -1.0f) cos_beta = -1.0f;
     float beta = acosf(cos_beta);
@@ -267,6 +287,7 @@ void HAND_CONTROL(int *Out_Pivots, bool hand_state) {
     } else {
         Out_Pivots[4] = 205;
     }
+    prev_hand_pwm = Out_Pivots[4];  // save for next time
 }
 
 
@@ -333,10 +354,8 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     // pivot3: wrist, 327° → PWM 0, 25° → PWM 205
     Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 327, 25);
     
-    // pivot4: gripper, direct mapping (0-125)
-    if (Pivots[4] < 0) Out_Pivots[4] = 0;
-    else if (Pivots[4] > 125) Out_Pivots[4] = 125;
-    else Out_Pivots[4] = Pivots[4];
+    // pivot4: keep PREVIOUS hand state for now
+    Out_Pivots[4] = prev_hand_pwm;
 }
 
 
@@ -360,11 +379,11 @@ bool VERIFY_PIVOTS(int *Out_Pivots) {
 // ----- ESTIMATE DELAY ----- //
 //for each 1cm it should take abought 0.5 sec + 1 sec for safety
 void ESTIMATE_DELAY(void) {
-    estim_distance = hypotf(Old_x-x, Old_y-y);
+    estim_distance = (int)hypotf(Old_x-x, Old_y-y);
 
     // i genuenly dont know how i cam up with that but it works
-    Estim_delay = (int)((estim_distance * 400) + 500.0f);
+    Estim_delay = (int)(estim_distance * 350);
     
     // caps it to not be too long
-    if (Estim_delay > 7500) Estim_delay = 7500;
+    if (Estim_delay > 4000) Estim_delay = 4000;
 }

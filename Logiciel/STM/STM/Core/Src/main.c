@@ -26,15 +26,14 @@
 #include "arm_logic.h"
 #include "UART_Com.h"
 #include "Mem_Tac.h"
+#include "Gui.h"
 #include <stdbool.h>
-#include <stdio.h>
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 /* USER CODE END PTD */
-
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
@@ -44,6 +43,7 @@
 #define OPEN  1
 #define CLOSE 0
 
+#define MANUAL 69
 #define AUTO 67
 
 /* USER CODE END PD */
@@ -54,17 +54,37 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-char key = 0;
 int function = 0;
 Point Membrane = {0,0};
 
 int Out_Pivots[5];
 int test = 0;
+int weight;
+int ctrl_mode = AUTO;
+int key;
+
+// non blocking delay:
+typedef enum {
+  STATE_IDLE,
+  STATE_WAIT_1,
+  STATE_WAIT_2,
+  STATE_WAIT_3,
+  STATE_SORT
+} ArmState;
+
+ArmState arm_state = STATE_IDLE;
+int now;
+int state_timer = 0;
+int saved_weight = 0;
+Point saved_pos = {0, 0};
 
 /* USER CODE END PV */
 
@@ -95,8 +115,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int Valeur_Prnt[2];
-  Valeur_Prnt[1] = '\0';     // NE PAS TOUCHER C'EST TRÈS IMPORTANT POUR LE LCD
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -122,11 +140,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
-  LCD_Init();
+  GUI_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
@@ -135,8 +155,10 @@ while (1) {
     LCD_Clear();                     // efface l’écran
     LCD_Print("ADC: ");              // oh yeah print me raw baby
     LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    LCD_Print("Poids: ");
+  //LCD_PrintInt("");                //place holder for when the weight is able to display
 
-    LCD_Set(0, 2);
+    LCD_Set(0, 2);                   // i am a retard -javier
     LCD_Print(" X:");
     LCD_PrintInt(Table_pos.x);       // on sais ce que ca fait la
     LCD_Print(" Y:"); 
@@ -148,39 +170,141 @@ while (1) {
     uint8_t* UART_Inputs = UART_Receive();
     Point Table_pos = Lire_Tab(UART_Inputs);
 
+
+  // here check * button to see fi manue or automatic
+  key = Clavier_MX();    
+  if ((key == '*') && (ctrl_mode == AUTO)) {
+    ctrl_mode = MANUAL;
+    arm_state = STATE_IDLE;
+  }
+  else if ((key == '*') && (ctrl_mode == MANUAL)){
+    ctrl_mode = AUTO;
+  }
+
+
+  // display every info and check for manue ctrl 
+  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
+
   
-    //ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-    //HAL_Delay(1500);
-    //ARM_LOGIC(-5, 40, 10, OPEN, Out_Pivots);
+  // ----- mode auto -----//
+  if (ctrl_mode == AUTO) {
+    now = HAL_GetTick();
 
-    test ++;
-    if (test > 3) {
-        test = 0;
+    switch (arm_state) {
+      // if no wieght just wait at the center of the table
+      case STATE_IDLE:
+        // execute the full arm logic if there is something onn the table
+        if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
+          saved_pos = Table_pos;
+          ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_1;
+        } else if (now - state_timer >= 500) {  // only update idle position every 500ms
+          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+          state_timer = now;
+        }
+        break;
+
+      case STATE_WAIT_1:  // was: HAL_Delay(1500)
+        if (now - state_timer >= 1500) {
+          ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_2;
+        }
+        break;
+
+      case STATE_WAIT_2:  // was: HAL_Delay(2000)
+        // test for the wight and the go to its desired section
+        if (now - state_timer >= 2000) {
+          saved_weight = ADC_Read_Raw();
+          ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
+          state_timer = now;
+          arm_state = STATE_WAIT_3;
+        }
+        break;
+
+      case STATE_WAIT_3:  // was: HAL_Delay(1000)
+        if (now - state_timer >= 1000) {
+          ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
+          arm_state = STATE_SORT;
+        }
+        break;
+
+      case STATE_SORT:
+        // weight 20G (1500 ± 500)
+        if (saved_weight >= 1000 && saved_weight <= 2000) {
+          ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
+        }
+        // weight 50G (2500 ± 500)
+        else if (saved_weight >= 2000 && saved_weight <= 3000) {
+          ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
+        }
+        // weight 80G (3500 ± 500)
+        else if (saved_weight >= 3000 && saved_weight <= 4000) {
+          ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        }
+
+        // once done proceed to kill itself
+        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        state_timer = HAL_GetTick();
+        arm_state = STATE_IDLE;
+        break;
     }
-    switch (test) {
-      case 0:
-          ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
-          break;
-      case 1:
-          ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
-          break;
-      case 2:
-          ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
-          break;
-      case 3:
-          ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
-          break;
+  }
+
+  // ----- mode manuel -----//
+  else {
+    key = Clavier_MX();        
+    // pivot 0
+    if (key == '1') Out_Pivots[0] ++;
+    if (key == '4') Out_Pivots[0] --;
+    // pivot 1    
+    if (key == '2') Out_Pivots[1] ++;
+    if (key == '5') Out_Pivots[1] --;
+    // pivot 2
+    if (key == '3') Out_Pivots[2] ++;
+    if (key == '6') Out_Pivots[2] --;
+    // pivot 3    
+    if (key == 'A') Out_Pivots[3] ++;
+    if (key == 'B') Out_Pivots[3] --;
+    // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
+    if (key == 'C') {
+      Out_Pivots[4] = (Out_Pivots[4] == 0) ? 205 : 0;
     }
 
-    HAL_Delay(1000);
+    UART_Send(
+      (uint8_t)Out_Pivots[0],
+      (uint8_t)Out_Pivots[1],
+      (uint8_t)Out_Pivots[2],
+      (uint8_t)Out_Pivots[3],
+      (uint8_t)Out_Pivots[4]
+    );
+  }
 
+  //test ++;
+  //if (test > 3) {
+  //    test = 0;
+  //}
+  //switch (test) {
+  //  case 0:
+  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
+  //      break;
+  //  case 1:
+  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
+  //      break;
+  //  case 2:
+  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
+  //      break;
+  //  case 3:
+  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
+  //      break;
+  //}
 
+  /* USER CODE END WHILE */
 
-    /* USER CODE END WHILE */
+  /* USER CODE BEGIN 3 */
+ }
 
-    /* USER CODE BEGIN 3 */
- } 
-  /* USER CODE END 3 */
 }
 
 /**
@@ -251,7 +375,7 @@ static void MX_ADC1_Init(void)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -263,9 +387,9 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_41CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -406,7 +530,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RW_Pin|EN_Pin|D4_Pin|D5_Pin
@@ -418,8 +542,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LED_BP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : P1_0_Pin P1_1_Pin P1_2_Pin P1_3_Pin */
-  GPIO_InitStruct.Pin = P1_0_Pin|P1_1_Pin|P1_2_Pin|P1_3_Pin;
+  /*Configure GPIO pins : P1_1_Pin P1_2_Pin P1_3_Pin */
+  GPIO_InitStruct.Pin = P1_1_Pin|P1_2_Pin|P1_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
