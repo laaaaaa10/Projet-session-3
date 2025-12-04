@@ -59,7 +59,26 @@ uint8_t down_I[8] = {
   0B10001,
   0B11011
 };
-
+uint8_t Pince_1[8] = {
+  0B00000,
+  0B11100,
+  0B11110,
+  0B00000,
+  0B00000,
+  0B11110,
+  0B11100,
+  0B00000
+};
+uint8_t Pince_2[8] = {
+  0B00000,
+  0B00000,
+  0B10011,
+  0B11110,
+  0B11110,
+  0B10011,
+  0B00000,
+  0B00000
+};
 // ************************* SETUP MAIN PROGRAM ****************************** //
 void GUI_Init(void) {
     LCD_Init();
@@ -67,6 +86,8 @@ void GUI_Init(void) {
     LCD_CreateChar(2, down);
     LCD_CreateChar(3, up_I);
     LCD_CreateChar(4, down_I);
+    LCD_CreateChar(5, Pince_1);
+    LCD_CreateChar(6, Pince_2);
 }
 
 void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
@@ -160,7 +181,9 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
         else LCD_Write(4);
 
         LCD_Set(14, 0);
-        LCD_Print("Pi=");   
+        LCD_Write(6); 
+        LCD_Write(5);
+        LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
 
         LCD_Set(14, 3);
