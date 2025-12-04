@@ -1,6 +1,6 @@
 // ************************************************************************* // 
 // File: keyboard.c
-// Done by :
+// Done by : thomas
 // Description :
 //
 //
@@ -20,25 +20,27 @@ uint8_t Clavier_MX(void)
     };
 
     //static bool Ch_Front = 1;
-	for (int ligne = 0; ligne < 4; ligne++){ //check les caca
-		// Lire les colonnes (entrée)
-		for (int col = 0; col < 4; col++){ //check les pipi
-            Ecrire_I2C(~(0x01 << col));   // écrie 0xF? selon la col pour détecter gnd 
-			HAL_Delay(1);                // delai de configuration de l'i2c
+	for (int ligne = 0; ligne < 4; ligne++){ // check lines
+	
+		for (int col = 0; col < 4; col++){ 	 // check colons
+            Ecrire_I2C(~(0x01 << col));   	 // write 0xF? depending on the col to detect GND
+
+			HAL_Delay(1);
 			uint8_t lecture = Lire_I2C();
-			if (~lecture & (0x80 >> ligne))  // check les pipi selectionner
+			if (~lecture & (0x80 >> ligne))  // check if lines are selected
 			{
 				//if (Ch_Front){
 				//	Ch_Front = 0;
-					return Symbole_Clavier[col][ligne]; 
+					return Symbole_Clavier[col][ligne]; // return the button pressed
 				//}
 				//else{			
 				//	return 0; // aucune touche
 				//}
 			}
-			HAL_Delay(1);	 // delai de configuration de l'i2c
+			HAL_Delay(1);
 		}
 	}	
+
 	//Ch_Front = 1;
-    return 0; // aucune touche
+    return 0; //nothing pressed
 }
