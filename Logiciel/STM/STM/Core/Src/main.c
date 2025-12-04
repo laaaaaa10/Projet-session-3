@@ -63,6 +63,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 int function = 0; 
+Point Table_pos = {0,0};
 int Out_Pivots[5];
 int test = 0;
 int weight;
@@ -202,7 +203,7 @@ while (1) {
       case STATE_WAIT_2:  // used to be HAL_Delay(2000)
         // test for the wight and the go to its desired section
         if (now - state_timer >= 2000) {
-          saved_weight = ADC_Read_Raw();
+          saved_weight = ADC_Read_Balance();
           ARM_LOGIC(-3, 37, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_3;
