@@ -8,6 +8,8 @@
 
 
 // ************************ FUNCTION PROTOTYPES **************************** //
-uint16_t ADC_Read_Raw(void);
+
+uint16_t ADC_Read_Balance(void);
+uint16_t ADC_Read_Pince(void);
 
 #endif
