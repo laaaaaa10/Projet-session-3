@@ -103,13 +103,13 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
         Ancient_Mode = ctrl_mode;
         timer_1 = 0;
     }
-    if (HAL_GetTick() - timer_1 >= 1000) {
-        // Une seconde est passée
-        LCD_Clear();
-        AAA = ~AAA;
-        timer_1 = HAL_GetTick();   // reset pour la prochaine seconde
-    }
 
+        if (HAL_GetTick() - timer_1 >= 1000) {
+          // Une seconde est passée
+          LCD_Clear();
+          AAA = ~AAA;
+          timer_1 = HAL_GetTick();   // reset pour la prochaine seconde
+        }
     // ----- MENU 1 (AUTO) ----- //
     if (ctrl_mode == AUTO) {
         LCD_Print("0:");
@@ -138,6 +138,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
     
     // ----- MENU 2 (MANUAL) ----- //
     else  {
+
         LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 

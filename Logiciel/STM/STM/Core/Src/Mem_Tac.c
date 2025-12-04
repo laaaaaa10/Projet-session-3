@@ -40,7 +40,7 @@ Point Lire_Tab(uint8_t* Coord_Table){
 Point Simple_Tab(uint8_t* data){
     Point Tab = {-1, -1};
 
-    if ((data[3] == 255) && (data[4] == 255)) return Tab;  // FIX: was data[4] twice
+    if ((data[3] == 0xFF) || (data[4] == 0xFF)) return Tab;  // FIX: was data[4] twice
 
     // y index from data[4]
     if       (data[4] >  130)                     Tab.y = 0;
@@ -48,12 +48,12 @@ Point Simple_Tab(uint8_t* data){
     else if  (data[4] <= 80 )                     Tab.y = 2;
 
     // x index from data[3]
-    if       (data[3] >  220)                     Tab.x = 0;
-    else if ((data[3] <= 220) && (data[3] > 210)) Tab.x = 1;
-    else if ((data[3] <= 210) && (data[3] > 190)) Tab.x = 2;
-    else if ((data[3] <= 190) && (data[3] > 160)) Tab.x = 3;
-    else if ((data[3] <= 160) && (data[3] > 140)) Tab.x = 4;
-    else if ((data[3] <= 140) && (data[3] > 100)) Tab.x = 5;
+    if       (data[3] >  200)                     Tab.x = 0;
+    else if ((data[3] <= 200) && (data[3] > 180)) Tab.x = 1;
+    else if ((data[3] <= 180) && (data[3] > 170)) Tab.x = 2;
+    else if ((data[3] <= 170) && (data[3] > 150)) Tab.x = 3;
+    else if ((data[3] <= 150) && (data[3] > 120)) Tab.x = 4;
+    else if ((data[3] <= 120) && (data[3] > 100)) Tab.x = 5;
     else if  (data[3] <= 100)                     Tab.x = 6;
     
     return Tab;

@@ -62,8 +62,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-int function = 0;
-Point Table_pos = {0,0};
+int function = 0; 
 int Out_Pivots[5];
 int test = 0;
 int weight;
@@ -288,6 +287,7 @@ while (1) {
   //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
   //      break;
   //}
+  HAL_Delay(100);
 
   /* USER CODE END WHILE */
 
