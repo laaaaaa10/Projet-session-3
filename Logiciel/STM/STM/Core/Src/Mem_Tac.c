@@ -1,8 +1,8 @@
 // ************************************************************************* // 
 // File: Mem_Tac.c
-// Done by :
+// Done by : Thomas
 // Description :
-//
+// use to transform the hex values of the table into cardinal coordinates
 //
 // ************************************************************************* // 
 

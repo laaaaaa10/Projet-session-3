@@ -26,6 +26,7 @@
 #include "arm_logic.h"
 #include "UART_Com.h"
 #include "Mem_Tac.h"
+#include "Gui.h"
 #include <stdbool.h>
 
 /* USER CODE END Includes */
@@ -42,6 +43,7 @@
 #define OPEN  1
 #define CLOSE 0
 
+#define MANUAL 69
 #define AUTO 67
 
 /* USER CODE END PD */
@@ -66,6 +68,8 @@ Point Membrane = {0,0};
 int Out_Pivots[5];
 int test = 0;
 int weight;
+int ctrl_mode = AUTO;
+int key;
 
 /* USER CODE END PV */
 
@@ -129,59 +133,89 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 while (1) {
   // ----- run main code if pic received shit----- //
-  // test adc
-  // lecture ADC
-    
-    LCD_Clear();                     // efface l’écran
-    LCD_Print("Raw: ");              // oh yeah print me raw baby
-    LCD_PrintInt(raw);               // affiche la valeur ADC brute
-  
-    
     // get the 8 bits fromt the pic
     uint8_t* UART_Inputs = UART_Receive();
     Point Table_pos = Lire_Tab(UART_Inputs);
-    
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
 
-    // execute the full arm logic if there is something onn the table
-    if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
-        ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-        HAL_Delay(1500);
-        ARM_LOGIC(-3.75, 41, 11.5, OPEN,  Out_Pivots);
-        HAL_Delay(2000);
+    // here check ____ button to see fi manue or automatic
+    key = lavier_MX();    
+    if ((key == '*') && (ctrl_mode == AUTO)) {
+        ctrl_mode = MANUAL;
+    }
+    else if ((key == '*') && (ctrl_mode == MANUAL)){
+        ctrl_mode = AUTO;
+    }
+
+    // display every info and check for manue ctrl 
+    Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
+  
+
+    // ----- mode auto -----//
+    if (ctrl_mode == AUTO) {
+        // execute the full arm logic if there is something onn the table
+        if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
+            ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+            HAL_Delay(1500);
+            ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
+            HAL_Delay(2000);
+
+            // test for the wight and the go to its desired section
+            uint16_t weight = ADC_Read_Raw();
+
+            ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
+            HAL_Delay(1000);
+            ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
         
-        // test for the wight and the go to its desired section
-        uint16_t weight = ADC_Read_Raw();
-        ARM_LOGIC(-3.75, 41, 7, CLOSE,  Out_Pivots);
-        HAL_Delay(1000);
-        ARM_LOGIC(-3.75, 41, 11.5, CLOSE,  Out_Pivots);
-    
-      // weight 20G 
-        if (weight = 1500) {
-            ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); }
-      // weight 50G 
-        else if (weight = 2500) {
-            ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); }
-      // weight 80G 
-        else if (weight = 3500) {
-            ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+            // weight 20G 
+            if (weight = 1500) {
+                ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); }
+            // weight 50G 
+            else if (weight = 2500) {
+                ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); }
+            // weight 80G 
+            else if (weight = 3500) {
+                ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+            }
+          
+          // once done proceed to kill itself
+          //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
         }
 
-      // once done proceed to kill itself
-        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+        // if no wieght just wait at the center of the table
+        else {
+            ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+        }
     }
 
-    // if no wieght just wait at the center of the table
+    // ----- mode manuel -----//
     else {
-        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+        key = Clavier_MX();        
+        // pivot 0
+        if (key == '1') Out_Pivots[0] ++;
+        if (key == '4') Out_Pivots[0] --;
+        // pivot 1    
+        if (key == '2') Out_Pivots[0] ++;
+        if (key == '5') Out_Pivots[0] --;
+        // pivot 2
+        if (key == '3') Out_Pivots[0] ++;
+        if (key == '6') Out_Pivots[0] --;
+        // pivot 3    
+        if (key == 'A') Out_Pivots[0] ++;
+        if (key == 'B') Out_Pivots[0] --;
+        // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
+        if (key == 'C') {
+          // somone do it pls
+        }
+
+        UART_Send(
+            (uint8_t)Out_Pivots[0],
+            (uint8_t)Out_Pivots[1],
+            (uint8_t)Out_Pivots[2],
+            (uint8_t)Out_Pivots[3],
+            (uint8_t)Out_Pivots[4]
+        );
     }
-
-    LCD_Set(0, 3);
-    LCD_Print("we gay fr");
-
+    
     HAL_Delay(1000);
 
     //test ++;
