@@ -1,9 +1,10 @@
-#ifndef INC_LCD_H_
-#define INC_LCD_H_
-// ************** INCLUDES ************** //
+#ifndef LCD_H
+#define LCD_H
+
+// *************************** INCLUDES ************************************ //
 #include "main.h"
 
-// ************** FUNCTIONS ************** //
+// ***************************** FUNCTIONS ********************************* //
 void LCD_Init(void);
 void LCD_Cmd(uint8_t cmd);
 void LCD_Write(uint8_t data);

@@ -73,17 +73,17 @@ int key;
 
 // non blocking delay:
 typedef enum {
-    STATE_IDLE,
-    STATE_WAIT_1,
-    STATE_WAIT_2,
-    STATE_WAIT_3,
-    STATE_WAIT_4,
-    STATE_SORT
+  STATE_IDLE,
+  STATE_WAIT_1,
+  STATE_WAIT_2,
+  STATE_WAIT_3,
+  STATE_SORT
 } ArmState;
 
 ArmState arm_state = STATE_IDLE;
-uint32_t state_timer = 0;
-uint16_t saved_weight = 0;
+int now;
+int state_timer = 0;
+int saved_weight = 0;
 Point saved_pos = {0, 0};
 
 /* USER CODE END PV */
@@ -171,7 +171,7 @@ while (1) {
   
   // ----- mode auto -----//
   if (ctrl_mode == AUTO) {
-    uint32_t now = HAL_GetTick();
+    now = HAL_GetTick();
 
     switch (arm_state) {
       // if no wieght just wait at the center of the table
