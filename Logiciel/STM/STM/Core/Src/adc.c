@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 extern ADC_HandleTypeDef hadc1;
+extern ADC_HandleTypeDef hadc2;
 
 //************************* SETUP MAIN PROGRAM *******************************
 uint16_t ADC_Read_Balance(void)
@@ -36,7 +37,7 @@ uint16_t ADC_Read_Balance(void)
 uint16_t ADC_Read_Pince(void)
 {
     HAL_ADC_Start(&hadc2);
-    unit16_t adcPince = 0;
+    uint16_t adcPince = 0;
 
     HAL_ADC_PollForConversion(&hadc2, 10);  // timeout de 10 ms !!!
 

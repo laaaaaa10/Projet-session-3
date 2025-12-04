@@ -91,8 +91,6 @@ void GUI_Init(void) {
 }
 
 void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
-    x_pos = (float)x_coord;
-    y_pos = (float)y_coord;
 
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
@@ -125,9 +123,9 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
 
         LCD_Set(0, 1);
         LCD_Print("X:");
-        LCD_PrintInt(x_pos); 
+        LCD_PrintInt(x_coord);
         LCD_Print(" Y:"); 
-        LCD_PrintInt(y_pos);
+        LCD_PrintInt(y_coord);
 
         LCD_Set(0, 2);
         LCD_Print(" * to change mode");
