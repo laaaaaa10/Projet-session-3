@@ -349,7 +349,7 @@ void PIV_TRANSLATE(int *Pivots, int *Out_Pivots){
     Out_Pivots[1] = pwm;
 
     // pivot2: elbow, deg0 = 34, deg205 = 375    
-    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 34, 375);
+    Out_Pivots[2] = linear_deg_to_pwm(Pivots[2], 26, 375);
     
     // pivot3: wrist, 327° → PWM 0, 25° → PWM 205
     Out_Pivots[3] = linear_deg_to_pwm(Pivots[3], 327, 25);

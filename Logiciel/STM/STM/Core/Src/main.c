@@ -169,7 +169,7 @@ while (1) {
   Table_pos = Lire_Tab(UART_Inputs);
 
   // display every info and check for manue ctrl 
-  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
+  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, 0, 0);
 
   
   // ----- mode auto -----//
