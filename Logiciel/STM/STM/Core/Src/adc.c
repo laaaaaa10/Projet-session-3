@@ -46,5 +46,4 @@ uint16_t ADC_Read_Pince(void)
     HAL_ADC_Stop(&hadc2);
 
     return adcPince;
-    //TESTing.
 }
