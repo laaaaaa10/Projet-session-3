@@ -151,10 +151,6 @@ while (1) {
   // ----- run main code if pic received shit----- //
   now = HAL_GetTick();
 
-  // get the 8 bits fromt the pic
-  uint8_t* UART_Inputs = UART_Receive();
-  Table_pos = Lire_Tab(UART_Inputs);
-
   // here check * button to see fi manue or automatic
   key = Clavier_MX();    
   if ((key == '*') && (now - button_timer >= 1500)) {
@@ -167,6 +163,10 @@ while (1) {
       ctrl_mode = AUTO;
     }
   }
+
+  // get the 8 bits fromt the pic
+  uint8_t* UART_Inputs = UART_Receive();
+  Table_pos = Lire_Tab(UART_Inputs);
 
   // display every info and check for manue ctrl 
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
@@ -194,7 +194,7 @@ while (1) {
 
       case STATE_WAIT_1:  // used to be HAL_Delay(1500)
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
+          ARM_LOGIC(-4, 40.5, 10, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
@@ -204,7 +204,7 @@ while (1) {
         // test for the wight and the go to its desired section
         if (now - state_timer >= 2000) {
           saved_weight = ADC_Read_Raw();
-          ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
+          ARM_LOGIC(-3, 37, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_3;
         }
@@ -212,7 +212,7 @@ while (1) {
 
       case STATE_WAIT_3:  //  used to be HAL_Delay(1000)
         if (now - state_timer >= 1000) {
-          ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
+          ARM_LOGIC(0, 30, 15, CLOSE, Out_Pivots);
           arm_state = STATE_SORT;
         }
         break;
@@ -265,8 +265,10 @@ while (1) {
       (uint8_t)Out_Pivots[3],
       (uint8_t)Out_Pivots[4]
     );
-    HAL_Delay(500);
+    HAL_Delay(100);
   }
+  
+  HAL_Delay(750);
 
   //test ++;
   //if (test > 3) {
