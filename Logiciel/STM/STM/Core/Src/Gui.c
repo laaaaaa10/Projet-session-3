@@ -90,7 +90,7 @@ void GUI_Init(void) {
     LCD_CreateChar(6, Pince_2);
 }
 
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcPince, int adcBalance) {
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static AAA = 0;
@@ -125,6 +125,8 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
         LCD_PrintInt(x_coord); 
         LCD_Print(" Y:"); 
         LCD_PrintInt(y_coord);
+        LCD_Print("Pince: ");
+        LCD_PrintInt(adcPince);
 
         LCD_Set(0, 2);
         LCD_Print(" * to change mode");
