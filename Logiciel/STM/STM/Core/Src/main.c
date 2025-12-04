@@ -155,7 +155,7 @@ while (1) {
   uint8_t* UART_Inputs = UART_Receive();
   Table_pos = Lire_Tab(UART_Inputs);
 
-  // here check * button to see fi manue or automatic
+  // here check * button to see if manuel or automatic
   key = Clavier_MX();    
   if ((key == '*') && (now - button_timer >= 1500)) {
     button_timer = now;  // reset debounce timer
@@ -168,6 +168,7 @@ while (1) {
     }
   }
 
+
   // display every info and check for manue ctrl 
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
 
@@ -176,9 +177,9 @@ while (1) {
   if (ctrl_mode == AUTO) {
 
     switch (arm_state) {
-      // if no wieght just wait at the center of the table
+      // if no weight just wait at the center of the table
       case STATE_IDLE:
-        // execute the full arm logic if there is something onn the table
+        // execute the full arm logic if there is something on the table
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
           saved_pos = Table_pos;
           ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
