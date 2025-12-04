@@ -36,20 +36,12 @@ void UART_Com(uint8_t V_TX){
     HAL_UART_Transmit(&huart1, &V_TX, 1, 1);
 }
 
-// ----- check if data available ----- //
-uint8_t UART_Data_Available(void){
-    return __HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE);
-}
-
 // ----- Receive ----- //
 // read 8 bytes only if data available, return pointer to buffer
 uint8_t* UART_Receive(void){
-    // only read if data is waiting
-    if (UART_Data_Available()) {
         for (uint8_t i = 0; i < 8; i++){
             PICs_8Bit[i] = UART_Read_1bit();
         }
-    }
     return PICs_8Bit;
 }
 

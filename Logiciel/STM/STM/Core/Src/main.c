@@ -62,8 +62,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-int function = 0;
-Point Table_pos = {0,0};
+int function = 0; 
 int Out_Pivots[5];
 int test = 0;
 int weight;
@@ -153,7 +152,7 @@ while (1) {
 
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
-  Table_pos = Lire_Tab(UART_Inputs);
+  Point Table_pos = Lire_Tab(UART_Inputs);
 
   // here check * button to see fi manue or automatic
   key = Clavier_MX();    
@@ -265,7 +264,7 @@ while (1) {
       (uint8_t)Out_Pivots[3],
       (uint8_t)Out_Pivots[4]
     );
-    HAL_Delay(500);
+    HAL_Delay(100);
   }
 
   //test ++;
@@ -286,6 +285,7 @@ while (1) {
   //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
   //      break;
   //}
+  HAL_Delay(100);
 
   /* USER CODE END WHILE */
 

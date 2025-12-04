@@ -17,6 +17,5 @@ void UART_Com(uint8_t V_TX);
 // AIDE LE RECEIVE
 uint8_t* UART_Receive(void);  // returnE LE POINTEUR À PICs_8Bit
 uint8_t UART_Read_1bit(void);
-uint8_t UART_Data_Available(void);
 
 #endif
