@@ -14,7 +14,7 @@
 
 // *************************** VARIABLES *********************************** //
 extern UART_HandleTypeDef huart1;
-uint8_t PICs_8Bit[8] = {255, 255, 255, 255, 255, 255, 255, 255};
+uint8_t PICs_8Bit[8];
 
 // ************************* SETUP MAIN PROGRAM **************************** //
 // ----- Transmit ----- //
@@ -36,19 +36,11 @@ void UART_Com(uint8_t V_TX){
     HAL_UART_Transmit(&huart1, &V_TX, 1, 1);
 }
 
-// ----- check if data available ----- //
-uint8_t UART_Data_Available(void){
-    return __HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE);
-}
-
 // ----- Receive ----- //
-// read 8 bytes only if data available, return pointer to buffer
+// read 8 bytes (blocking) and return pointer to buffer
 uint8_t* UART_Receive(void){
-    // only read if data is waiting
-    if (UART_Data_Available()) {
-        for (uint8_t i = 0; i < 8; i++){
-            PICs_8Bit[i] = UART_Read_1bit();
-        }
+    for (uint8_t i = 0; i < 8; i++){
+        PICs_8Bit[i] = UART_Read_1bit();
     }
     return PICs_8Bit;
 }
@@ -57,8 +49,9 @@ uint8_t* UART_Receive(void){
 // ----- read one bit at a time ----- //
 uint8_t UART_Read_1bit(void){
     uint8_t ucCaract = 0;
-    // short timeout since we already know data is available
+    // Use 1000 ms timeout for robustness during debug; reduce later if needed
     if (HAL_UART_Receive(&huart1, &ucCaract, 1, 10) != HAL_OK) {
+        // on timeout or error return 0 (NUL). You can change behaviour if desired.
         return 0;
     }
     return ucCaract;
