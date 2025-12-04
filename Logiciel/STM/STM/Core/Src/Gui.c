@@ -102,7 +102,7 @@ void GUI_Init(void) {
     LCD_Clear();
 }
 
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcPince, int adcBalance) {
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince, int adcBalance) {
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static AAA = 0;
