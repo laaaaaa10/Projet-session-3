@@ -60,7 +60,7 @@ uint8_t down_I[8] = {
   0B11011
 };
 
-// ************************* SETUP MAIN PROGRAM **************************** //
+// ************************* SETUP MAIN PROGRAM ****************************** //
 void GUI_Init(void) {
     LCD_Init();
     LCD_CreateChar(1, up);
