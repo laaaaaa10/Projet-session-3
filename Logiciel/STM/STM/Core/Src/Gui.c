@@ -42,13 +42,16 @@ uint8_t down[8] = {
 // ************************* SETUP MAIN PROGRAM **************************** //
 void GUI_Init(void) {
     LCD_Init();
-    LCD_CreateChar(1, up);
-    LCD_CreateChar(2, down);
+    LCD_CreateChar(0, up);
+    LCD_CreateChar(1, down);
 }
 
 void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
-    LCD_Clear();
-
+    static int Ancient_Mode = AUTO;
+    if (Ancient_Mode != ctrl_mode){
+        LCD_Clear();
+        Ancient_Mode = ctrl_mode;
+    }
     // ----- MENU 1 (AUTO) ----- //
     if (ctrl_mode == AUTO) {
         LCD_Print("0:");
@@ -89,14 +92,16 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
         LCD_PrintInt(Out_Pivots[4]); 
 
         LCD_Set(0, 1);
-        LCD_Write(1);
+        LCD_Write(0);
         LCD_Print(" 1    2    3    A");
 
         LCD_Set(0, 2);
-        LCD_Write(2); 
+        LCD_Write(1); 
         LCD_Print(" 4    5    6    B");
 
         LCD_Set(0, 3);
         LCD_Print("gay    mode = MANUAL");
     }
+
+
 }

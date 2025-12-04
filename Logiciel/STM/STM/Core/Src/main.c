@@ -140,7 +140,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
-  LCD_Init();
+  GUI_Init();
 
   /* USER CODE END 2 */
 
