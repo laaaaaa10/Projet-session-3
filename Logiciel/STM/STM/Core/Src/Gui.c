@@ -62,32 +62,32 @@ uint8_t down_I[8] = {
 uint8_t Pince_1[8] = {
   0B00000,
   0B11100,
-  0B11110,
+  0B11111,
   0B00000,
   0B00000,
-  0B11110,
+  0B11111,
   0B11100,
   0B00000
 };
 uint8_t Pince_2[8] = {
   0B00000,
   0B00000,
-  0B10000,
+  0B10001,
   0B11111,
   0B11111,
-  0B10000,
+  0B10001,
   0B00000,
   0B00000
 };
 uint8_t Pince_3[8] = {
-  0B00000,
-  0B00000,
   0B11100,
-  0B11110,
-  0B11110,
-  0B11100,
+  0B11111,
   0B00000,
-  0B00000
+  0B00000,
+  0B00000,
+  0B00000,
+  0B11111,
+  0B11100
 };
 // ************************* SETUP MAIN PROGRAM ****************************** //
 void GUI_Init(void) {
@@ -126,22 +126,28 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
         LCD_Set(0, 1);
-        LCD_Print(" 1:");
+        LCD_Print("1:");
         LCD_PrintInt(Out_Pivots[1]); 
         LCD_Set(0, 2);
-        LCD_Print(" 2:");
+        LCD_Print("2:");
         LCD_PrintInt(Out_Pivots[2]); 
         LCD_Set(0, 3);
-        LCD_Print(" 3:");
+        LCD_Print("3:");
         LCD_PrintInt(Out_Pivots[3]); 
 
-        LCD_Set(6, 0);
+        LCD_Set(6, 3);
         LCD_Print("4:");
         LCD_PrintInt(Out_Pivots[4]);
-        LCD_Print(" X:");
+
+        LCD_Set(6, 1);
+        LCD_Print("X:");
         LCD_PrintInt(x_coord); 
-        LCD_Print(" Y:"); 
+        LCD_Set(6, 2);
+        LCD_Print("Y:"); 
         LCD_PrintInt(y_coord);
+
+        LCD_Set(11, 2);
+        LCD_Print("*:Toggle");
 
         LCD_Set(14, 0);
         LCD_Write(6); 
@@ -149,8 +155,8 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         else LCD_Write(7);
         LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
-        LCD_Set(9, 2);
-        LCD_Print("Balance:");
+        LCD_Set(6, 0);
+        LCD_Print("Cont:");
         LCD_PrintInt(adcBalance);
         // ici ajouter PE, MO, GR et --
 
