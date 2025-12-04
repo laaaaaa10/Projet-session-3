@@ -63,8 +63,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 int function = 0;
-Point Membrane = {0,0};
-
+Point Table_pos = {0,0};
 int Out_Pivots[5];
 int test = 0;
 int weight;
@@ -85,6 +84,7 @@ int now;
 int state_timer = 0;
 int saved_weight = 0;
 Point saved_pos = {0, 0};
+int button_timer = 0;
 
 /* USER CODE END PV */
 
@@ -149,49 +149,32 @@ int main(void)
 
 while (1) {
   // ----- run main code if pic received shit----- //
-  // test adc
-    uint16_t rawBalance = ADC_Read_Balance();   // lecture ADC
-    HAL_Delay(100);
-    LCD_Clear();                     // efface l’écran
-    LCD_Print("ADC: ");              // oh yeah print me raw baby
-    LCD_PrintInt(rawBalance);               // affiche la valeur ADC brute
-    LCD_Print("Poids: ");
-  //LCD_PrintInt("");                //place holder for when the weight is able to display
-  
-  //LCD_Set(0, 2);
-    LCD_Print("Pince")
+  now = HAL_GetTick();
 
-    LCD_Set(0, 3);                   // i am a retard -javier
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x);       // on sais ce que ca fait la
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
-
-  
-    
-    // get the 8 bits fromt the pic
-    uint8_t* UART_Inputs = UART_Receive();
-    Point Table_pos = Lire_Tab(UART_Inputs);
-
+  // get the 8 bits fromt the pic
+  uint8_t* UART_Inputs = UART_Receive();
+  Table_pos = Lire_Tab(UART_Inputs);
 
   // here check * button to see if manuel or automatic
   key = Clavier_MX();    
-  if ((key == '*') && (ctrl_mode == AUTO)) {
-    ctrl_mode = MANUAL;
-    arm_state = STATE_IDLE;
-  }
-  else if ((key == '*') && (ctrl_mode == MANUAL)){
-    ctrl_mode = AUTO;
+  if ((key == '*') && (now - button_timer >= 1500)) {
+    button_timer = now;  // reset debounce timer
+    if (ctrl_mode == AUTO) {
+      ctrl_mode = MANUAL;
+      arm_state = STATE_IDLE;
+    }
+    else {
+      ctrl_mode = AUTO;
+    }
   }
 
 
-  // display every info and check for manuel ctrl 
+  // display every info and check for manue ctrl 
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
 
   
   // ----- mode auto -----//
   if (ctrl_mode == AUTO) {
-    now = HAL_GetTick();
 
     switch (arm_state) {
       // if no weight just wait at the center of the table
@@ -200,15 +183,17 @@ while (1) {
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
           saved_pos = Table_pos;
           ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
+
           state_timer = now;
           arm_state = STATE_WAIT_1;
-        } else if (now - state_timer >= 500) {  // only update idle position every 500ms
-          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+          // if nothing is detected then go to center
+        } else if (now - state_timer >= 750) {  
+          ARM_LOGIC(0, 26, 10, OPEN, Out_Pivots);
           state_timer = now;
         }
         break;
 
-      case STATE_WAIT_1:  // was: HAL_Delay(1500)
+      case STATE_WAIT_1:  // used to be HAL_Delay(1500)
         if (now - state_timer >= 1500) {
           ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
           state_timer = now;
@@ -216,8 +201,8 @@ while (1) {
         }
         break;
 
-      case STATE_WAIT_2:  // was: HAL_Delay(2000)
-        // test for the weight and then goes to its desired section
+      case STATE_WAIT_2:  // used to be HAL_Delay(2000)
+        // test for the wight and the go to its desired section
         if (now - state_timer >= 2000) {
           saved_weight = ADC_Read_Raw();
           ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
@@ -226,27 +211,27 @@ while (1) {
         }
         break;
 
-      case STATE_WAIT_3:  // was: HAL_Delay(1000)
+      case STATE_WAIT_3:  //  used to be HAL_Delay(1000)
         if (now - state_timer >= 1000) {
           ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
           arm_state = STATE_SORT;
         }
         break;
 
-      case STATE_SORT:
-        // weight 20G (1500 ± 500)
-        if (saved_weight >= 1000 && saved_weight <= 2000) {
-          ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
-        }
-        // weight 50G (2500 ± 500)
-        else if (saved_weight >= 2000 && saved_weight <= 3000) {
-          ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
-        }
-        // weight 80G (3500 ± 500)
-        else if (saved_weight >= 3000 && saved_weight <= 4000) {
-          ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
-        }
-
+      //case STATE_SORT:
+      //  // weight 20G (1500 ± 500)
+      //  if (saved_weight >= 1000 && saved_weight <= 2000) {
+      //    ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
+      //  }
+      //  // weight 50G (2500 ± 500)
+      //  else if (saved_weight >= 2000 && saved_weight <= 3000) {
+      //    ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
+      //  }
+      //  // weight 80G (3500 ± 500)
+      //  else if (saved_weight >= 3000 && saved_weight <= 4000) {
+      //    ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+      //  }
+      
         // once done proceed to kill itself
         //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
         state_timer = HAL_GetTick();
@@ -256,20 +241,19 @@ while (1) {
   }
 
   // ----- mode manuel -----//
-  else {
-    key = Clavier_MX();        
+  else {   
     // pivot 0
-    if (key == '1') Out_Pivots[0] ++;
-    if (key == '4') Out_Pivots[0] --;
+    if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] ++;
+    if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] --;
     // pivot 1    
-    if (key == '2') Out_Pivots[1] ++;
-    if (key == '5') Out_Pivots[1] --;
+    if (key == '2' && Out_Pivots[1] < 205) Out_Pivots[1] ++;
+    if (key == '5' && Out_Pivots[1] > 000) Out_Pivots[1] --;
     // pivot 2
-    if (key == '3') Out_Pivots[2] ++;
-    if (key == '6') Out_Pivots[2] --;
+    if (key == '3' && Out_Pivots[2] < 205) Out_Pivots[2] ++;
+    if (key == '6' && Out_Pivots[2] > 000) Out_Pivots[2] --;
     // pivot 3    
-    if (key == 'A') Out_Pivots[3] ++;
-    if (key == 'B') Out_Pivots[3] --;
+    if (key == 'A' && Out_Pivots[3] < 205) Out_Pivots[3] ++;
+    if (key == 'B' && Out_Pivots[3] > 000) Out_Pivots[3] --;
     // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
     if (key == 'C') {
       Out_Pivots[4] = (Out_Pivots[4] == 0) ? 205 : 0;
@@ -282,6 +266,7 @@ while (1) {
       (uint8_t)Out_Pivots[3],
       (uint8_t)Out_Pivots[4]
     );
+    HAL_Delay(500);
   }
 
   //test ++;
