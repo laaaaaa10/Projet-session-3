@@ -176,9 +176,9 @@ while (1) {
   if (ctrl_mode == AUTO) {
 
     switch (arm_state) {
-      // if no wieght just wait at the center of the table
+      // if no weight just wait at the center of the table
       case STATE_IDLE:
-        // execute the full arm logic if there is something onn the table
+        // execute the full arm logic if there is something on the table
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
           saved_pos = Table_pos;
           ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);

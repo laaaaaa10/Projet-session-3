@@ -1,2 +1,2 @@
-../Core/Src/Gui.c:67:6:GUI_Init	8	static
-../Core/Src/Gui.c:75:6:Run_GUI	24	static
+../Core/Src/Gui.c:83:6:GUI_Init	8	static
+../Core/Src/Gui.c:93:6:Run_GUI	24	static
