@@ -123,7 +123,6 @@ int main(void)
 
   /* Initialize LCD */
   LCD_Init();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,9 +133,15 @@ while (1) {
     uint16_t raw = ADC_Read_Raw();   // lecture ADC
     HAL_Delay(100);
     LCD_Clear();                     // efface l’écran
-    LCD_Print("Raw: ");              // oh yeah print me raw baby
+    LCD_Print("ADC: ");              // oh yeah print me raw baby
     LCD_PrintInt(raw);               // affiche la valeur ADC brute
-    LCD_Print("we gay fr");
+
+    LCD_Set(0, 2);
+    LCD_Print(" X:");
+    LCD_PrintInt(Table_pos.x);       // on sais ce que ca fait la
+    LCD_Print(" Y:"); 
+    LCD_PrintInt(Table_pos.y);
+
   
     
     // get the 8 bits fromt the pic
@@ -169,10 +174,7 @@ while (1) {
 
     HAL_Delay(1000);
 
-    LCD_Print(" X:");
-    LCD_PrintInt(Table_pos.x); 
-    LCD_Print(" Y:"); 
-    LCD_PrintInt(Table_pos.y);
+
 
     /* USER CODE END WHILE */
 

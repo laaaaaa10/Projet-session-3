@@ -1,7 +1,7 @@
 // ************************************************************************* //
 // File: ADC.c
 // Done by : Jessica Di Stefano
-// Description :
+// Description : C'est le ADC la
 //
 //
 // ************************************************************************* //
@@ -25,7 +25,7 @@ uint16_t ADC_Read_Raw(void)
     // Attendre conversion complète
     HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 
-    // Lire valeur brute (0–4095)
+    // Lis le raw genre 4095
     adcVal = HAL_ADC_GetValue(&hadc1);
 
     // HAL_ADC_Stop(&hadc1);
