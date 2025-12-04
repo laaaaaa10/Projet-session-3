@@ -47,7 +47,11 @@ void GUI_Init(void) {
 }
 
 void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
-    LCD_Clear();
+    static int Ancient_Mode = AUTO;
+    if (Ancient_Mode != ctrl_mode){
+        LCD_Clear();
+        Ancient_Mode = ctrl_mode;
+    }
 
     // ----- MENU 1 (AUTO) ----- //
     if (ctrl_mode == AUTO) {
