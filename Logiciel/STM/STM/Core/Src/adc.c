@@ -32,6 +32,7 @@ uint16_t ADC_Read_Balance(void)
     return adcBalance;
 }
 
+
 uint16_t ADC_Read_Pince(void)
 {
     HAL_ADC_Start(&hadc2);
