@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+
 extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
 

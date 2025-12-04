@@ -62,7 +62,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-int function = 0;
+int function = 0; 
 Point Table_pos = {0,0};
 int Out_Pivots[5];
 int test = 0;

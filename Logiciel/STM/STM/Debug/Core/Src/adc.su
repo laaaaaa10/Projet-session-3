@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 ../Core/Src/adc.c:19:10:ADC_Read_Balance	16	static
 ../Core/Src/adc.c:37:10:ADC_Read_Pince	16	static
+=======
+../Core/Src/adc.c:20:10:ADC_Read_Balance	16	static
+../Core/Src/adc.c:38:10:ADC_Read_Pince	16	static
+>>>>>>> 68f80785b26e597ffd214222aba6b11e806628c7
