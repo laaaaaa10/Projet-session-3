@@ -67,13 +67,12 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
         LCD_Print(" 4:");
         LCD_PrintInt(Out_Pivots[4]); 
 
-
         LCD_Set(0, 2);
-        LCD_Print(UP );
+        LCD_write(1);
         LCD_Print(" 1  2  3  A");
 
         LCD_Set(0, 1);
-        LCD_Print(DOWN ); 
+        LCD_write(2); 
         LCD_Print(" 4  5  6  B");
 
         // can type anything you want on theseline

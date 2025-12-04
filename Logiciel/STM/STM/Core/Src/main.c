@@ -147,7 +147,7 @@ while (1) {
     }
 
     // display every info and check for manue ctrl 
-    Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode);
+    Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
   
 
     // ----- mode auto -----//
@@ -156,15 +156,15 @@ while (1) {
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
             ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
             HAL_Delay(1500);
-            ARM_LOGIC(-3.75, 41, 11.5, OPEN,  Out_Pivots);
+            ARM_LOGIC(-3.75, 41, 11.5, OPEN, Out_Pivots);
             HAL_Delay(2000);
 
             // test for the wight and the go to its desired section
             uint16_t weight = ADC_Read_Raw();
 
-            ARM_LOGIC(-3.75, 41, 7, CLOSE,  Out_Pivots);
+            ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);
             HAL_Delay(1000);
-            ARM_LOGIC(-3.75, 41, 11.5, CLOSE,  Out_Pivots);
+            ARM_LOGIC(-3.75, 41, 11.5, CLOSE, Out_Pivots);
         
             // weight 20G 
             if (weight = 1500) {
