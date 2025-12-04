@@ -1,7 +1,2 @@
-<<<<<<< HEAD
-../Core/Src/adc.c:19:10:ADC_Read_Balance	1
-../Core/Src/adc.c:37:10:ADC_Read_Pince	1
-=======
 ../Core/Src/adc.c:20:10:ADC_Read_Balance	1
 ../Core/Src/adc.c:38:10:ADC_Read_Pince	1
->>>>>>> 68f80785b26e597ffd214222aba6b11e806628c7

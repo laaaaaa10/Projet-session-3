@@ -27,7 +27,7 @@ Point Lire_Tab(uint8_t* Coord_Table){
     Point Tab = Simple_Tab(Coord_Table);
 
     // Bounds check - return {0,0} if invalid
-    if ((Tab.x < 0) || (Tab.y < 0)){  // FIX: was && (would miss single -1)
+    if ((Tab.x < 0) || (Tab.y < 0)){
         return Coord_Mem;
     }
 
@@ -40,7 +40,10 @@ Point Lire_Tab(uint8_t* Coord_Table){
 Point Simple_Tab(uint8_t* data){
     Point Tab = {-1, -1};
 
-    if ((data[3] == 0xFF) || (data[4] == 0xFF)) return Tab;  // FIX: was data[4] twice
+    if ((data[3] == 0xFF) || (data[4] == 0xFF) ||
+        (data[3] == 0)    || (data[4] == 0)) {
+        return Tab;
+    }
 
     // y index from data[4]
     if       (data[4] >  130)                     Tab.y = 0;
