@@ -1,2 +1,2 @@
-../Core/Src/Gui.c:43:6:GUI_Init	1
-../Core/Src/Gui.c:49:6:Run_GUI	3
+../Core/Src/Gui.c:64:6:GUI_Init	1
+../Core/Src/Gui.c:72:6:Run_GUI	12

@@ -63,8 +63,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 int function = 0;
-Point Membrane = {0,0};
-
+Point Table_pos = {0,0};
 int Out_Pivots[5];
 int test = 0;
 int weight;
@@ -154,7 +153,7 @@ while (1) {
 
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
-  Point Table_pos = Lire_Tab(UART_Inputs);
+  Table_pos = Lire_Tab(UART_Inputs);
 
   // here check * button to see fi manue or automatic
   key = Clavier_MX();    
