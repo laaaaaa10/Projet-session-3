@@ -91,11 +91,6 @@ void GUI_Init(void) {
 }
 
 void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
-<<<<<<< HEAD
-=======
-    
-    
->>>>>>> 68f80785b26e597ffd214222aba6b11e806628c7
 
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
@@ -128,11 +123,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots) {
 
         LCD_Set(0, 1);
         LCD_Print("X:");
-<<<<<<< HEAD
-        LCD_PrintInt(x_coord);
-=======
         LCD_PrintInt(x_coord); 
->>>>>>> 68f80785b26e597ffd214222aba6b11e806628c7
         LCD_Print(" Y:"); 
         LCD_PrintInt(y_coord);
 
