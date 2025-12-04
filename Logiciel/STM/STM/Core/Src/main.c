@@ -187,14 +187,14 @@ while (1) {
           arm_state = STATE_WAIT_1;
           // if nothing is detected then go to center
         } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(0, 26, 5, OPEN, Out_Pivots);
+          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
           state_timer = now;
         }
         break;
 
       case STATE_WAIT_1:  // used to be HAL_Delay(1500)
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-4, 39.5, 5, OPEN, Out_Pivots);
+          ARM_LOGIC(-4, 39.75, 5, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
@@ -202,9 +202,9 @@ while (1) {
 
       case STATE_WAIT_2:  // used to be HAL_Delay(2000)
         // test for the wight and the go to its desired section
-        if (now - state_timer >= 2000) {
+        if (now - state_timer >= 3000) {
           saved_weight = ADC_Read_Balance();
-          ARM_LOGIC(-4, 39.5, AUTO, CLOSE, Out_Pivots);
+          ARM_LOGIC(-4, 39.75, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_3;
         }
@@ -233,7 +233,9 @@ while (1) {
           ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
           Weight = 280;
         }
-      
+       
+        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+        HAL_Delay(500);
         // once done proceed to kill itself
         //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
         state_timer = HAL_GetTick();
