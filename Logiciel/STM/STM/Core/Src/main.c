@@ -150,15 +150,18 @@ int main(void)
 while (1) {
   // ----- run main code if pic received shit----- //
   // test adc
-    uint16_t raw = ADC_Read_Raw();   // lecture ADC
+    uint16_t rawBalance = ADC_Read_Balance();   // lecture ADC
     HAL_Delay(100);
     LCD_Clear();                     // efface l’écran
     LCD_Print("ADC: ");              // oh yeah print me raw baby
-    LCD_PrintInt(raw);               // affiche la valeur ADC brute
+    LCD_PrintInt(rawBalance);               // affiche la valeur ADC brute
     LCD_Print("Poids: ");
   //LCD_PrintInt("");                //place holder for when the weight is able to display
+  
+  //LCD_Set(0, 2);
+    LCD_Print("Pince")
 
-    LCD_Set(0, 2);                   // i am a retard -javier
+    LCD_Set(0, 3);                   // i am a retard -javier
     LCD_Print(" X:");
     LCD_PrintInt(Table_pos.x);       // on sais ce que ca fait la
     LCD_Print(" Y:"); 
@@ -171,7 +174,7 @@ while (1) {
     Point Table_pos = Lire_Tab(UART_Inputs);
 
 
-  // here check * button to see fi manue or automatic
+  // here check * button to see if manuel or automatic
   key = Clavier_MX();    
   if ((key == '*') && (ctrl_mode == AUTO)) {
     ctrl_mode = MANUAL;
@@ -182,7 +185,7 @@ while (1) {
   }
 
 
-  // display every info and check for manue ctrl 
+  // display every info and check for manuel ctrl 
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
 
   
@@ -191,9 +194,9 @@ while (1) {
     now = HAL_GetTick();
 
     switch (arm_state) {
-      // if no wieght just wait at the center of the table
+      // if no weight just wait at the center of the table
       case STATE_IDLE:
-        // execute the full arm logic if there is something onn the table
+        // execute the full arm logic if there is something on the table
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
           saved_pos = Table_pos;
           ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
@@ -214,7 +217,7 @@ while (1) {
         break;
 
       case STATE_WAIT_2:  // was: HAL_Delay(2000)
-        // test for the wight and the go to its desired section
+        // test for the weight and then goes to its desired section
         if (now - state_timer >= 2000) {
           saved_weight = ADC_Read_Raw();
           ARM_LOGIC(-3.75, 41, 7, CLOSE, Out_Pivots);

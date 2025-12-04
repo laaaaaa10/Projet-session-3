@@ -1,11 +1,7 @@
 // ************************************************************************* //
 // File: ADC.c
 // Done by : Jessica Di Stefano
-<<<<<<< HEAD
-// Description : C'est le ADC la
-=======
 // Description : used to get the wieght of the cylinders
->>>>>>> 0659e4b144fb942262f9cbb755db25425938f9f3
 //
 //
 // ************************************************************************* //
@@ -18,23 +14,35 @@
 
 extern ADC_HandleTypeDef hadc1;
 
-
 //************************* SETUP MAIN PROGRAM *******************************
-uint16_t ADC_Read_Raw(void)
+uint16_t ADC_Read_Balance(void)
 {
 
 	HAL_ADC_Start(&hadc1);
-    uint16_t adcVal = 0;
-
-    HAL_ADC_Start(&hadc1);
+    uint16_t adcBalance = 0;
 
     // Attendre conversion complète
-    HAL_ADC_PollForConversion(&hadc1, 10);
+    HAL_ADC_PollForConversion(&hadc1, 10);  // timeout de 10 ms :-)
 
     // Lis le raw genre 4095
-    adcVal = HAL_ADC_GetValue(&hadc1);
+    adcBalance = HAL_ADC_GetValue(&hadc1);  // ajoute la lecture dans adcBalance
 
     HAL_ADC_Stop(&hadc1);
 
-    return adcVal;
+    return adcBalance;
+}
+
+uint16_t ADC_Read_Pince(void)
+{
+    HAL_ADC_Start(&hadc2);
+    unit16_t adcPince = 0;
+
+    HAL_ADC_PollForConversion(&hadc2, 10);  // timeout de 10 ms !!!
+
+    // Lis la valeur raw
+    adcPince = HAL_ADC_GetValue(&hadc2);    // ajoute la lecture dans adcPince
+
+    HAL_ADC_Stop(&hadc2);
+
+    return adcPince;
 }
