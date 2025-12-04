@@ -102,7 +102,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     y = (float)x_coord;
 
     // Move to position (at z=10 if AUTO, else z_coord)
-    z = (z_coord == AUTO) ? 10.0f : (float)z_coord;
+    z = (z_coord == AUTO) ? 7.0f : (float)z_coord;
     ESTIMATE_DELAY();
 
     // Linear interpolation: 2 steps if distance > 10cm to help move straight
@@ -115,7 +115,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         // mid way pos (raised +5cm) - best effort, skip if unreachable
         x = Old_x + (final_x - Old_x) * 0.60f;
         y = Old_y + (final_y - Old_y) * 0.60f;
-        z = final_z + 9.0f;
+        z = final_z + 5.0f;
         
         MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness
         
@@ -125,18 +125,18 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         z = final_z;
         
         if (MOVE_ARM(Out_Pivots, half_delay) != 0) {
-            return -1; // KEEP: final target unreachable
+            return -1; // target unreachable
         }
     } else {
         if (MOVE_ARM(Out_Pivots, Estim_delay) != 0) {
-            return -1; // KEEP: target unreachable
+            return -1; // target unreachable
         }
     }
 
-    // If AUTO, lower to z=6 (grab position)
+    // If AUTO, lower to (grab position)
     if (was_auto) {
-        z = 7.0f;
-        MOVE_ARM(Out_Pivots, 800);  // best effort, arm is already close
+        z = 5.0f;
+        MOVE_ARM(Out_Pivots, 800);  
     }
     
     // controll the hand (keeps the arm at the same pos)
@@ -152,7 +152,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     
     // If AUTO, raise back up after grabbing
     if (was_auto) {
-        z = 14.0f;
+        z = 10.0f;
         MOVE_ARM(Out_Pivots, 800);  // ignore error, just skip if unreachable
     }
     
