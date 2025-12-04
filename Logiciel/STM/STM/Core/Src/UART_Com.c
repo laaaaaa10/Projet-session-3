@@ -50,7 +50,7 @@ uint8_t* UART_Receive(void){
 uint8_t UART_Read_1bit(void){
     uint8_t ucCaract = 0;
     // Use 1000 ms timeout for robustness during debug; reduce later if needed
-    if (HAL_UART_Receive(&huart1, &ucCaract, 1, 10) != HAL_OK) {
+    if (HAL_UART_Receive(&huart1, &ucCaract, 1, 250) != HAL_OK) {
         // on timeout or error return 0 (NUL). You can change behaviour if desired.
         return 0;
     }
