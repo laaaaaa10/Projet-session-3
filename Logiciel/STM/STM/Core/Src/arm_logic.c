@@ -113,8 +113,8 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         int half_delay = (Estim_delay / 2);
         
         // mid way pos (raised +5cm) - best effort, skip if unreachable
-        x = Old_x + (final_x - Old_x) * 0.60f;
-        y = Old_y + (final_y - Old_y) * 0.60f;
+        x = Old_x + (final_x - Old_x) * 0.65f;
+        y = Old_y + (final_y - Old_y) * 0.65f;
         z = final_z + 10.0f;
         
         MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness

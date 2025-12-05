@@ -18,5 +18,5 @@ extern int Out_Pivots[5];
 // ************************ FUNCTION PROTOTYPES **************************** //
 
 void GUI_Init(void);
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince);
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adc_Weight, int adc_pince);
 #endif
