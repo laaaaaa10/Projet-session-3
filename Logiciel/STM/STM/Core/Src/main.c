@@ -169,9 +169,9 @@ while (1) {
   uint8_t* UART_Inputs = UART_Receive();
   Table_pos = Lire_Tab(UART_Inputs);
   
-  adc_pince = ADC_Read_Pince();
-
   // display every info and check for manue ctrl 
+  adc_weight = ADC_Read_Balance();
+  adc_pince = ADC_Read_Pince();
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
   
@@ -208,7 +208,8 @@ while (1) {
         if (now - state_timer >= 3000) {
           // read wieght and sipaly it
           adc_weight = ADC_Read_Balance();
-          Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, 0);
+          adc_pince = ADC_Read_Pince();  
+          Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
           
           ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
