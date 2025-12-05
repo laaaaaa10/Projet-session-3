@@ -140,10 +140,9 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_PrintInt(Out_Pivots[4]);
 
         LCD_Set(6, 1);
-        LCD_Print("X:");
-        LCD_PrintInt(x_coord); 
-        LCD_Set(6, 2);
-        LCD_Print("Y:"); 
+        LCD_Print("  X:");
+        LCD_PrintInt(x_coord);
+        LCD_Print("  Y:"); 
         LCD_PrintInt(y_coord);
 
         LCD_Set(11, 2);
@@ -156,7 +155,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
         LCD_Set(9, 2);
-        LCD_Print("Balance:");
+        LCD_Print("Poid:");
         LCD_PrintInt(Weight);
         LCD_Print("G");
         // ici ajouter PE, MO, GR et --

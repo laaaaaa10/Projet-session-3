@@ -102,11 +102,11 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     y = (float)x_coord;
 
     // Move to position (at z=10 if AUTO, else z_coord)
-    z = (z_coord == AUTO) ? 6.0f : (float)z_coord;
+    z = (z_coord == AUTO) ? 5.5f : (float)z_coord;
     ESTIMATE_DELAY();
 
     // Linear interpolation: 2 steps if distance > 10cm to help move straight
-    if (estim_distance > 10) {
+    if (estim_distance > 7) {
         float final_x = x;
         float final_y = y;
         float final_z = z;
@@ -115,7 +115,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         // mid way pos (raised +5cm) - best effort, skip if unreachable
         x = Old_x + (final_x - Old_x) * 0.60f;
         y = Old_y + (final_y - Old_y) * 0.60f;
-        z = final_z + 8.0f;
+        z = final_z + 10.0f;
         
         MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness
         
