@@ -145,6 +145,10 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_Print("  Y:"); 
         LCD_PrintInt(y_coord);
 
+        LCD_Set(0, 2);
+        LCD_Print("Balance: ");
+        LCD_PrintInt(adcBalance);
+        
         LCD_Set(11, 2);
         LCD_Print("*:Toggle");
 
