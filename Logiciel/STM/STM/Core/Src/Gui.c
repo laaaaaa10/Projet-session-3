@@ -102,7 +102,7 @@ void GUI_Init(void) {
     LCD_Clear();
 }
 
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince, int adcBalance) {
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince) {
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static AAA = 0;
@@ -155,9 +155,10 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         else LCD_Write(7);
         LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
-        LCD_Set(6, 0);
-        LCD_Print("Cont:");
-        LCD_PrintInt(adcBalance);
+        LCD_Set(9, 2);
+        LCD_Print("Balance:");
+        LCD_PrintInt(Weight);
+        LCD_Print("G");
         // ici ajouter PE, MO, GR et --
 
         LCD_Set(14, 3);
