@@ -276,26 +276,6 @@ while (1) {
   
   HAL_Delay(750);
 
-  //test ++;
-  //if (test > 3) {
-  //    test = 0;
-  //}
-  //switch (test) {
-  //  case 0:
-  //      ARM_LOGIC(-7, 15, 20, CLOSE, Out_Pivots);  // y=15, x=-7
-  //      break;
-  //  case 1:
-  //      ARM_LOGIC(-7, 37, 10, OPEN, Out_Pivots);  // y=37, x=-7
-  //      break;
-  //  case 2:
-  //      ARM_LOGIC(7, 37, 10, CLOSE, Out_Pivots);   // y=37, x=7
-  //      break;
-  //  case 3:
-  //      ARM_LOGIC(7, 15, 10, OPEN, Out_Pivots);   // y=15, x=7
-  //      break;
-  //}
-  HAL_Delay(100);
-
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
