@@ -167,6 +167,8 @@ while (1) {
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
   Table_pos = Lire_Tab(UART_Inputs);
+  // get the weight
+  Weight = ADC_Read_Balance();
 
   // display every info and check for manue ctrl 
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, Weight, 0);
