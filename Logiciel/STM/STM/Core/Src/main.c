@@ -62,11 +62,11 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-int function = 0; 
+int function = 0;
 Point Table_pos = {0,0};
 int Out_Pivots[5];
 int test = 0;
-int weight;
+int Weight;
 int ctrl_mode = AUTO;
 int key;
 
@@ -167,9 +167,11 @@ while (1) {
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
   Table_pos = Lire_Tab(UART_Inputs);
+  // get the weight
+  Weight = ADC_Read_Balance();
 
   // display every info and check for manue ctrl 
-  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots);
+  Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, Weight, 0);
 
   
   // ----- mode auto -----//
@@ -187,14 +189,14 @@ while (1) {
           arm_state = STATE_WAIT_1;
           // if nothing is detected then go to center
         } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(0, 26, 10, OPEN, Out_Pivots);
+          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
           state_timer = now;
         }
         break;
 
       case STATE_WAIT_1:  // used to be HAL_Delay(1500)
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-4, 40.5, 10, OPEN, Out_Pivots);
+          ARM_LOGIC(-4, 39.75, 5, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
@@ -202,9 +204,9 @@ while (1) {
 
       case STATE_WAIT_2:  // used to be HAL_Delay(2000)
         // test for the wight and the go to its desired section
-        if (now - state_timer >= 2000) {
+        if (now - state_timer >= 3000) {
           saved_weight = ADC_Read_Balance();
-          ARM_LOGIC(-3, 37, AUTO, CLOSE, Out_Pivots);
+          ARM_LOGIC(-4, 39.75, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_3;
         }
@@ -217,20 +219,25 @@ while (1) {
         }
         break;
 
-      //case STATE_SORT:
-      //  // weight 20G (1500 ± 500)
-      //  if (saved_weight >= 1000 && saved_weight <= 2000) {
-      //    ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
-      //  }
-      //  // weight 50G (2500 ± 500)
-      //  else if (saved_weight >= 2000 && saved_weight <= 3000) {
-      //    ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
-      //  }
-      //  // weight 80G (3500 ± 500)
-      //  else if (saved_weight >= 3000 && saved_weight <= 4000) {
-      //    ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
-      //  }
-      
+      case STATE_SORT:
+        // weight 20G (1500 ± 500)
+        if (saved_weight >= 1000 && saved_weight <= 2000) {
+          ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
+          Weight = 20;
+        }
+        // weight 50G (2500 ± 500)
+        else if (saved_weight >= 2000 && saved_weight <= 3000) {
+          ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
+          Weight = 50;
+        }
+        // weight 80G (3500 ± 500)
+        else if (saved_weight >= 3000 && saved_weight <= 4000) {
+          ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
+          Weight = 280;
+        }
+       
+        ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+        HAL_Delay(500);
         // once done proceed to kill itself
         //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
         state_timer = HAL_GetTick();

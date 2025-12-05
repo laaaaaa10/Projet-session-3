@@ -62,22 +62,32 @@ uint8_t down_I[8] = {
 uint8_t Pince_1[8] = {
   0B00000,
   0B11100,
-  0B11110,
+  0B11111,
   0B00000,
   0B00000,
-  0B11110,
+  0B11111,
   0B11100,
   0B00000
 };
 uint8_t Pince_2[8] = {
   0B00000,
   0B00000,
-  0B10011,
-  0B11110,
-  0B11110,
-  0B10011,
+  0B10001,
+  0B11111,
+  0B11111,
+  0B10001,
   0B00000,
   0B00000
+};
+uint8_t Pince_3[8] = {
+  0B11100,
+  0B11111,
+  0B00000,
+  0B00000,
+  0B00000,
+  0B00000,
+  0B11111,
+  0B11100
 };
 // ************************* SETUP MAIN PROGRAM ****************************** //
 void GUI_Init(void) {
@@ -88,9 +98,11 @@ void GUI_Init(void) {
     LCD_CreateChar(4, down_I);
     LCD_CreateChar(5, Pince_1);
     LCD_CreateChar(6, Pince_2);
+    LCD_CreateChar(7, Pince_3);
+    LCD_Clear();
 }
 
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcPince, int adcBalance) {
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince) {
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static AAA = 0;
@@ -109,40 +121,55 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcPi
         }
     // ----- MENU 1 (AUTO) ----- //
     if (ctrl_mode == AUTO) {
+       
+        LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
-        LCD_Print(" 1:");
-        LCD_PrintInt(Out_Pivots[1]); 
-        LCD_Print(" 2:");
-        LCD_PrintInt(Out_Pivots[2]); 
-        LCD_Print(" 3:");
-        LCD_PrintInt(Out_Pivots[3]); 
-        LCD_Print(" 4:");
-        LCD_PrintInt(Out_Pivots[4]); 
-
         LCD_Set(0, 1);
+        LCD_Print("1:");
+        LCD_PrintInt(Out_Pivots[1]); 
+        LCD_Set(0, 2);
+        LCD_Print("2:");
+        LCD_PrintInt(Out_Pivots[2]); 
+        LCD_Set(0, 3);
+        LCD_Print("3:");
+        LCD_PrintInt(Out_Pivots[3]); 
+
+        LCD_Set(6, 3);
         LCD_Print("4:");
         LCD_PrintInt(Out_Pivots[4]);
-        LCD_Print(" X:");
-        LCD_PrintInt(x_coord); 
-        LCD_Print(" Y:"); 
+
+        LCD_Set(6, 1);
+        LCD_Print("  X:");
+        LCD_PrintInt(x_coord);
+        LCD_Print("  Y:"); 
         LCD_PrintInt(y_coord);
-        LCD_Print(" Pince:");
-        LCD_PrintInt(adcPince);
 
         LCD_Set(0, 2);
         LCD_Print("Balance: ");
         LCD_PrintInt(adcBalance);
         
+        LCD_Set(11, 2);
+        LCD_Print("*:Toggle");
+
+        LCD_Set(14, 0);
+        LCD_Write(6); 
+        if (AAA) LCD_Write(5);
+        else LCD_Write(7);
+        LCD_Print("=");
+        LCD_PrintInt(Out_Pivots[4]); 
+        LCD_Set(9, 2);
+        LCD_Print("Poid:");
+        LCD_PrintInt(Weight);
+        LCD_Print("G");
         // ici ajouter PE, MO, GR et --
 
-        LCD_Set(0, 3);
-        LCD_Print("we cool:)   mode = AUTO");
+        LCD_Set(14, 3);
+        LCD_Print("mode=A");
     }
     
     // ----- MENU 2 (MANUAL) ----- //
     else  {
-
         LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
@@ -190,7 +217,8 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcPi
 
         LCD_Set(14, 0);
         LCD_Write(6); 
-        LCD_Write(5);
+        if (AAA) LCD_Write(5);
+        else LCD_Write(7);
         LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
 
