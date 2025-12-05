@@ -195,7 +195,8 @@ while (1) {
         }
         break;
 
-      case STATE_WAIT_1:  // used to be HAL_Delay(1500)
+      // goes to the balance and drops the weight
+      case STATE_WAIT_1:
         if (now - state_timer >= 1500) {
           ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
           state_timer = now;
@@ -203,10 +204,10 @@ while (1) {
         }
         break;
 
-      case STATE_WAIT_2:  // used to be HAL_Delay(2000)
-        // test for the wight and the go to its desired section
+      // test for the wight and the go to its desired section
+      case STATE_WAIT_2:
         if (now - state_timer >= 3000) {
-          // read wieght and sipaly it
+          // read adc and display it
           adc_weight = ADC_Read_Balance();
           adc_pince = ADC_Read_Pince();  
           Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
@@ -217,6 +218,7 @@ while (1) {
         }
         break;
 
+      // sorts the diffrent weights
       case STATE_SORT:
         // weight 20G
         if (adc_weight >= 100 && adc_weight <= 1000) {
