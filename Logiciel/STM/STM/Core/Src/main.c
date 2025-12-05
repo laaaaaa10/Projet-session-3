@@ -75,7 +75,6 @@ typedef enum {
   STATE_IDLE,
   STATE_WAIT_1,
   STATE_WAIT_2,
-  STATE_WAIT_3,
   STATE_SORT
 } ArmState;
 
@@ -221,7 +220,7 @@ while (1) {
       // sorts the diffrent weights
       case STATE_SORT:
         // weight 20G
-        if (adc_weight >= 100 && adc_weight <= 1000) {
+        if      (adc_weight >=  100 && adc_weight <= 1000) {
           ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
         }
         // weight 50G
