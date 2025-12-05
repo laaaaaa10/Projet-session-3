@@ -144,7 +144,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_PrintInt(adcPince);
 
         LCD_Set(0, 2);
-        LCD_Print("Balance:");
+        LCD_Print("Weight:");
         LCD_PrintInt(Weight);
         LCD_Print(" Bloc:");
         LCD_PrintInt(Grams);
