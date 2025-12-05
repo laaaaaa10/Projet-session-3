@@ -19,7 +19,6 @@ extern ADC_HandleTypeDef hadc2;
 //************************* SETUP MAIN PROGRAM *******************************
 uint16_t ADC_Read_Balance(void)
 {
-
 	HAL_ADC_Start(&hadc1);
     uint16_t adcBalance = 0;
 
