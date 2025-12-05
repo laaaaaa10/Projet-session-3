@@ -54,11 +54,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
-
+ADC_HandleTypeDef hadc2;
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -75,6 +73,7 @@ typedef enum {
   STATE_IDLE,
   STATE_WAIT_1,
   STATE_WAIT_2,
+  STATE_WAIT_3,
   STATE_SORT
 } ArmState;
 
@@ -169,8 +168,8 @@ while (1) {
   Table_pos = Lire_Tab(UART_Inputs);
   
   // display every info and check for manue ctrl 
-  adc_weight = ADC_Read_Balance();
-  adc_pince = ADC_Read_Pince();
+  adc_weight = 0; // ADC_Read_Balance();
+  adc_pince = 0; //ADC_Read_Pince();
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
   
@@ -194,8 +193,7 @@ while (1) {
         }
         break;
 
-      // goes to the balance and drops the weight
-      case STATE_WAIT_1:
+      case STATE_WAIT_1:  // used to be HAL_Delay(1500)
         if (now - state_timer >= 1500) {
           ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
           state_timer = now;
@@ -203,13 +201,13 @@ while (1) {
         }
         break;
 
-      // test for the wight and the go to its desired section
-      case STATE_WAIT_2:
+      case STATE_WAIT_2:  // used to be HAL_Delay(2000)
+        // test for the wight and the go to its desired section
         if (now - state_timer >= 3000) {
-          // read adc and display it
+          // read wieght and sipaly it
           adc_weight = ADC_Read_Balance();
           adc_pince = ADC_Read_Pince();  
-          Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
+          Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, 0);
           
           ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
           state_timer = now;
@@ -217,10 +215,9 @@ while (1) {
         }
         break;
 
-      // sorts the diffrent weights
       case STATE_SORT:
         // weight 20G
-        if      (adc_weight >=  100 && adc_weight <= 1000) {
+        if (adc_weight >= 100 && adc_weight <= 1000) {
           ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
         }
         // weight 50G
@@ -275,8 +272,7 @@ while (1) {
     HAL_Delay(100);
   }
   
-  HAL_Delay(750);
-
+  HAL_Delay(500);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
