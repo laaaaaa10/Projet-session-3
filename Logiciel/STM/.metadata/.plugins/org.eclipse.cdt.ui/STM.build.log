@@ -1,5 +1,7 @@
-13:16:57 **** Incremental Build of configuration Debug for project STM ****
+13:30:47 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
+arm-none-eabi-gcc "../Core/Src/UART_Com.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/UART_Com.d" -MT"Core/Src/UART_Com.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/UART_Com.o"
+arm-none-eabi-gcc "../Core/Src/arm_logic.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/arm_logic.d" -MT"Core/Src/arm_logic.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/arm_logic.o"
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
@@ -8,7 +10,7 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  27232	    180	   2356	  29768	   7448	STM.elf
+  27244	    180	   2356	  29780	   7454	STM.elf
 Finished building: default.size.stdout
  
 Finished building: STM.bin
@@ -16,5 +18,5 @@ Finished building: STM.bin
 Finished building: STM.list
  
 
-13:17:03 Build Finished. 0 errors, 0 warnings. (took 5s.890ms)
+13:30:53 Build Finished. 0 errors, 0 warnings. (took 6s.549ms)
 
