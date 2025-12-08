@@ -45,6 +45,7 @@
 
 #define MANUAL 69
 #define AUTO 67
+#define MANUAUTO 42
 
 /* USER CODE END PD */
 
@@ -150,17 +151,27 @@ while (1) {
   // ----- run main code if pic received shit----- //
   now = HAL_GetTick();
 
-  // here check * button to see fi manue or automatic
-  key = Clavier_MX();    
+  // here check * or # button to go to manual or manuauto
+  key = Clavier_MX();
+  // * toggle MANUAL
   if ((key == '*') && (now - button_timer >= 1500)) {
-    button_timer = now;  // reset debounce timer
-    if (ctrl_mode == AUTO) {
-      ctrl_mode = MANUAL;
-      arm_state = STATE_IDLE;
-    }
-    else {
-      ctrl_mode = AUTO;
-    }
+      button_timer = now;  // reset debounce timer
+      if (ctrl_mode == AUTO) {
+          ctrl_mode = MANUAL;
+          arm_state = STATE_IDLE;
+      } else if (ctrl_mode == MANUAL) {
+          ctrl_mode = AUTO;
+      }
+  }
+  // # toggle MANUAUTO)
+  if ((key == '#') && (now - button_timer >= 1500)) {
+      button_timer = now;  // reset debounce timer
+      if (ctrl_mode == AUTO) {
+          ctrl_mode = MANUAUTO;
+          arm_state = STATE_IDLE;
+      } else if (ctrl_mode == MANUAUTO) {
+          ctrl_mode = AUTO;
+      }
   }
 
   // get the 8 bits fromt the pic
@@ -210,19 +221,19 @@ while (1) {
           adc_pince = ADC_Read_Pince();  
           Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
-          ARM_LOGIC(-3.7, 39.60, AUTO, CLOSE, Out_Pivots);
+          ARM_LOGIC(-3.7, 39.90, AUTO, CLOSE, Out_Pivots);
           
           // weight 20G
           if      (adc_weight >=  100 && adc_weight <= 1000) {
-            ARM_LOGIC(14, 25.50, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 25.50, 9, OPEN, Out_Pivots); 
           }
           // weight 50G
           else if (adc_weight >= 1000 && adc_weight <= 2000) {
-            ARM_LOGIC(14, 29.50, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 29.50, 9, OPEN, Out_Pivots); 
           }
           // weight 80G
           else if (adc_weight >= 2000 && adc_weight <= 3000) {
-            ARM_LOGIC(14, 33.75, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 33.75, 9, OPEN, Out_Pivots); 
           }
           // no weight
           else {
