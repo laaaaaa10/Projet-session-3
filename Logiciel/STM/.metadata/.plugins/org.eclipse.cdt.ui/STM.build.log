@@ -1,10 +1,6 @@
-18:43:06 **** Incremental Build of configuration Debug for project STM ****
+13:16:57 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
-arm-none-eabi-gcc "../Core/Src/Mem_Tac.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Mem_Tac.d" -MT"Core/Src/Mem_Tac.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Mem_Tac.o"
-../Core/Src/Mem_Tac.c: In function 'Simple_Tab':
-../Core/Src/Mem_Tac.c:60:5: warning: implicit declaration of function 'LCD_PrintInt' [-Wimplicit-function-declaration]
-   60 |     LCD_PrintInt(Tab.x);
-      |     ^~~~~~~~~~~~
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -12,13 +8,13 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  12620	     12	   1852	  14484	   3894	STM.elf
+  27232	    180	   2356	  29768	   7448	STM.elf
 Finished building: default.size.stdout
-Finished building: STM.bin
  
+Finished building: STM.bin
  
 Finished building: STM.list
  
 
-18:43:12 Build Finished. 0 errors, 1 warnings. (took 5s.455ms)
+13:17:03 Build Finished. 0 errors, 0 warnings. (took 5s.890ms)
 
