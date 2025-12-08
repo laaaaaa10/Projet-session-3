@@ -112,13 +112,15 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
         float final_z = z;
         int half_delay = (Estim_delay / 2);
         
-        // mid way pos (raised +5cm) - best effort, skip if unreachable
-        x = Old_x + (final_x - Old_x) * 0.65f;
-        y = Old_y + (final_y - Old_y) * 0.65f;
-        z = final_z + 10.0f;
+        // mid way pos depending on the distance
+        if (estim_distance > 7) {
+            x = Old_x + (final_x - Old_x) * 0.65f;
+            y = Old_y + (final_y - Old_y) * 0.65f;
+            z = final_z + (float)estim_distance - 5.0f;
+        } 
         
-        MOVE_ARM(Out_Pivots, half_delay);  // ignore result, just helps smoothness
-        
+        MOVE_ARM(Out_Pivots, half_delay);
+
         // final position - this one matters
         x = final_x;
         y = final_y;
@@ -152,7 +154,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     
     // If AUTO, raise back up after grabbing
     if (was_auto) {
-        z = 10.0f;
+        z = 15.0f;
         MOVE_ARM(Out_Pivots, 800);  // ignore error, just skip if unreachable
     }
     
