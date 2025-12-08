@@ -186,9 +186,9 @@ while (1) {
 
           state_timer = now;
           arm_state = STATE_WAIT_1;
-          // if nothing is detected then go to center
+        // if nothing is detected then go to center
         } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
           state_timer = now;
         }
         break;
@@ -210,33 +210,33 @@ while (1) {
           adc_pince = ADC_Read_Pince();  
           Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
-          ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
-
+          ARM_LOGIC(-3.7, 39.60, AUTO, CLOSE, Out_Pivots);
+          
           // weight 20G
           if      (adc_weight >=  100 && adc_weight <= 1000) {
-            ARM_LOGIC(14, 26, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 25.50, 10, OPEN, Out_Pivots); 
           }
           // weight 50G
           else if (adc_weight >= 1000 && adc_weight <= 2000) {
-            ARM_LOGIC(14, 29.5, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 29.50, 10, OPEN, Out_Pivots); 
           }
           // weight 80G
           else if (adc_weight >= 2000 && adc_weight <= 3000) {
-            ARM_LOGIC(14, 33.5, 10, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 33.75, 10, OPEN, Out_Pivots); 
           }
           // no weight
           else {
-            ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+            ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
+            arm_state = STATE_IDLE;
           }
-
           HAL_Delay(1000);
           state_timer = HAL_GetTick();
+          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
           arm_state = STATE_IDLE;
         }
 
         // once done proceed to kill itself
         //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots);
-
         break;
     }
   }

@@ -1,2 +1,2 @@
 ../Core/Src/adc.c:20:10:ADC_Read_Balance	1
-../Core/Src/adc.c:37:10:ADC_Read_Pince	1
+../Core/Src/adc.c:37:10:ADC_Read_Pince	2

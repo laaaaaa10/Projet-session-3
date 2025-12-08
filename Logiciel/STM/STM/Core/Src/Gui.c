@@ -138,17 +138,20 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_PrintInt(Out_Pivots[4]);
         LCD_Print("  X:");
         LCD_PrintInt(x_coord);
-        LCD_Print("  Y:"); 
+        LCD_Print(" Y:"); 
         LCD_PrintInt(y_coord);
-        LCD_Print(" P:");
-        LCD_PrintInt(adcPince);
 
         LCD_Set(0, 2);
         LCD_Print("Weight:");
         LCD_PrintInt(Weight);
-        LCD_Print(" Bloc:");
+        LCD_Print(" (");
         LCD_PrintInt(Grams);
+        LCD_Print(")");
 
+        LCD_Set(0, 3);
+        LCD_Print("Grab:");
+        LCD_PrintInt(adcPince);
+        
         LCD_Set(14, 3);
         LCD_Print("mode=A");
     }
