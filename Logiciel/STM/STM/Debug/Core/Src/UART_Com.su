@@ -1,4 +1,4 @@
 ../Core/Src/UART_Com.c:21:6:UART_Send	32	static
-../Core/Src/UART_Com.c:35:6:UART_Com	16	static
-../Core/Src/UART_Com.c:42:10:UART_Receive	16	static
-../Core/Src/UART_Com.c:69:9:UART_Read_1bit	16	static
+../Core/Src/UART_Com.c:37:6:UART_Com	16	static
+../Core/Src/UART_Com.c:44:10:UART_Receive	16	static
+../Core/Src/UART_Com.c:73:9:UART_Read_1bit	16	static
