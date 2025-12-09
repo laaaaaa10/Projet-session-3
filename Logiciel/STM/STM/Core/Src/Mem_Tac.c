@@ -53,8 +53,8 @@ Point Simple_Tab(uint8_t* data){
     // x index from data[3]
     if      (data[3] > 200) Tab.x = 0;
     else if (data[3] > 180) Tab.x = 1;
-    else if (data[3] > 170) Tab.x = 2;
-    else if (data[3] > 150) Tab.x = 3;
+    else if (data[3] > 160) Tab.x = 2;
+    else if (data[3] > 140) Tab.x = 3;
     else if (data[3] > 120) Tab.x = 4;
     else if (data[3] > 100) Tab.x = 5;
     else if (data[3] <=100) Tab.x = 6;

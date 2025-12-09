@@ -72,6 +72,7 @@ int key;
 // non blocking delay:
 typedef enum {
   STATE_IDLE,
+  STATE_GOTO_CENTER,  // NEW STATE
   STATE_WAIT_1,
   STATE_WAIT_2,
 } ArmState;
@@ -179,29 +180,31 @@ while (1) {
   adc_pince = ADC_Read_Pince();
   Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
-  
+
   // ----- mode auto -----//
   if (ctrl_mode == AUTO) {
-
+  
     switch (arm_state) {
-      // if no weight just wait at the center of the table
-      case STATE_IDLE:
-        // execute the full arm logic if there is something on the table
-        if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
-          saved_pos = Table_pos;
-          ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
-          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
-          HAL_Delay(750);
-          ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
-
-          state_timer = now;
-          arm_state = STATE_WAIT_1;
-        // if nothing is detected then go to home
-        } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(10, 0, 0, CLOSE, Out_Pivots);
-          state_timer = now;
-        }
-        break;
+    // if no weight just wait at the center of the table
+    case STATE_IDLE:
+      if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
+        saved_pos = Table_pos;
+        ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);  // Go to center first
+        state_timer = now;
+        arm_state = STATE_GOTO_CENTER;  // Go to new transition state
+      } else if (now - state_timer >= 750) {  
+        ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);  // Home position when nothing detected
+        state_timer = now;
+      }
+      break;
+    
+    case STATE_GOTO_CENTER:
+      if (now - state_timer >= 750) {  // Wait for arm to reach center
+        ARM_LOGIC(saved_pos.x, saved_pos.y, AUTO, CLOSE, Out_Pivots);  // Now grab
+        state_timer = now;
+        arm_state = STATE_WAIT_1;
+      }
+      break;
 
       // palces the cylinders in the balance
       case STATE_WAIT_1:
@@ -223,7 +226,7 @@ while (1) {
           ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
           
           // weight 20G
-          if      (adc_weight >=  100 && adc_weight <= 1000) {
+          if      (adc_weight >=  250 && adc_weight <= 1000) {
             ARM_LOGIC(14, 25, 8, OPEN, Out_Pivots); 
             HAL_Delay(1000);
             ARM_LOGIC(-14, -12, 15, CLOSE, Out_Pivots); 
@@ -244,6 +247,7 @@ while (1) {
             ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
             arm_state = STATE_IDLE;
           }
+
           HAL_Delay(1000);
           state_timer = HAL_GetTick();
           ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
