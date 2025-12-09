@@ -151,9 +151,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         LCD_Set(0, 3);
         LCD_Print("Grab:");
         LCD_PrintInt(adcPince);
-        
-        LCD_Set(14, 3);
-        LCD_Print("mode=A");
+        LCD_Print("AUTO");
     }
     
     // ----- MENU 2 (MANUAL) ----- //
@@ -220,14 +218,14 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
           Grams = 20;
         }
         // weight 50G
-      //  else if (adc_weight >= 1000 && adc_weight <= 2000) {
-     //     Grams = 50;
-     //   }
+        else if (adc_weight >= 1000 && adc_weight <= 2000) {
+          Grams = 50;
+        }
         // weight 80G
-      //  else if (adc_weight >= 2000 && adc_weight <= 3000) {
-      //    Grams = 80;
-     //   }
-        // no weight
+        else if (adc_weight >= 2000 && adc_weight <= 3000) {
+          Grams = 80;
+        }
+        // no weightuhhhhh
         else {
           Grams = 0;
         }
