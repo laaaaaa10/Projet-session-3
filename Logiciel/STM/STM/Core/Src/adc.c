@@ -3,7 +3,7 @@
 // Done by : Jessica Di Stefano
 // Description : used to get the wieght of the cylinders
 //
-//
+//this is done im done
 // ************************************************************************* //
 
 // *************************** INCLUDES ************************************ //
@@ -32,7 +32,6 @@ uint16_t ADC_Read_Balance(void)
 
     return adcBalance;
 }
-
 
 uint16_t ADC_Read_Pince(void)
 {
