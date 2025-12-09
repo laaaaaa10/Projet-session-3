@@ -137,7 +137,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
 
     // If AUTO, lower to (grab position)
     if (was_auto) {
-        z = 5.0f;
+        z = 4.0f;
         MOVE_ARM(Out_Pivots, 800);  
     }
     

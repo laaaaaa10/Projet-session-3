@@ -189,13 +189,16 @@ while (1) {
         // execute the full arm logic if there is something on the table
         if ((Table_pos.x != 0) || (Table_pos.y != 0)) {
           saved_pos = Table_pos;
+          ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
+          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
+          HAL_Delay(750);
           ARM_LOGIC(Table_pos.x, Table_pos.y, AUTO, CLOSE, Out_Pivots);
 
           state_timer = now;
           arm_state = STATE_WAIT_1;
-        // if nothing is detected then go to center
+        // if nothing is detected then go to home
         } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
+          ARM_LOGIC(10, 0, 0, CLOSE, Out_Pivots);
           state_timer = now;
         }
         break;
@@ -203,7 +206,7 @@ while (1) {
       // palces the cylinders in the balance
       case STATE_WAIT_1:
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-3.75, 39.75, 5, OPEN, Out_Pivots);
+          ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
@@ -217,19 +220,24 @@ while (1) {
           adc_pince = ADC_Read_Pince();  
           Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
 
-          ARM_LOGIC(-3.7, 39.90, AUTO, CLOSE, Out_Pivots);
+          ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
           
           // weight 20G
           if      (adc_weight >=  100 && adc_weight <= 1000) {
-            ARM_LOGIC(14, 25.50, 9, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 25, 8, OPEN, Out_Pivots); 
+            HAL_Delay(1000);
+            ARM_LOGIC(-14, -12, 15, CLOSE, Out_Pivots); 
+            HAL_Delay(1000);
+            ARM_LOGIC(-14.5, -17.5, -2.5, OPEN, Out_Pivots);
+            ARM_LOGIC(-14.5, -30, -5, CLOSE, Out_Pivots);
           }
           // weight 50G
           else if (adc_weight >= 1000 && adc_weight <= 2000) {
-            ARM_LOGIC(14, 29.50, 9, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 29.6, 8, OPEN, Out_Pivots); 
           }
           // weight 80G
           else if (adc_weight >= 2000 && adc_weight <= 3000) {
-            ARM_LOGIC(14, 33.75, 9, OPEN, Out_Pivots); 
+            ARM_LOGIC(14, 34, 8, OPEN, Out_Pivots); 
           }
           // no weight
           else {
@@ -241,10 +249,9 @@ while (1) {
           ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
           arm_state = STATE_IDLE;
         }
-
-        // once done proceed to kill itself
-        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots);
-        break;
+        
+        ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
+      break;
     }
   }
 
