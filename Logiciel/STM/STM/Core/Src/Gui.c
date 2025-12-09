@@ -225,7 +225,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
         else if (adc_weight >= 2000 && adc_weight <= 3000) {
           Grams = 80;
         }
-        // no weightuhhhh
+        // no weightuhhhhh
         else {
           Grams = 0;
         }
