@@ -4,7 +4,7 @@
 // Description :
 // 3rd mode i did off college for fun
 // gpt helped me alot with it cuse idrc abought this usless mode 
-// (literraly the middle child) also if you are reading this, fuck you jess
+// (literraly the middle child) also if ur reading this i hope you get an anal prolapse
 // ************************************************************************* // 
 
 // *************************** INCLUDES ************************************ // 
