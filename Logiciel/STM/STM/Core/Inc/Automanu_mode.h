@@ -14,3 +14,5 @@
 
 // ************************ FUNCTION PROTOTYPES **************************** //
 uint16_t Automanu_mode(void);
+
+#endif

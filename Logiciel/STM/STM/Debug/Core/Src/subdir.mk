@@ -5,6 +5,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/Src/Automanu_mode.c \
 ../Core/Src/Gui.c \
 ../Core/Src/I2C.c \
 ../Core/Src/Keyboard.c \
@@ -21,6 +22,7 @@ C_SRCS += \
 ../Core/Src/system_stm32f1xx.c 
 
 OBJS += \
+./Core/Src/Automanu_mode.o \
 ./Core/Src/Gui.o \
 ./Core/Src/I2C.o \
 ./Core/Src/Keyboard.o \
@@ -37,6 +39,7 @@ OBJS += \
 ./Core/Src/system_stm32f1xx.o 
 
 C_DEPS += \
+./Core/Src/Automanu_mode.d \
 ./Core/Src/Gui.d \
 ./Core/Src/I2C.d \
 ./Core/Src/Keyboard.d \
@@ -60,7 +63,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/Gui.cyclo ./Core/Src/Gui.d ./Core/Src/Gui.o ./Core/Src/Gui.su ./Core/Src/I2C.cyclo ./Core/Src/I2C.d ./Core/Src/I2C.o ./Core/Src/I2C.su ./Core/Src/Keyboard.cyclo ./Core/Src/Keyboard.d ./Core/Src/Keyboard.o ./Core/Src/Keyboard.su ./Core/Src/Mem_Tac.cyclo ./Core/Src/Mem_Tac.d ./Core/Src/Mem_Tac.o ./Core/Src/Mem_Tac.su ./Core/Src/UART_Com.cyclo ./Core/Src/UART_Com.d ./Core/Src/UART_Com.o ./Core/Src/UART_Com.su ./Core/Src/adc.cyclo ./Core/Src/adc.d ./Core/Src/adc.o ./Core/Src/adc.su ./Core/Src/arm_logic.cyclo ./Core/Src/arm_logic.d ./Core/Src/arm_logic.o ./Core/Src/arm_logic.su ./Core/Src/lcd.cyclo ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/lcd.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32f1xx_hal_msp.cyclo ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.cyclo ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.cyclo ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su
+	-$(RM) ./Core/Src/Automanu_mode.cyclo ./Core/Src/Automanu_mode.d ./Core/Src/Automanu_mode.o ./Core/Src/Automanu_mode.su ./Core/Src/Gui.cyclo ./Core/Src/Gui.d ./Core/Src/Gui.o ./Core/Src/Gui.su ./Core/Src/I2C.cyclo ./Core/Src/I2C.d ./Core/Src/I2C.o ./Core/Src/I2C.su ./Core/Src/Keyboard.cyclo ./Core/Src/Keyboard.d ./Core/Src/Keyboard.o ./Core/Src/Keyboard.su ./Core/Src/Mem_Tac.cyclo ./Core/Src/Mem_Tac.d ./Core/Src/Mem_Tac.o ./Core/Src/Mem_Tac.su ./Core/Src/UART_Com.cyclo ./Core/Src/UART_Com.d ./Core/Src/UART_Com.o ./Core/Src/UART_Com.su ./Core/Src/adc.cyclo ./Core/Src/adc.d ./Core/Src/adc.o ./Core/Src/adc.su ./Core/Src/arm_logic.cyclo ./Core/Src/arm_logic.d ./Core/Src/arm_logic.o ./Core/Src/arm_logic.su ./Core/Src/lcd.cyclo ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/lcd.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/stm32f1xx_hal_msp.cyclo ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.cyclo ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.cyclo ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su
 
 .PHONY: clean-Core-2f-Src
 
