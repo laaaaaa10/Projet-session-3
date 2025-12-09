@@ -13,7 +13,6 @@
 // *************************** DEFINES ************************************ //
 #define MANUAL 69
 #define AUTO   67
-#define MANUAUTO 42
 
 // *************************** VARIABLES ************************************ //
 // Custom up symbol
@@ -158,7 +157,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
     }
     
     // ----- MENU 2 (MANUAL) ----- //
-    else if (ctrl_mode == MANUAL) {
+    else {
         LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
@@ -213,13 +212,6 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
 
         LCD_Set(14, 3);
         LCD_Print("mode=M");
-    }
-
-    // ----- MENU 3 (MANUAUTO) ----- //
-    else if (ctrl_mode == MANUAUTO) {
-      LCD_Clear();
-
-      
     }
 
     // ----- GERER LE POIDS ----- //

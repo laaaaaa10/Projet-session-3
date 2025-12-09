@@ -27,6 +27,7 @@
 #include "UART_Com.h"
 #include "Mem_Tac.h"
 #include "Gui.h"
+#include "Automanu_mode.h"
 #include <stdbool.h>
 
 /* USER CODE END Includes */
@@ -45,7 +46,7 @@
 
 #define MANUAL 69
 #define AUTO 67
-#define MANUAUTO 42
+#define AUTOMANU 42
 
 /* USER CODE END PD */
 
@@ -151,27 +152,24 @@ while (1) {
   // ----- run main code if pic received shit----- //
   now = HAL_GetTick();
 
-  // here check * or # button to go to manual or manuauto
+  // here check * or # button to go to manual or AUTOMANU
   key = Clavier_MX();
   // * toggle MANUAL
   if ((key == '*') && (now - button_timer >= 1500)) {
       button_timer = now;  // reset debounce timer
-      if (ctrl_mode == AUTO) {
+      if (ctrl_mode != MANUAL) {
           ctrl_mode = MANUAL;
           arm_state = STATE_IDLE;
       } else if (ctrl_mode == MANUAL) {
           ctrl_mode = AUTO;
       }
   }
-  // # toggle MANUAUTO)
+  // # toggle AUTOMANU)
   if ((key == '#') && (now - button_timer >= 1500)) {
-      button_timer = now;  // reset debounce timer
-      if (ctrl_mode == AUTO) {
-          ctrl_mode = MANUAUTO;
-          arm_state = STATE_IDLE;
-      } else if (ctrl_mode == MANUAUTO) {
-          ctrl_mode = AUTO;
-      }
+    button_timer = now;  // reset debounce timer
+    if (ctrl_mode != AUTOMANU) {
+      Automanu_mode();
+    }
   }
 
   // get the 8 bits fromt the pic
