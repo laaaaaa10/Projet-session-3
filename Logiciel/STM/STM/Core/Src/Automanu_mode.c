@@ -292,10 +292,10 @@ start_over:  // Jump here to restart everything
             if (digit_pos > 0) {
                 digit_pos --;            // Go back one position
                 digits[digit_pos] = 0;   // Clear the digit
-                
+
                 // Recalculate the value
                 float temp = digits[0] * 10 + digits[1] + (digits[2] * 0.1) + (digits[3] * 0.01);
-                
+
                 if (current_coord == 0) {
                     X_val = temp;    
                 }
@@ -306,7 +306,33 @@ start_over:  // Jump here to restart everything
                     Z_val = temp;
                 }
             }
-            
+            // If nothing to backspace, go to previous coordinate
+            else if (digit_pos == 0 && current_coord > 0) {
+                current_coord --;        // Go back to previous coordinate
+                digit_pos = 4;           // Start at end of that coordinate
+
+                // Restore digits from the previous coordinate value
+                float prev_val;
+                if (current_coord == 0) {
+                    prev_val = X_val;
+                }
+                else if (current_coord == 1) {
+                    prev_val = Y_val;
+                }
+                else {
+                    prev_val = Z_val;
+                }
+
+                // Extract digits back
+                int whole = (int)prev_val;
+                int decimal = (int)((prev_val - whole) * 100);
+
+                digits[0] = whole / 10;
+                digits[1] = whole % 10;
+                digits[2] = decimal / 10;
+                digits[3] = decimal % 10;
+            }
+
             key = 0;
         }
     }
