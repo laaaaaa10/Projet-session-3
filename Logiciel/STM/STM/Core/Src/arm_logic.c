@@ -2,7 +2,7 @@
 // File: arm_logic.c
 // Done by : Javier
 // Description :
-// send coordfs and return the pwm of each motors
+// send coords and return the pwm of each motors
 // this is the most interesting code ive made so far
 // ************************************************************************* // 
 
