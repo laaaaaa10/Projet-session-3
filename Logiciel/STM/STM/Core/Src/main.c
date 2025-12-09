@@ -46,7 +46,6 @@
 
 #define MANUAL 69
 #define AUTO 67
-#define AUTOMANU 42
 
 /* USER CODE END PD */
 
@@ -165,13 +164,10 @@ while (1) {
     }
   }
   // # toggle AUTOMANU)
-  if ((key == '#') && (now - button_timer >= 1500)) {
-    button_timer = now;  // reset debounce timer
-    if (ctrl_mode != AUTOMANU) {
-      LCD_Clear();
-      Automanu_mode();
-      arm_state = STATE_IDLE;
-    }
+  if (key == '#') {
+    LCD_Clear();
+    Automanu_mode();
+    arm_state = STATE_IDLE;
   }
 
   // get the 8 bits fromt the pic
