@@ -39,7 +39,7 @@ uint16_t ADC_Read_Pince(void)
     const int samples = 5;
 
     for (int i = 0; i < samples; i++) {
-        HAL_ADC_Start(&hadc2);                  // ????
+        HAL_ADC_Start(&hadc2);
         HAL_ADC_PollForConversion(&hadc2, 10);
         sum += HAL_ADC_GetValue(&hadc2);
         HAL_ADC_Stop(&hadc2);

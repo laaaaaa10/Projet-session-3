@@ -30,18 +30,41 @@ void UART_Send(uint8_t M_0, uint8_t M_1, uint8_t M_2, uint8_t M_3, uint8_t M_4){
 
     CheckSum = (uint8_t)('G' + 'O' + M_0 + M_1 + M_2 + M_3 + M_4);
     UART_Com(CheckSum);
+
+    HAL_Delay(10);
 }
 
 void UART_Com(uint8_t V_TX){
-    HAL_UART_Transmit(&huart1, &V_TX, 1, 1);
+    HAL_UART_Transmit(&huart1, &V_TX, 1, 100);
+    HAL_Delay(10);
 }
 
 // ----- Receive ----- //
 // read 8 bytes (blocking) and return pointer to buffer
 uint8_t* UART_Receive(void){
-    for (uint8_t i = 0; i < 8; i++){
-        PICs_8Bit[i] = UART_Read_1bit();
+    uint8_t byte;
+    
+    // Sync to 'G' followed immediately by 'O'
+    while (1) {
+        do {
+            byte = UART_Read_1bit();
+        } while (byte != 'G');
+        
+        byte = UART_Read_1bit();
+        if (byte == 'O') break;  // Found "GO" - synced!
+        // Otherwise keep looking for 'G'
     }
+    
+    // Offset by 1 so X lands at index 3, Y at index 4
+    PICs_8Bit[0] = 0;
+    PICs_8Bit[1] = 'G';
+    PICs_8Bit[2] = 'O';
+    PICs_8Bit[3] = UART_Read_1bit();      // X
+    PICs_8Bit[4] = UART_Read_1bit();      // Y
+    PICs_8Bit[5] = UART_Read_1bit();      // claws
+    PICs_8Bit[6] = UART_Read_1bit();      // balance
+    PICs_8Bit[7] = UART_Read_1bit();      // reserved (checksum)
+    
     return PICs_8Bit;
 }
 
@@ -49,6 +72,7 @@ uint8_t* UART_Receive(void){
 // ----- read one bit at a time ----- //
 uint8_t UART_Read_1bit(void){
     uint8_t ucCaract = 0;
+    
     // Use 1000 ms timeout for robustness during debug; reduce later if needed
     if (HAL_UART_Receive(&huart1, &ucCaract, 1, 250) != HAL_OK) {
         // on timeout or error return 0 (NUL). You can change behaviour if desired.

@@ -27,6 +27,7 @@
 #include "UART_Com.h"
 #include "Mem_Tac.h"
 #include "Gui.h"
+#include "Automanu_mode.h"
 #include <stdbool.h>
 
 /* USER CODE END Includes */
@@ -54,11 +55,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
-
+ADC_HandleTypeDef hadc2;
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -75,7 +74,6 @@ typedef enum {
   STATE_IDLE,
   STATE_WAIT_1,
   STATE_WAIT_2,
-  STATE_SORT
 } ArmState;
 
 ArmState arm_state = STATE_IDLE;
@@ -95,6 +93,7 @@ static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_ADC2_Init(void);
 /* USER CODE BEGIN PFP */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -137,6 +136,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   MX_ADC1_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
 
   /* Initialize LCD */
@@ -151,17 +151,23 @@ while (1) {
   // ----- run main code if pic received shit----- //
   now = HAL_GetTick();
 
-  // here check * button to see fi manue or automatic
+  // here check * or # button to go to manual or AUTOMANU
   key = Clavier_MX();    
   if ((key == '*') && (now - button_timer >= 1500)) {
     button_timer = now;  // reset debounce timer
     if (ctrl_mode == AUTO) {
       ctrl_mode = MANUAL;
       arm_state = STATE_IDLE;
-    }
+    }    
     else {
       ctrl_mode = AUTO;
     }
+  }
+  // # toggle AUTOMANU)
+  if (key == '#') {
+    LCD_Clear();
+    Automanu_mode();
+    arm_state = STATE_IDLE;
   }
 
   // get the 8 bits fromt the pic
@@ -187,14 +193,14 @@ while (1) {
 
           state_timer = now;
           arm_state = STATE_WAIT_1;
-          // if nothing is detected then go to center
+        // if nothing is detected then go to center
         } else if (now - state_timer >= 750) {  
-          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
+          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
           state_timer = now;
         }
         break;
 
-      // goes to the balance and drops the weight
+      // palces the cylinders in the balance
       case STATE_WAIT_1:
         if (now - state_timer >= 1500) {
           ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
@@ -202,46 +208,42 @@ while (1) {
           arm_state = STATE_WAIT_2;
         }
         break;
-
-      // test for the wight and the go to its desired section
+        
+      // test for the wieght and the go to its desired section
       case STATE_WAIT_2:
-        if (now - state_timer >= 3000) {
-          // read adc and display it
+        if (now - state_timer >= 4000) {
+          // read wieght and sipaly it
           adc_weight = ADC_Read_Balance();
           adc_pince = ADC_Read_Pince();  
           Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
+
+          ARM_LOGIC(-3.7, 39.90, AUTO, CLOSE, Out_Pivots);
           
-          ARM_LOGIC(-3.7, 40, AUTO, CLOSE, Out_Pivots);
-          state_timer = now;
-          arm_state = STATE_SORT;
+          // weight 20G
+          if      (adc_weight >=  100 && adc_weight <= 1000) {
+            ARM_LOGIC(14, 25.50, 9, OPEN, Out_Pivots); 
+          }
+          // weight 50G
+          else if (adc_weight >= 1000 && adc_weight <= 2000) {
+            ARM_LOGIC(14, 29.50, 9, OPEN, Out_Pivots); 
+          }
+          // weight 80G
+          else if (adc_weight >= 2000 && adc_weight <= 3000) {
+            ARM_LOGIC(14, 33.75, 9, OPEN, Out_Pivots); 
+          }
+          // no weight
+          else {
+            ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
+            arm_state = STATE_IDLE;
+          }
+          HAL_Delay(1000);
+          state_timer = HAL_GetTick();
+          ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
+          arm_state = STATE_IDLE;
         }
-        break;
-
-      // sorts the diffrent weights
-      case STATE_SORT:
-        // weight 20G
-        if      (adc_weight >=  100 && adc_weight <= 1000) {
-          ARM_LOGIC(14, 26, 7, OPEN, Out_Pivots); 
-        }
-        // weight 50G
-        else if (adc_weight >= 1000 && adc_weight <= 2000) {
-          ARM_LOGIC(14, 31, 7, OPEN, Out_Pivots); 
-        }
-        // weight 80G
-        else if (adc_weight >= 2000 && adc_weight <= 3000) {
-          ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
-        }
-        // no weight
-        else {
-          ARM_LOGIC(0, 26, 15, OPEN, Out_Pivots);
-        }
-
-        HAL_Delay(1000);
 
         // once done proceed to kill itself
-        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots); 
-        state_timer = HAL_GetTick();
-        arm_state = STATE_IDLE;
+        //ARM_LOGIC(14, 34, 7, OPEN, Out_Pivots);
         break;
     }
   }
@@ -272,16 +274,15 @@ while (1) {
       (uint8_t)Out_Pivots[3],
       (uint8_t)Out_Pivots[4]
     );
-    HAL_Delay(100);
+    HAL_Delay(10);
   }
-  
-  HAL_Delay(750);
 
-  /* USER CODE END WHILE */
+  HAL_Delay(500);
+    /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
- }
-
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -374,6 +375,53 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief ADC2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC2_Init(void)
+{
+
+  /* USER CODE BEGIN ADC2_Init 0 */
+
+  /* USER CODE END ADC2_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC2_Init 1 */
+
+  /* USER CODE END ADC2_Init 1 */
+
+  /** Common config
+  */
+  hadc2.Instance = ADC2;
+  hadc2.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc2.Init.ContinuousConvMode = DISABLE;
+  hadc2.Init.DiscontinuousConvMode = DISABLE;
+  hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc2.Init.NbrOfConversion = 1;
+  if (HAL_ADC_Init(&hadc2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC2_Init 2 */
+
+  /* USER CODE END ADC2_Init 2 */
 
 }
 
@@ -507,7 +555,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, P1_1_Pin|P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, P1_2_Pin|P1_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RW_Pin|EN_Pin|D4_Pin|D5_Pin
@@ -519,8 +567,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(LED_BP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : P1_1_Pin P1_2_Pin P1_3_Pin */
-  GPIO_InitStruct.Pin = P1_1_Pin|P1_2_Pin|P1_3_Pin;
+  /*Configure GPIO pins : P1_2_Pin P1_3_Pin */
+  GPIO_InitStruct.Pin = P1_2_Pin|P1_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

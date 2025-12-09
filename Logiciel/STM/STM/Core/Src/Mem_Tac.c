@@ -15,13 +15,13 @@ Point Lire_Tab(uint8_t* Coord_Table){
     
     // Tableau 2D de Points
     Point Tableau_Mem[7][3] = {
-        {{-3,15},{1,15},{5,15}},
-        {{-3,20},{1,20},{5,20}},
-        {{-3,23},{1,23},{5,23}},
-        {{-3,26},{1,26},{5,26}},
-        {{-3,29},{1,29},{5,29}},
-        {{-3,32},{1,32},{5,32}},
-        {{-3,35},{1,35},{5,35}} 
+        {{-2.5,15},{2,15},{5,15}},
+        {{-2.5,18},{2,18},{5,18}},
+        {{-2.5,20},{2,20},{5,20}},
+        {{-2.5,24},{2,24},{5,24}},
+        {{-2.5,27},{1,27},{5,27}},
+        {{-2.5,30},{1,30},{5,30}},
+        {{-3.0,33},{2,33},{5,33}} 
     };
 
     Point Tab = Simple_Tab(Coord_Table);
@@ -31,7 +31,7 @@ Point Lire_Tab(uint8_t* Coord_Table){
         return Coord_Mem;
     }
 
-    Coord_Mem = Tableau_Mem[Tab.x][Tab.y];
+    Coord_Mem = Tableau_Mem[(int)Tab.x][(int)Tab.y];
 
     return Coord_Mem;
 }
