@@ -102,7 +102,7 @@ void GUI_Init(void) {
     LCD_Clear();
 }
 
-void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weight, int adcPince) {
+void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWeight, int adcPince) {
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static int Grams = 0;
@@ -143,7 +143,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
 
         LCD_Set(0, 2);
         LCD_Print("Weight:");
-        LCD_PrintInt(Weight);
+        LCD_PrintInt(adcWeight);
         LCD_Print(" (");
         LCD_PrintInt(Grams);
         LCD_Print(")");
@@ -214,15 +214,15 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int Weigh
 
     // ----- GERER LE POIDS ----- //
         // weight 20G
-        if      (Weight >=  100 && Weight <= 1000) {
+        if      (adcWeight >=  100 && adcWeight <= 1000) {
           Grams = 20;
         }
         // weight 50G
-        else if (adc_weight >= 1000 && adc_weight <= 2000) {
+        else if (adcWeight >= 1000 && adcWeight <= 2000) {
           Grams = 50;
         }
         // weight 80G
-        else if (adc_weight >= 2000 && adc_weight <= 3000) {
+        else if (adcWeight >= 2000 && adcWeight <= 3000) {
           Grams = 80;
         }
         // no weightuhhhhh

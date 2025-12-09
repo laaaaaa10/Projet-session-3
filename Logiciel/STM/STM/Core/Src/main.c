@@ -203,7 +203,7 @@ while (1) {
       // palces the cylinders in the balance
       case STATE_WAIT_1:
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
+          ARM_LOGIC(-3.75, 39.75, 5, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
