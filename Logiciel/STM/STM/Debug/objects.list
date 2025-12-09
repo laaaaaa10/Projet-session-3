@@ -1,3 +1,4 @@
+"./Core/Src/Automanu_mode.o"
 "./Core/Src/Gui.o"
 "./Core/Src/I2C.o"
 "./Core/Src/Keyboard.o"

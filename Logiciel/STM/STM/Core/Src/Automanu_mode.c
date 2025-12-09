@@ -22,7 +22,7 @@
 #define CLOSE 0
 
 // *************************** VARIABLES ************************************ //
-int key;
+static int key;
 
 float X_val;
 float Y_val;
@@ -35,17 +35,16 @@ int X_sign;
 int Y_sign; 
 
 int digits[4];
-int Out_Pivots[5];
-
 int error_timer;  // Timer for error message display
 
 int last_coord = -1;      // Track last active coordinate
 int last_digit_pos = -1;  // Track last digit position
+uint32_t last_exit_time = 0;  // Cooldown timer for # button
 
 // ************************* FUCNTIONS ******************************* //
 
 // ----- basic setup shit ----- //
-void Display_Coordinate(float value, int is_active, int has_sign) {
+void Display_Coordinate(float value, int is_active, int has_sign, int coord) {
     // Extract digits from value for display
     int whole = (int)value;
     int decimal = (int)((value - whole) * 100);
@@ -57,42 +56,54 @@ void Display_Coordinate(float value, int is_active, int has_sign) {
     
     // Display sign if needed (for X and Y)
     if (has_sign) {
-        if (current_coord == 0) {
-            LCD_Write(X_sign > 0 ? '+' : '-');
+        if (coord == 0) {
+            if (X_sign > 0) {
+                LCD_Print("+");
+            }
+            else {
+                LCD_Print("-");
+            }
         }
-        else if (current_coord == 1) {
-            LCD_Write(Y_sign > 0 ? '+' : '-');
+        else if (coord == 1) {
+            if (Y_sign > 0) {
+                LCD_Print("+");
+            }
+            else {
+                LCD_Print("-");
+            }
         }
     }
     
     // Display with underscores for active input
     if (is_active) {
         if (digit_pos == 0) LCD_Print("_");
-        else LCD_Printint(d0);
+        else LCD_PrintInt(d0);
         
         if (digit_pos == 1) LCD_Print("_");
-        else LCD_Printint(d1);
+        else LCD_PrintInt(d1);
         
         LCD_Print(".");
         
         if (digit_pos == 2) LCD_Print("_");
-        else LCD_Printint(d2);
+        else LCD_PrintInt(d2);
         
         if (digit_pos == 3) LCD_Print("_");
-        else LCD_Printint(d3);
+        else LCD_PrintInt(d3);
     }
     else {
         // Just display the value normally
-        LCD_Printint(d0);
-        LCD_Printint(d1);
+        LCD_PrintInt(d0);
+        LCD_PrintInt(d1);
         LCD_Print(".");
-        LCD_Printint(d2);
-        LCD_Printint(d3);
+        LCD_PrintInt(d2);
+        LCD_PrintInt(d3);
     }
 }
 
 // ----- main display thing ----- //
 uint16_t Automanu_mode(void) {
+    last_exit_time = HAL_GetTick();
+    HAL_Delay(500);
     
 start_over:  // Jump here to restart everything
     
@@ -130,34 +141,34 @@ start_over:  // Jump here to restart everything
         LCD_Set(0, 0);
         LCD_Print("X=");
         if (current_coord == 0) {
-            Display_Coordinate(X_val, 1, 1);  // active, has sign
+            Display_Coordinate(X_val, 1, 1, 0);  // active, has sign
         }
         else {
             if (X_sign < 0) LCD_Write('-');
             else LCD_Write('+');
-            Display_Coordinate(X_val, 0, 0);  // not active, sign already shown
+            Display_Coordinate(X_val, 0, 0, 0);  // not active, sign already shown
         }
 
         // Display Y coordinate (LCD line 1)
         LCD_Set(0, 1);
         LCD_Print("Y=");
         if (current_coord == 1) {
-            Display_Coordinate(Y_val, 1, 1);  // active, has sign
+            Display_Coordinate(Y_val, 1, 1, 1);  // active, has sign
         }
         else {
             if (Y_sign < 0) LCD_Write('-');
             else LCD_Write('+');
-            Display_Coordinate(Y_val, 0, 0);  // not active, sign already shown
+            Display_Coordinate(Y_val, 0, 0, 1);  // not active, sign already shown
         }
 
         // Display Z coordinate (LCD line 2)
         LCD_Set(0, 2);
         LCD_Print("Z=");
         if (current_coord == 2) {
-            Display_Coordinate(Z_val, 1, 0);  // active, no sign
+            Display_Coordinate(Z_val, 1, 0, 2);  // active, no sign
         }
         else {
-            Display_Coordinate(Z_val, 0, 0);  // not active, no sign
+            Display_Coordinate(Z_val, 0, 0, 2);  // not active, no sign
         }
 
         
@@ -180,9 +191,18 @@ start_over:  // Jump here to restart everything
         
         // Press # to exit back to main
         if (key == '#') {
-            return 1;  // return to the main.c cause fuck you
+            // Check cooldown - must wait 2 seconds since function started
+            if (HAL_GetTick() - last_exit_time > 2000) {
+                // Wait until # key is released
+                while (Clavier_MX() == '#') {
+                    HAL_Delay(50);
+                }
+                HAL_Delay(200);
+                return 1;  // return to the main.c cause fuck you
+            }
+            key = 0;  // Ignore if within cooldown period
         }
-        
+
         // Handle digit input (0-9)
         else if (key >= '0' && key <= '9') {
 
@@ -215,8 +235,13 @@ start_over:  // Jump here to restart everything
                     digits[3] = 0;
                 }
             }
-            
             key = 0;
+
+            // debounce
+            while (Clavier_MX() >= '0' && Clavier_MX() <= '9') {
+            HAL_Delay(10);
+                }
+            HAL_Delay(50);  // Extra debounce delay
         }
 
         

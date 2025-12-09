@@ -46,7 +46,6 @@
 
 #define MANUAL 69
 #define AUTO 67
-#define AUTOMANU 42
 
 /* USER CODE END PD */
 
@@ -153,23 +152,22 @@ while (1) {
   now = HAL_GetTick();
 
   // here check * or # button to go to manual or AUTOMANU
-  key = Clavier_MX();
-  // * toggle MANUAL
+  key = Clavier_MX();    
   if ((key == '*') && (now - button_timer >= 1500)) {
-      button_timer = now;  // reset debounce timer
-      if (ctrl_mode != MANUAL) {
-          ctrl_mode = MANUAL;
-          arm_state = STATE_IDLE;
-      } else if (ctrl_mode == MANUAL) {
-          ctrl_mode = AUTO;
-      }
+    button_timer = now;  // reset debounce timer
+    if (ctrl_mode == AUTO) {
+      ctrl_mode = MANUAL;
+      arm_state = STATE_IDLE;
+    }    
+    else {
+      ctrl_mode = AUTO;
+    }
   }
   // # toggle AUTOMANU)
-  if ((key == '#') && (now - button_timer >= 1500)) {
-    button_timer = now;  // reset debounce timer
-    if (ctrl_mode != AUTOMANU) {
-      Automanu_mode();
-    }
+  if (key == '#') {
+    LCD_Clear();
+    Automanu_mode();
+    arm_state = STATE_IDLE;
   }
 
   // get the 8 bits fromt the pic
@@ -205,7 +203,7 @@ while (1) {
       // palces the cylinders in the balance
       case STATE_WAIT_1:
         if (now - state_timer >= 1500) {
-          ARM_LOGIC(-3.7, 40, 6, OPEN, Out_Pivots);
+          ARM_LOGIC(-3.7, 40, 5, OPEN, Out_Pivots);
           state_timer = now;
           arm_state = STATE_WAIT_2;
         }
@@ -276,7 +274,7 @@ while (1) {
       (uint8_t)Out_Pivots[3],
       (uint8_t)Out_Pivots[4]
     );
-    HAL_Delay(100);
+    HAL_Delay(10);
   }
 
   HAL_Delay(500);
