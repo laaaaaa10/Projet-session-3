@@ -320,7 +320,7 @@ while (1) {
   // ----- mode fun -----//
   if (ctrl_mode == DANCE) {   // stupid dance function made by jess
     ARM_LOGIC(-10, 10, 20, CLOSE, Out_Pivots); 
-    ARM_LOGIC(10, 10, 20, OPEN, Out_Pivots); 
+    ARM_LOGIC(10, 10, 20, CLOSE, Out_Pivots); 
   }
   
   HAL_Delay(500);
