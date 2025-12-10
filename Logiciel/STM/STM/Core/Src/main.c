@@ -318,7 +318,7 @@ while (1) {
 
   // ----- mode fun -----//
   if (ctrl_mode == DANCE) {   // stupid dance function made by jess
-    ARM_LOGIC(0, 0, 0, CLOSE, Out_Pivots); 
+    ARM_LOGIC(0, 0, 100, CLOSE, Out_Pivots); 
   }
   HAL_Delay(500);
     /* USER CODE END WHILE */
