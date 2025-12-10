@@ -177,6 +177,7 @@ while (1) {
     button_timer = now;  // reset debounce timer
     if (ctrl_mode != DANCE) {
       ctrl_mode = DANCE;
+      ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
       arm_state = STATE_IDLE;
     }    
     else {
@@ -318,14 +319,10 @@ while (1) {
 
   // ----- mode fun -----//
   if (ctrl_mode == DANCE) {   // stupid dance function made by jess
-    ARM_LOGIC(0, 0, 50, CLOSE, Out_Pivots); 
-    while (ctrl_mode == DANCE)
-    {
-      ARM_LOGIC(0, -10, 50, CLOSE, Out_Pivots); 
-      ARM_LOGIC(0, 10, 50, OPEN, Out_Pivots); 
-    }
-    
+    ARM_LOGIC(-10, 10, 20, CLOSE, Out_Pivots); 
+    ARM_LOGIC(10, 10, 20, OPEN, Out_Pivots); 
   }
+  
   HAL_Delay(500);
     /* USER CODE END WHILE */
 
