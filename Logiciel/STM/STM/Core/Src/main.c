@@ -158,7 +158,7 @@ while (1) {
   key = Clavier_MX();    
   if ((key == '*') && (now - button_timer >= 1500)) {
     button_timer = now;  // reset debounce timer
-    if (ctrl_mode == AUTO) {
+    if (ctrl_mode != MANUAL) {
       ctrl_mode = MANUAL;
       arm_state = STATE_IDLE;
     }    
@@ -173,14 +173,14 @@ while (1) {
     arm_state = STATE_IDLE;
   }
   // A to toggle FUN mode 
-  if ((key == '*') && (now - button_timer >= 1500) && (ctrl_mode != MANUAL)) {
+  if ((key == 'C') && (now - button_timer >= 1500)) {
     button_timer = now;  // reset debounce timer
-    if (ctrl_mode == DANCE) {
-      ctrl_mode = MANUAL;
+    if (ctrl_mode != DANCE) {
+      ctrl_mode = DANCE;
       arm_state = STATE_IDLE;
     }    
     else {
-      ctrl_mode = DANCE;
+      ctrl_mode = AUTO;
     }
   }
   
@@ -289,7 +289,7 @@ while (1) {
   }
 
   // ----- mode manuel -----//
-  else {   
+  if (ctrl_mode == MANUAL) {
     // pivot 0
     if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] ++;
     if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] --;
@@ -318,7 +318,7 @@ while (1) {
 
   // ----- mode fun -----//
   if (ctrl_mode == DANCE) {   // stupid dance function made by jess
-    ARM_LOGIC(0, 0, 100, CLOSE, Out_Pivots); 
+    ARM_LOGIC(0, 0, 50, CLOSE, Out_Pivots); 
   }
   HAL_Delay(500);
     /* USER CODE END WHILE */
