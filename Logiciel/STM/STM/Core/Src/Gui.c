@@ -126,31 +126,34 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
         LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
-        LCD_Print("1:");
+        LCD_Print(" 1:");
         LCD_PrintInt(Out_Pivots[1]); 
-        LCD_Print("2:");
+        LCD_Print(" 2:");
         LCD_PrintInt(Out_Pivots[2]); 
+
+        LCD_Set(0, 1);        
         LCD_Print("3:");
         LCD_PrintInt(Out_Pivots[3]); 
-
-        LCD_Set(0, 1);
-        LCD_Print("4:");
+        LCD_Print(" 4:");
         LCD_PrintInt(Out_Pivots[4]);
-        LCD_Print("  X:");
+        LCD_Set (14, 1);
+        LCD_Print(" X:");
         LCD_PrintInt(x_coord);
-        LCD_Print(" Y:"); 
-        LCD_PrintInt(y_coord);
 
         LCD_Set(0, 2);
-        LCD_Print("Weight:");
+        LCD_Print("Poid:");
         LCD_PrintInt(adcWeight);
-        LCD_Print(" (");
+        LCD_Print("(");
         LCD_PrintInt(Grams);
-        LCD_Print(")");
+        LCD_Print("G)");
+        LCD_Set (14, 2);
+        LCD_Print(" Y:"); 
+        LCD_PrintInt(y_coord);
 
         LCD_Set(0, 3);
         LCD_Print("Grab:");
         LCD_PrintInt(adcPince);
+        LCD_Set(16, 3);
         LCD_Print("AUTO");
     }
     
@@ -208,8 +211,8 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
         LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
 
-        LCD_Set(14, 3);
-        LCD_Print("mode=M");
+        LCD_Set(16, 3);
+        LCD_Print("MANU");
     }
 
     // ----- GERER LE POIDS ----- //
@@ -225,7 +228,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
         else if (adcWeight >= 2000 && adcWeight <= 3000) {
           Grams = 80;
         }
-        // no weightuhhhhh
+        // no weight
         else {
           Grams = 0;
         }

@@ -182,7 +182,7 @@ start_over:  // Jump here to restart everything
             LCD_Print("missing digits");
         }
         else {
-            LCD_Print("A=Run B=Back C=+/-");
+            LCD_Print("A=GO  B=Back  C=+/-");
         }
 
 
