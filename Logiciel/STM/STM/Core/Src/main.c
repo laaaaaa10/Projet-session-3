@@ -244,7 +244,7 @@ while (1) {
           ARM_LOGIC(14, 25, 8, OPEN, Out_Pivots); 
           ARM_LOGIC(14, 25, 12, OPEN, Out_Pivots); 
           
-
+          // special animation
           ARM_LOGIC(-12, -16, 10, OPEN, Out_Pivots); 
           HAL_Delay(1000);
           ARM_LOGIC(-12, -16, -2.5, OPEN, Out_Pivots);
