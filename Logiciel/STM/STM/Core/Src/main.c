@@ -46,6 +46,7 @@
 
 #define MANUAL 69
 #define AUTO 67
+#define DANCE 42
 
 /* USER CODE END PD */
 
@@ -171,6 +172,18 @@ while (1) {
     Automanu_mode();
     arm_state = STATE_IDLE;
   }
+  // A to toggle FUN mode 
+  if ((key == '*') && (now - button_timer >= 1500) && (ctrl_mode != MANUAL)) {
+    button_timer = now;  // reset debounce timer
+    if (ctrl_mode == DANCE) {
+      ctrl_mode = MANUAL;
+      arm_state = STATE_IDLE;
+    }    
+    else {
+      ctrl_mode = DANCE;
+    }
+  }
+  
 
   // get the 8 bits fromt the pic
   uint8_t* UART_Inputs = UART_Receive();
@@ -195,7 +208,7 @@ while (1) {
         arm_state = STATE_GRAB_WEIGHT;
       }
       // if no weight after 5 seconds, go home
-      else if (now - state_timer >= 5000) {
+      else if (now - state_timer >= 7500) {
         ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
         ARM_LOGIC(10, 0, 0, CLOSE, Out_Pivots);
         arm_state = STATE_AT_HOME;
@@ -271,8 +284,6 @@ while (1) {
         ARM_LOGIC(0, 23, 15, OPEN, Out_Pivots);
         arm_state = STATE_IDLE;
       }
-      
-      //ARM_LOGIC(10, 0, 10, CLOSE, Out_Pivots);
       break;
     }
   }
@@ -305,6 +316,10 @@ while (1) {
     );
   }
 
+  // ----- mode fun -----//
+  if (ctrl_mode == DANCE) {
+    // do wahtever you want
+  }
   HAL_Delay(500);
     /* USER CODE END WHILE */
 
