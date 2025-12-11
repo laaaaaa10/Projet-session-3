@@ -287,6 +287,7 @@ while (1) {
       }
       break;
     }
+    HAL_Delay(500);
   }
 
   // ----- mode manuel -----//
@@ -323,7 +324,6 @@ while (1) {
     ARM_LOGIC(-10, 0, 15, OPEN, Out_Pivots); 
   }
   
-  HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
