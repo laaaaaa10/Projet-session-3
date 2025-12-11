@@ -13,6 +13,7 @@
 // *************************** DEFINES ************************************ //
 #define MANUAL 69
 #define AUTO   67
+#define DANCE  42
 
 // *************************** VARIABLES ************************************ //
 // Custom up symbol
@@ -27,67 +28,67 @@ uint8_t up[8] = {
     0b00000
 };
 uint8_t up_I[8] = {
-  0B11011,
-  0B10001,
-  0B01010,
-  0B11011,
-  0B11011,
-  0B11011,
-  0B11011,
-  0B11011
+    0B11011,
+    0B10001,
+    0B01010,
+    0B11011,
+    0B11011,
+    0B11011,
+    0B11011,
+    0B11011
 };
 
 // Custom down symbol
 uint8_t down[8] = {
-  0B00000,
-  0B00100,
-  0B00100,
-  0B00100,
-  0B00100,
-  0B10101,
-  0B01110,
-  0B00100
+    0B00000,
+    0B00100,
+    0B00100,
+    0B00100,
+    0B00100,
+    0B10101,
+    0B01110,
+    0B00100
 };
 
 uint8_t down_I[8] = {
-  0B11111,
-  0B11011,
-  0B11011,
-  0B11011,
-  0B11011,
-  0B01010,
-  0B10001,
-  0B11011
+    0B11111,
+    0B11011,
+    0B11011,
+    0B11011,
+    0B11011,
+    0B01010,
+    0B10001,
+    0B11011
 };
 uint8_t Pince_1[8] = {
-  0B00000,
-  0B11100,
-  0B11111,
-  0B00000,
-  0B00000,
-  0B11111,
-  0B11100,
-  0B00000
+    0B00000,
+    0B11100,
+    0B11111,
+    0B00000,
+    0B00000,
+    0B11111,
+    0B11100,
+    0B00000
 };
 uint8_t Pince_2[8] = {
-  0B00000,
-  0B00000,
-  0B10001,
-  0B11111,
-  0B11111,
-  0B10001,
-  0B00000,
-  0B00000
+    0B00000,
+    0B00000,
+    0B10001,
+    0B11111,
+    0B11111,
+    0B10001,
+    0B00000,
+    0B00000
 };
 uint8_t Pince_3[8] = {
-  0B11100,
-  0B11111,
-  0B00000,
-  0B00000,
-  0B00000,
-  0B00000,
-  0B11111,
-  0B11100
+    0B11100,
+    0B11111,
+    0B00000,
+    0B00000,
+    0B00000,
+    0B00000,
+    0B11111,
+    0B11100
 };
 // ************************* SETUP MAIN PROGRAM ****************************** //
 void GUI_Init(void) {
@@ -121,7 +122,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
           timer_1 = HAL_GetTick();   // reset pour la prochaine seconde
         }*/
     // ----- MENU 1 (AUTO) ----- //
-    if (ctrl_mode == AUTO) {
+    if (ctrl_mode == AUTO || ctrl_mode == DANCE) {
        
         LCD_Set(0, 0);
         LCD_Print("0:");
@@ -158,7 +159,7 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
     }
     
     // ----- MENU 2 (MANUAL) ----- //
-    else {
+    if (ctrl_mode == MANUAL) {
         LCD_Set(0, 0);
         LCD_Print("0:");
         LCD_PrintInt(Out_Pivots[0]); 
@@ -216,20 +217,20 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
     }
 
     // ----- GERER LE POIDS ----- //
-        // weight 20G
-        if      (adcWeight >=  100 && adcWeight <= 1000) {
-          Grams = 20;
-        }
-        // weight 50G
-        else if (adcWeight >= 1000 && adcWeight <= 2000) {
-          Grams = 50;
-        }
-        // weight 80G
-        else if (adcWeight >= 2000 && adcWeight <= 3000) {
-          Grams = 80;
-        }
-        // no weight
-        else {
-          Grams = 0;
-        }
-  }
+    // weight 20G
+    if      (adcWeight >=  100 && adcWeight <= 1000) {
+      Grams = 20;
+    }
+    // weight 50G
+    else if (adcWeight >= 1000 && adcWeight <= 2000) {
+      Grams = 50;
+    }
+    // weight 80G
+    else if (adcWeight >= 2000 && adcWeight <= 3000) {
+      Grams = 80;
+    }
+    // no weight
+    else {
+      Grams = 0;
+    }
+}
