@@ -5,6 +5,7 @@
 #include "main.h"
 #include "lcd.h"
 #include "adc.h"
+#include <stdbool.h>
 
 // *************************** DEFINES ************************************ //
 #define MANUAL 69
