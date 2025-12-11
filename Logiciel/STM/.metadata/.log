@@ -2522,3 +2522,31 @@ COM2
 
 !ENTRY org.eclipse.cdt.core 1 0 2025-12-10 15:10:01.359
 !MESSAGE Indexed 'STM' (32 sources, 126 headers) in 8,54 sec: 11 993 declarations; 70 546 references; 2 unresolved inclusions; 36 syntax errors; 188 unresolved names (0,23 %)
+!SESSION 2025-12-11 09:25:30.135 -----------------------------------------------
+eclipse.buildId=Version 2.0.0
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=fr_CA
+Framework arguments:  U:\Session 3\Projet-session-3\Logiciel\STM\STM\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 U:\Session 3\Projet-session-3\Logiciel\STM\STM\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-12-11 09:26:02.786
+!MESSAGE Log4j2 initialized with config file U:\Session 3\Projet-session-3\Logiciel\STM\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-12-11 09:26:14.932
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mpu.remote.serial 1 1 2025-12-11 09:26:30.997
+!MESSAGE Executed PowerShell command powershell.exe -Command "Get-CimInstance -ClassName Win32_SerialPort | Select-Object -ExpandProperty DeviceID":
+COM1
+COM2
+
+
+!ENTRY com.st.stm32cube.ide.mpu.remote.serial 1 1 2025-12-11 09:26:31.045
+!MESSAGE port: COM1
+
+!ENTRY org.eclipse.cdt.core 1 0 2025-12-11 09:26:31.077
+!MESSAGE Indexed 'STM' (32 sources, 126 headers) in 3,67 sec: 11 994 declarations; 70 586 references; 2 unresolved inclusions; 36 syntax errors; 188 unresolved names (0,23 %)
+
+!ENTRY com.st.stm32cube.ide.mpu.remote.serial 1 1 2025-12-11 09:26:31.135
+!MESSAGE port: COM2
