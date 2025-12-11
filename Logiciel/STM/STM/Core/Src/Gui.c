@@ -107,20 +107,20 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
     static int Ancient_Mode = AUTO;
     static uint32_t timer_1 = 0;
     static int Grams = 0;
-    //static AAA = 0;
+    static bool Toggle_Char = 0;
 
     if (Ancient_Mode != ctrl_mode){
         LCD_Clear();
         Ancient_Mode = ctrl_mode;
         timer_1 = 0;
     }
-/*
+
         if (HAL_GetTick() - timer_1 >= 1000) {
           // Une seconde est passée
           LCD_Clear();
-          AAA = ~AAA;
+          Toggle_Char = ~Toggle_Char;
           timer_1 = HAL_GetTick();   // reset pour la prochaine seconde
-        }*/
+        }
     // ----- MENU 1 (AUTO) ----- //
     if (ctrl_mode == AUTO || ctrl_mode == DANCE) {
        
@@ -175,41 +175,41 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
 
         LCD_Set(6, 0); 
         LCD_Print("-1");
-     //   if (AAA) LCD_Write(1);
-     //   else LCD_Write(3);
+      if (Toggle_Char) LCD_Write(1);
+      else LCD_Write(3);
         LCD_Print(" -4");
-     //   if (AAA) LCD_Write(2);
-      //  else LCD_Write(4);
+      if (Toggle_Char) LCD_Write(2);
+      else LCD_Write(4);
 
-        LCD_Set(6, 1); 
-        LCD_Print("-2");
-     //   if (AAA) LCD_Write(1);
-     //   else LCD_Write(3);
-        LCD_Print(" -5");
-     //   if (AAA) LCD_Write(2);
-      //  else LCD_Write(4);
+      LCD_Set(6, 1); 
+      LCD_Print("-2");
+        if (Toggle_Char) LCD_Write(1);
+        else LCD_Write(3);
+      LCD_Print(" -5");
+        if (Toggle_Char) LCD_Write(2);
+        else LCD_Write(4);
 
-        LCD_Set(6, 2); 
-        LCD_Print("-3");
-       // if (AAA) LCD_Write(1);
-       // else LCD_Write(3);
-        LCD_Print(" -6");
-      //  if (AAA) LCD_Write(2);
-      ///  else LCD_Write(4);
+      LCD_Set(6, 2); 
+      LCD_Print("-3");
+       if (Toggle_Char) LCD_Write(1);
+       else LCD_Write(3);
+      LCD_Print(" -6");
+        if (Toggle_Char) LCD_Write(2);
+        else LCD_Write(4);
 
-        LCD_Set(6, 3); 
-        LCD_Print("-A");
-      //  if (AAA) LCD_Write(1);
-      //  else LCD_Write(3);
-        LCD_Print(" -B");
-      //  if (AAA) LCD_Write(2);
-      //  else LCD_Write(4);
+      LCD_Set(6, 3); 
+      LCD_Print("-A");
+        if (Toggle_Char) LCD_Write(1);
+        else LCD_Write(3);
+      LCD_Print(" -B");
+        if (Toggle_Char) LCD_Write(2);
+        else LCD_Write(4);
 
-        LCD_Set(14, 0);
-        LCD_Write(6); 
-      //  if (AAA) LCD_Write(5);
-      //  else LCD_Write(7);
-        LCD_Print("=");
+      LCD_Set(14, 0);
+      LCD_Write(6); 
+        if (Toggle_Char) LCD_Write(5);
+        else LCD_Write(7);
+      LCD_Print("=");
         LCD_PrintInt(Out_Pivots[4]); 
 
         LCD_Set(16, 3);
