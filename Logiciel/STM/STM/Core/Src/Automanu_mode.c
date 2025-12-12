@@ -37,9 +37,10 @@ int Y_sign;
 int digits[4];
 int error_timer;  // Timer for error message display
 
-int last_coord = -1;      // Track last active coordinate
-int last_digit_pos = -1;  // Track last digit position
+int last_coord = -1;          // Track last active coordinate
+int last_digit_pos = -1;      // Track last digit position
 uint32_t last_exit_time = 0;  // Cooldown timer for # button
+int error_type;               // 1=invalid range, 2=missing digits
 
 // ************************* FUCNTIONS ******************************* //
 
@@ -138,6 +139,8 @@ start_over:  // Jump here to restart everything
         }
 
         // Display X coordinate (LCD line 0)
+        LCD_Set(14, 0);
+        LCD_Print("A=Run");
         LCD_Set(0, 0);
         LCD_Print("X=");
         if (current_coord == 0) {
@@ -149,7 +152,10 @@ start_over:  // Jump here to restart everything
             Display_Coordinate(X_val, 0, 0, 0);  // not active, sign already shown
         }
 
+
         // Display Y coordinate (LCD line 1)
+        LCD_Set(14, 1);
+        LCD_Print("B=Back");
         LCD_Set(0, 1);
         LCD_Print("Y=");
         if (current_coord == 1) {
@@ -162,6 +168,8 @@ start_over:  // Jump here to restart everything
         }
 
         // Display Z coordinate (LCD line 2)
+        LCD_Set(14, 2);
+        LCD_Print("C=+/-");
         LCD_Set(0, 2);
         LCD_Print("Z=");
         if (current_coord == 2) {
@@ -171,18 +179,17 @@ start_over:  // Jump here to restart everything
             Display_Coordinate(Z_val, 0, 0, 2);  // not active, no sign
         }
 
-        
         // errors n shit (LCD line 3)
         LCD_Set(0, 3);
-        if (error_timer > 0 && (HAL_GetTick() - error_timer < 3000)) {
-            LCD_Print("invalid range");
-        }
-        else if ((current_coord < 2 || digit_pos < 4) && (current_coord > 0 || digit_pos > 0)) {
-            LCD_Print("missing digits");
+        if (error_timer > 0) {
+            if      (error_type == 1)     LCD_Print("invalid range       ");
+            else if (error_type == 2)     LCD_Print("missing digits      ");
+            error_timer--;
         }
         else {
-            LCD_Print("A=GO  B=Back  C=+/-");
+            LCD_Print("            AUTOMANU");
         }
+
 
         // Get keyboard press
         key = Clavier_MX();
@@ -244,32 +251,40 @@ start_over:  // Jump here to restart everything
 
         
         // Press A to validate and send coordinates
-        else if (key == 'A' && current_coord == 2 && digit_pos >= 4) {
-            
-            // Apply signs to X and Y
-            float final_X = X_val * X_sign;
-            float final_Y = Y_val * Y_sign;
-            float final_Z = Z_val;
-            
-            // Check if values are in valid range
-            if ((final_X >= -40.0 && final_X <= 40.0) && 
-                (final_Y >= -40.0 && final_Y <= 40.0) && 
-                (final_Z >=   5.0 && final_Z <= 20.0)) {
-                
-                LCD_Clear();
-                LCD_Print("moving...");
-                ARM_LOGIC(final_X, final_Y, final_Z, CLOSE, Out_Pivots);
-                HAL_Delay(1500);
-                
-                // Start over the entire logic  GPT TOLD ME THAT, WTF THAT EXISTS IN C!!! C IS BECOMING ASSEMBLY NOOOOOOOOOOOOOOOOOOOOOOO
-                goto start_over;
+        else if (key == 'A') {
+            if (current_coord != 2 || digit_pos < 4) {
+                error_type = 2;
+                error_timer = 100;
+                LCD_Set(0, 3);
+                LCD_Print("missing digits      ");
+                key = 0;
             }
             else {
-                // Invalid range - set error timer
-                error_timer = HAL_GetTick();
+                // Apply signs to X and Y
+                float final_X = X_val * X_sign;
+                float final_Y = Y_val * Y_sign;
+                float final_Z = Z_val;
+                
+                // Check if values are in valid range
+                if ((final_X >= -40.0 && final_X <= 40.0) && 
+                    (final_Y >= -40.0 && final_Y <= 40.0) && 
+                    (final_Z >=   5.0 && final_Z <= 20.0)) {
+                    
+                    LCD_Clear();
+                    LCD_Print("moving...");
+                    ARM_LOGIC(final_X, final_Y, final_Z, CLOSE, Out_Pivots);
+                    HAL_Delay(1500);
+                    
+                    // Start over the entire logic  GPT TOLD ME THAT, WTF THAT EXISTS IN C!!! C IS BECOMING ASSEMBLY NOOOOOOOOOOOOOOOOOOOOOOO
+                    goto start_over;
+                }
+                else {
+                    // Invalid range - set error timer
+                    error_type = 1;
+                    error_timer = 100;  // Show error for ~100 loop iterations
+                }
+                key = 0;
             }
-            
-            key = 0;
         }
 
 
@@ -330,7 +345,6 @@ start_over:  // Jump here to restart everything
                 digits[2] = decimal / 10;
                 digits[3] = decimal % 10;
             }
-
             key = 0;
         }
     }
