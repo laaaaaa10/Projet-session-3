@@ -238,7 +238,7 @@ while (1) {
     // palces the cylinders in the balance
     case STATE_WAIT_1:
       if (now - state_timer >= 1500) {
-        ARM_LOGIC(-3.5, 40, 5, OPEN, Out_Pivots);
+        ARM_LOGIC(-3, 40, 5, OPEN, Out_Pivots);
         state_timer = now;
         arm_state = STATE_WAIT_2;
       }
@@ -251,7 +251,7 @@ while (1) {
         adc_weight = ADC_Read_Balance();
         adc_pince = ADC_Read_Pince();  
         Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
-        ARM_LOGIC(-3.5, 40, AUTO, CLOSE, Out_Pivots);
+        ARM_LOGIC(-3, 40, AUTO, CLOSE, Out_Pivots);
         
         // weight 20G
         if      (adc_weight >=  250 && adc_weight <= 1000) {
