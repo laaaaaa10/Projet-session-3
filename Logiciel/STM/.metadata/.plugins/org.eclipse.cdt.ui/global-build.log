@@ -1,15 +1,6 @@
-12:40:20 **** Incremental Build of configuration Debug for project STM ****
+13:25:51 **** Incremental Build of configuration Debug for project STM ****
 make -j6 all 
-arm-none-eabi-gcc "../Core/Src/Gui.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/Gui.d" -MT"Core/Src/Gui.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/Gui.o"
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-../Core/Src/Gui.c: In function 'Run_GUI':
-../Core/Src/Gui.c:121:25: warning: '~' on a boolean expression [-Wbool-operation]
-  121 |           Toggle_Char = ~Toggle_Char;
-      |                         ^
-../Core/Src/Gui.c:121:25: note: did you mean to use logical not?
-  121 |           Toggle_Char = ~Toggle_Char;
-      |                         ^
-      |                         !
 arm-none-eabi-gcc -o "STM.elf" @"objects.list"   -mcpu=cortex-m3 -T"U:\Session 3\Projet-session-3\Logiciel\STM\STM\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: STM.elf
  
@@ -17,7 +8,7 @@ arm-none-eabi-size  STM.elf
 arm-none-eabi-objdump -h -S STM.elf  > "STM.list"
 arm-none-eabi-objcopy  -O binary STM.elf  "STM.bin"
    text	   data	    bss	    dec	    hex	filename
-  32352	    188	   2420	  34960	   8890	STM.elf
+  32344	    188	   2420	  34952	   8888	STM.elf
 Finished building: default.size.stdout
  
 Finished building: STM.bin
