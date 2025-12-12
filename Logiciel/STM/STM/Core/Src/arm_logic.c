@@ -137,7 +137,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
 
     // If AUTO, lower to (grab position)
     if (was_auto) {
-        z = 4.0f;
+        z = 3.5f;
         MOVE_ARM(Out_Pivots, 800);  
     }
     
@@ -196,9 +196,9 @@ int ARM_ROTATIONS(int *Pivots) {
     // 15→25: error 5→0  
     else if (distance <= 25.0f) {compensation = -5.0f + (distance - 15.0f) * 0.5f;} 
     // 25→35: error 0→-3
-    else if (distance <= 35.0f) {compensation = (distance - 25.0f) * 0.3f;} 
+    else if (distance <= 35.0f) {compensation = (distance - 24.0f) * 0.3f;} 
     // 35+: stays -3
-    else                        {compensation = 3.0f;}
+    else                        {compensation = 2.5f;}
     
     height += compensation;
 

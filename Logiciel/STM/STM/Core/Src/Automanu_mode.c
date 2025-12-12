@@ -174,17 +174,15 @@ start_over:  // Jump here to restart everything
         
         // errors n shit (LCD line 3)
         LCD_Set(0, 3);
-        if (error_timer > 0) {
+        if (error_timer > 0 && (HAL_GetTick() - error_timer < 3000)) {
             LCD_Print("invalid range");
-            error_timer --;           // Count down the error timer 
         }
-        else if (current_coord < 2 || digit_pos < 4) {
+        else if ((current_coord < 2 || digit_pos < 4) && (current_coord > 0 || digit_pos > 0)) {
             LCD_Print("missing digits");
         }
         else {
             LCD_Print("A=GO  B=Back  C=+/-");
         }
-
 
         // Get keyboard press
         key = Clavier_MX();
@@ -268,7 +266,7 @@ start_over:  // Jump here to restart everything
             }
             else {
                 // Invalid range - set error timer
-                error_timer = 100;  // Show error for ~100 loop iterations
+                error_timer = HAL_GetTick();
             }
             
             key = 0;
