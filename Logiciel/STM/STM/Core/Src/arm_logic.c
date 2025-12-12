@@ -101,8 +101,8 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
     x = (float)y_coord;
     y = (float)x_coord;
 
-    // Move to position (at z=10 if AUTO, else z_coord)
-    z = (z_coord == AUTO) ? 5.5f : (float)z_coord;
+    // Move to position at z (else z_coord) but if AUTO use the f value
+    z = (z_coord == AUTO) ? 5.0f : (float)z_coord;
     ESTIMATE_DELAY();
 
     // Linear interpolation: 2 steps if distance > 10cm to help move straight
@@ -137,7 +137,7 @@ int ARM_LOGIC(int x_coord, int y_coord, int z_coord, bool hand_inst, int *Out_Pi
 
     // If AUTO, lower to (grab position)
     if (was_auto) {
-        z = 3.5f;
+        z = 4.0f;
         MOVE_ARM(Out_Pivots, 800);  
     }
     
@@ -192,11 +192,11 @@ int ARM_ROTATIONS(int *Pivots) {
     // Vertical offset and also need to apply
     // compensation based on distance
     // 10→15: error 4→5
-    if      (distance <= 15.0f) {compensation = -4.0f - (distance - 10.0f) * 0.2f;} 
+    if      (distance <= 15.0f) {compensation = -4.0f - (distance - 9.0f) * 0.2f;} 
     // 15→25: error 5→0  
     else if (distance <= 25.0f) {compensation = -5.0f + (distance - 15.0f) * 0.5f;} 
     // 25→35: error 0→-3
-    else if (distance <= 35.0f) {compensation = (distance - 24.0f) * 0.3f;} 
+    else if (distance <= 35.0f) {compensation = (distance - 27.0f) * 0.3f;} 
     // 35+: stays -3
     else                        {compensation = 2.5f;}
     

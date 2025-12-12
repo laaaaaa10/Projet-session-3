@@ -238,7 +238,7 @@ while (1) {
     // palces the cylinders in the balance
     case STATE_WAIT_1:
       if (now - state_timer >= 1500) {
-        ARM_LOGIC(-3, 40, 5, OPEN, Out_Pivots);
+        ARM_LOGIC(-2, 40, 5, OPEN, Out_Pivots);
         state_timer = now;
         arm_state = STATE_WAIT_2;
       }
@@ -251,12 +251,12 @@ while (1) {
         adc_weight = ADC_Read_Balance();
         adc_pince = ADC_Read_Pince();  
         Run_GUI(Table_pos.x, Table_pos.y, ctrl_mode, Out_Pivots, adc_weight, adc_pince);
-        ARM_LOGIC(-3, 40, AUTO, CLOSE, Out_Pivots);
+        ARM_LOGIC(-2, 40, AUTO, CLOSE, Out_Pivots);
         
         // weight 20G
         if      (adc_weight >=  250 && adc_weight <= 1000) {
-          ARM_LOGIC(15, 25, 8,  OPEN, Out_Pivots); 
-          ARM_LOGIC(15, 25, 12, OPEN, Out_Pivots); 
+          ARM_LOGIC(14, 25, 8,  OPEN, Out_Pivots); 
+          ARM_LOGIC(14, 25, 12, OPEN, Out_Pivots); 
           
           // special animation
           ARM_LOGIC(-11, -16, 10, OPEN, Out_Pivots); 
@@ -272,7 +272,7 @@ while (1) {
         }
         // weight 80G
         else if (adc_weight >= 2000 && adc_weight <= 3000) {
-          ARM_LOGIC(16, 34, 8, OPEN, Out_Pivots); 
+          ARM_LOGIC(15, 33.5, 8, OPEN, Out_Pivots); 
         }
         // no weight
         else {
@@ -293,17 +293,17 @@ while (1) {
   // ----- mode manuel -----//
   if (ctrl_mode == MANUAL) {
     // pivot 0
-    if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] ++;
-    if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] --;
+    if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] += 2;
+    if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] -= 2;
     // pivot 1    
-    if (key == '2' && Out_Pivots[1] < 205) Out_Pivots[1] ++;
-    if (key == '5' && Out_Pivots[1] > 000) Out_Pivots[1] --;
+    if (key == '2' && Out_Pivots[1] < 205) Out_Pivots[1] += 2;
+    if (key == '5' && Out_Pivots[1] > 000) Out_Pivots[1] -= 2;
     // pivot 2
-    if (key == '3' && Out_Pivots[2] < 205) Out_Pivots[2] ++;
-    if (key == '6' && Out_Pivots[2] > 000) Out_Pivots[2] --;
+    if (key == '3' && Out_Pivots[2] < 205) Out_Pivots[2] += 2;
+    if (key == '6' && Out_Pivots[2] > 000) Out_Pivots[2] -= 2;
     // pivot 3    
-    if (key == 'A' && Out_Pivots[3] < 205) Out_Pivots[3] ++;
-    if (key == 'B' && Out_Pivots[3] > 000) Out_Pivots[3] --;
+    if (key == 'A' && Out_Pivots[3] < 205) Out_Pivots[3] += 2;
+    if (key == 'B' && Out_Pivots[3] > 000) Out_Pivots[3] -= 2;
     // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
     if (key == 'C') {
       Out_Pivots[4] = (Out_Pivots[4] == 0) ? 205 : 0;
