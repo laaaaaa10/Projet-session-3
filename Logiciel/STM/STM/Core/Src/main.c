@@ -293,17 +293,17 @@ while (1) {
   // ----- mode manuel -----//
   if (ctrl_mode == MANUAL) {
     // pivot 0
-    if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] ++;
-    if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] --;
+    if (key == '1' && Out_Pivots[0] < 205) Out_Pivots[0] += 2;
+    if (key == '4' && Out_Pivots[0] > 000) Out_Pivots[0] -= 2;
     // pivot 1    
-    if (key == '2' && Out_Pivots[1] < 205) Out_Pivots[1] ++;
-    if (key == '5' && Out_Pivots[1] > 000) Out_Pivots[1] --;
+    if (key == '2' && Out_Pivots[1] < 205) Out_Pivots[1] += 2;
+    if (key == '5' && Out_Pivots[1] > 000) Out_Pivots[1] -= 2;
     // pivot 2
-    if (key == '3' && Out_Pivots[2] < 205) Out_Pivots[2] ++;
-    if (key == '6' && Out_Pivots[2] > 000) Out_Pivots[2] --;
+    if (key == '3' && Out_Pivots[2] < 205) Out_Pivots[2] += 2;
+    if (key == '6' && Out_Pivots[2] > 000) Out_Pivots[2] -= 2;
     // pivot 3    
-    if (key == 'A' && Out_Pivots[3] < 205) Out_Pivots[3] ++;
-    if (key == 'B' && Out_Pivots[3] > 000) Out_Pivots[3] --;
+    if (key == 'A' && Out_Pivots[3] < 205) Out_Pivots[3] += 2;
+    if (key == 'B' && Out_Pivots[3] > 000) Out_Pivots[3] -= 2;
     // pivot 4 (toggle open(Out_Pivots[4] = 0) / close(Out_Pivots[4] = 205))
     if (key == 'C') {
       Out_Pivots[4] = (Out_Pivots[4] == 0) ? 205 : 0;

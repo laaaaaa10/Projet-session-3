@@ -174,34 +174,34 @@ void Run_GUI(int x_coord, int y_coord, int ctrl_mode, int *Out_Pivots, int adcWe
         LCD_PrintInt(Out_Pivots[3]); 
 
         LCD_Set(6, 0); 
-        LCD_Print("-1");
+        LCD_Print(" 1");
       if (Toggle_Char) LCD_Write(1);
       else LCD_Write(3);
-        LCD_Print(" -4");
+        LCD_Print("  4");
       if (Toggle_Char) LCD_Write(2);
       else LCD_Write(4);
 
       LCD_Set(6, 1); 
-      LCD_Print("-2");
+      LCD_Print(" 2");
         if (Toggle_Char) LCD_Write(1);
         else LCD_Write(3);
-      LCD_Print(" -5");
+      LCD_Print("  5");
         if (Toggle_Char) LCD_Write(2);
         else LCD_Write(4);
 
       LCD_Set(6, 2); 
-      LCD_Print("-3");
+      LCD_Print(" 3");
        if (Toggle_Char) LCD_Write(1);
        else LCD_Write(3);
-      LCD_Print(" -6");
+      LCD_Print("  6");
         if (Toggle_Char) LCD_Write(2);
         else LCD_Write(4);
 
       LCD_Set(6, 3); 
-      LCD_Print("-A");
+      LCD_Print(" A");
         if (Toggle_Char) LCD_Write(1);
         else LCD_Write(3);
-      LCD_Print(" -B");
+      LCD_Print("  B");
         if (Toggle_Char) LCD_Write(2);
         else LCD_Write(4);
 
